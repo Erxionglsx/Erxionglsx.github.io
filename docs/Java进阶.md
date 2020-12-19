@@ -1,5 +1,9 @@
 # Java进阶
 
+------
+
+[TOC]
+
 ### 1.进程和线程
 
 #### 1.Java多线程编程
@@ -1373,7 +1377,7 @@ Java类的加载是动态的，它并不会一次性将所有类全部加载后�
 
 class文件是通过**类的加载器**装载到jvm中的
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/2BGWl1qPxib18m2ejoyMtU86WQLnpnxCL8G8oU45MP4sH2X28NqgSKxPTZuZEfuGtVUlnteu4icplyJAKOsWYzeA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](https://img.tool22.com/image/5fdc971494ee1.jpg)
 
 **工作过程：**
 
@@ -1401,7 +1405,7 @@ class文件是通过**类的加载器**装载到jvm中的
 - <font color="lighblue">本地方法栈</font>：本地方法栈则是为虚拟机使用到的**Native方法服务**。
 - <font color="lighblue">程序计数器</font>：当前线程所执行的字节码的**行号指示器**，主要就是完成一个加载工作，类似于一个指针一样的，指向下一行我们需要执行的代码。和栈一样，都是 **线程独享** 的，就是说每一个线程都会有自己对应的一块区域而不会存在并发和多线程的问题。
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/2BGWl1qPxib18m2ejoyMtU86WQLnpnxCL08zjMNIccO3PZ1PuvaEicqvzgfjZF1XPl62fyPkZbJ90oOFmfR9msWg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](https://img.tool22.com/image/5fdc97167d53e.jpg)
 
 **小总结**
 
@@ -1456,7 +1460,7 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 
 ##### 垃圾收集器种类
 
-![](https://mmbiz.qpic.cn/mmbiz_png/OyweysCSeLUrYqPicjVwjuMChPrPicNHdXzJK4ic99AOYK1D1icmJan8QMHcUNu8b6fRT34xicv52j6ticmgQcNbwhsA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](https://img.tool22.com/image/5fdc971622140.jpg)
 
 - 在新生代工作的垃圾回收器：Serial, ParNew, ParallelScavenge
 - 在老年代工作的垃圾回收器：CMS，Serial Old, Parallel Old

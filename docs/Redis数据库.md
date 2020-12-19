@@ -1,0 +1,525 @@
+# Redis数据库
+
+------
+
+[TOC]
+
+### Redis简介
+
+非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。
+
+Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis存储的方式是以`key-value`的形式。
+
+**Redis作为一个高性能的key-value数据库具有以下特征：**
+
+- 多样的数据模型
+- 持久化
+- 主从同步
+
+**Redis是单进程单线程的**
+
+#### Redis单线程为什么快
+
+- 1）纯内存操作
+- 2）核心是基于非阻塞的IO多路复用机制
+- 3）单线程避免了多线程的频繁上下文切换问题
+
+redis利用队列技术将并发访问变为串行访问，消除了传统数据库串行控制的开销
+
+![](https://img.tool22.com/image/5fdc9a5fc8696.jpg)
+
+Redis的存储是以`key-value`的形式的。Redis中的<font color="lighblue">key一定是字符串</font>，value可以是string、list、hash、set、sortset这几种常用的。
+
+#### SDS简单动态字符串
+
+Redis使用sdshdr结构来表示一个SDS值：
+
+```java
+struct sdshdr{
+
+    // 字节数组，用于保存字符串
+    char buf[];
+
+    // 记录buf数组中已使用的字节数量，也是字符串的长度
+    int len;
+
+    // 记录buf数组未使用的字节数量
+    int free;
+}
+```
+
+#### SDS字符串的好处
+
+1. sdshdr数据结构中用len属性记录了字符串的长度。那么**获取字符串的长度时，时间复杂度只需要O(1)**。
+2. SDS不会发生溢出的问题，如果修改SDS时，空间不足。先会扩展空间，再进行修改！(**内部实现了动态扩展机制**)。
+3. SDS可以**减少内存分配的次数**(空间预分配机制)。在扩展空间时，除了分配修改时所必要的空间，还会分配额外的空闲空间(free 属性)。
+4. SDS是**二进制安全的**，所有SDS API都会以处理二进制的方式来处理SDS存放在buf数组里的数据。
+
+#### Redis链表的特性
+
+- 无环双向链表
+- 获取表头指针，表尾指针，链表节点长度的时间复杂度均为O(1)
+- 链表使用`void *`指针来保存节点值，可以保存各种不同类型的值
+
+#### 跳跃表(shiplist)
+
+跳跃表(shiplist)是实现sortset(**有序**集合)的底层数据结构之一！
+
+Redis的跳跃表实现由zskiplist和zskiplistNode两个结构组成。其中**zskiplist保存跳跃表的信息**(表头，表尾节点，长度)，**zskiplistNode则表示跳跃表的节点**。
+
+![](https://img.tool22.com/image/5fdc9a5fa588e.jpg)
+
+#### 数据类型选择
+
+- <font color="lighblue">string</font>-->简单的`key-value`，他能够存储任何类型的字符串
+- <font color="lighblue">list</font>-->有序链表(底层是双向链表)-->可做简单队列，可以支持反向查找和遍历
+- <font color="lighblue">hash</font>-->哈希表-->存储结构化数据
+- <font color="lighblue">set</font>-->无序列表(去重)-->提供一系列的交集、并集、差集的命令
+- <font color="lighblue">sortset</font>-->有序集合映射(member-score)-->排行榜
+
+### Redis数据库
+
+Redis服务器中也有数据库这么一个概念。如果不指定具体的数量，默认会有**16**个数据库。
+
+Redis是C/S结构，数据库与数据库之间的数据是**隔离**的。
+
+Redis的数据库就是使用字典(哈希表)来作为底层实现的，对**数据库的增删改查都是构建在字典(哈希表)的操作之上的**。
+
+#### 键的过期时间
+
+内存是**有限**的。所以我们**会干掉不常用的数据，保留常用的数据**。我们需要设置一下键的过期(生存)时间。
+
+- 设置键的**生存**时间可以通过`EXPIRE`或者`PEXPIRE`命令。
+- 设置键的**过期**时间可以通过`EXPIREAT`或者`PEXPIREAT`命令。
+
+Redis采用的是**惰性删除+定期删除**两种策略，所以说，在Redis里边如果过期键到了过期的时间了，未必被立马删除的。
+
+使用 Redis 缓存数据时，为了提高缓存命中率，需要保证缓存数据都是**热点数据**。可以将内存最大使用量设置为热点数据占用的内存量，然后启用<font color="lighblue">allkeys-lru淘汰策略</font>，将<font color="lighblue">最近最少使用的数据</font>淘汰。
+
+### Redis持久化
+
+Redis是基于内存的，如果不想办法将数据保存在硬盘上，一旦Redis重启(退出/故障)，内存的数据将会全部丢失。
+
+#### RDB(快照持久化)
+
+<font color="lighblue">RDB持久化</font>可以**手动**执行，也可以根据服务器配置**定期**执行。RDB持久化所生成的RDB文件是一个经过**压缩**的二进制文件，Redis可以通过这个文件**还原**数据库的数据
+
+**两个命令可以生成RDB文件：**
+
+- `SAVE`会**阻塞**Redis服务器进程，服务器不能接收任何请求，直到RDB文件创建完毕为止。
+- `BGSAVE`创建出一个**子进程**，由子进程来负责创建RDB文件，服务器进程可以继续接收请求。
+
+通过手动调用`SAVE`或者`BGSAVE`命令或者配置条件触发，将数据库**某一时刻**的数据快照，生成RDB文件实现持久化。
+
+#### AOF(文件追加)
+
+AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的数据的。
+
+<font color="lighblue">AOF持久化</font>功能的实现可以分为3个步骤：
+
+- 命令追加：命令写入aof_buf缓冲区
+- 文件写入：调用flushAppendOnlyFile函数，考虑是否要将aof_buf缓冲区写入AOF文件中
+- 文件同步：考虑是否将内存缓冲区的数据真正写入到硬盘
+
+![](https://img.tool22.com/image/5fdc9a5fc8239.jpg)
+
+<font color="lighblue">AOF重写</font>由Redis自行触发(参数配置)，也可以用`BGREWRITEAOF`命令**手动触发**重写操作。
+
+- 要值得说明的是：**AOF重写不需要对现有的AOF文件进行任何的读取、分析。AOF重写是通过读取服务器当前数据库的数据来实现的**！
+
+<font color="lighblue">AOF后台重写</font>是不会阻塞主进程接收请求的，新的写命令请求可能会导致**当前数据库和重写后的AOF文件的数据不一致**！
+
+为了解决数据不一致的问题，Redis服务器设置了一个**AOF重写缓冲区**，这个缓存区会在服务器**创建出子进程之后使用**。
+
+![](https://img.tool22.com/image/5fdc9a5fc87b5.jpg)
+
+#### RDB和AOF对过期键的策略
+
+RDB持久化对过期键的策略：
+
+- 执行`SAVE`或者`BGSAVE`命令创建出的RDB文件，程序会对数据库中的过期键检查，**已过期的键不会保存在RDB文件中**。
+- 载入RDB文件时，程序同样会对RDB文件中的键进行检查，**过期的键会被忽略**。
+
+AOF持久化对过期键的策略：
+
+- 如果数据库的键已过期，但还没被惰性/定期删除，AOF文件不会因为这个过期键产生任何影响(也就说会保留)，当过期的键被删除了以后，会追加一条DEL命令来显示记录该键被删除了
+- 重写AOF文件时，程序会对RDB文件中的键进行检查，**过期的键会被忽略**。
+
+复制模式：
+
+- **主服务器来控制**从服务器统一删除过期键(保证主从服务器数据的一致性)
+
+#### RDB和AOF用哪个
+
+RDB和AOF并不互斥，它俩可以**同时使用**。
+
+- RDB的优点：载入时**恢复数据快**、文件体积小。
+- RDB的缺点：会一定程度上**丢失数据**(因为系统一旦在定时持久化之前出现宕机现象，此前没有来得及写入磁盘的数据都将丢失。)
+- AOF的优点：丢失数据少(默认配置只丢失一秒的数据)。
+- AOF的缺点：恢复数据相对较慢，文件体积大
+
+如果Redis服务器**同时开启**了RDB和AOF持久化，服务器会**优先使用AOF文件**来还原数据(因为AOF更新频率比RDB更新频率要高，还原的数据更完善)
+
+### Redis主从复制
+
+#### 主从架构
+
+**主从架构特点：**
+
+![](https://img.tool22.com/image/5fdc9a5f54587.jpg)
+
+主从架构的**好处**：
+
+- 读写分离(主服务器负责写，从服务器负责读)
+- 高可用(某一台从服务器挂了，其他从服务器还能继续接收请求，不影响服务)
+- 处理更多的并发量(每台从服务器**都可以接收读请求**，读QPS就上去了)
+
+#### 复制功能
+
+主从架构的特点之一：主服务器和从服务器的数据是**一致**的。
+
+复制功能分为两个操作：
+
+- <font color="lighblue">同步(sync)</font>
+  * 将从服务器的数据库状态**更新至**主服务器的数据库状态
+
+- <font color="lighblue">命令传播(command propagate)</font>
+  * 主服务器的数据库状态**被修改**，导致主从服务器的数据库状态**不一致**，让主从服务器的数据库状态**重新回到一致状态**。
+
+
+![](https://img.tool22.com/image/5fdc9a5f0297a.jpg)
+
+![](https://note.youdao.com/yws/api/personal/file/F12C5A558A8C444F829936F0724A5489?method=download&shareKey=85fab767d8552f10534b82a622316ce9)
+
+从服务器对主服务器的**同步又可以分为两种情况**：
+
+- 初次同步：从服务器**没有复制过任何**的主服务器，或者从服务器要复制的主服务器跟上次复制的主服务器**不一样**。
+- 断线后同步：处于**命令传播阶段**的主从服务器因为**网络原因**中断了复制，从服务器通过**自动重连**重新连接主服务器，并继续复制主服务器
+
+### 哨兵(Sentinel)机制
+
+> https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&mid=2247484451&idx=1&sn=5495b1165954cd6b84b011489e04a66b&chksm=ebd74522dca0cc3416ab0ccd3a4ddb4ddd28290c9769596a069d81df3b03f4bad72e27d30a6d&token=620000779&lang=zh_CN&scene=21###wechat_redirect
+
+主服务器挂了，我们可以将从服务器**升级**为主服务器，等到旧的主服务器(挂掉的那个)重连上来，会将它(挂掉的主服务器)变成从服务器。
+
+在正常的情况下，主从加哨兵(Sentinel)机制是这样子的：
+
+![](https://note.youdao.com/yws/api/personal/file/98FD4FD575224CB2BA3CC8E8D8071D93?method=download&shareKey=f9fa4ae579894f23ba9ea11ba499ad4a)
+
+主服务器挂了，主从复制操作就中止了，并且哨兵系统是可以察觉出主服务挂了：
+
+![](https://note.youdao.com/yws/api/personal/file/6A4522B7E07848D29FA9FBB74386260C?method=download&shareKey=bde831d5c0fa7efeab4bebcfb99f2d69)
+
+Redis提供哨兵机制可以将**选举**一台从服务器变成主服务器
+
+![](https://note.youdao.com/yws/api/personal/file/38726A28A0424489A6CDBD6F1C270A4A?method=download&shareKey=608ec7d1abacb3e3fdc4bb32be1b1d0a)
+
+然后旧的主服务器如果重连了，会变成从服务器：
+
+![](https://note.youdao.com/yws/api/personal/file/E66AEDB7DEA7479285C55C11BF543A7B?method=download&shareKey=efbfc6caf110d88c7c19ea2feb999b77)
+
+哨兵(Sentinel)机制主要用于实现Redis的**高可用性**，主要的功能：
+
+* Sentinel**不停地监控**Redis主从服务器是否正常工作
+* 如果某个Redis实例有故障，那么哨兵负责**发送消息通知**管理员
+* 如果主服务器挂掉了，会**自动**将从服务器提升为主服务器(包括配置都会修改)。
+* Sentinel可以作为**配置中心**，能够提供当前主服务器的信息。
+
+Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因为Sentinel做的事情和Redis服务器是不一样的，所以它们的初始化是有所区别的(比如，Sentinel在初始化的时候并不会载入AOF/RDB文件，因为Sentinel根本就不用数据库)。
+
+主从+哨兵架构可以说Redis是高可用的，但要清楚的是：Redis还是会**丢失数据**的
+
+**丢失数据有两种情况：**
+
+- 异步复制导致的数据丢失
+
+  * **有部分数据还没复制到从服务器，主服务器就宕机了**，此时这些部分数据就丢失了
+
+- 脑裂导致的数据丢失
+
+  * 有时候主服务器脱离了正常网络，跟其他从服务器不能连接。此时哨兵可能就会**认为主服务器下线了**(然后开启选举，将某个从服务器切换成了主服务器)，但是实际上主服务器还运行着。这个时候，集群里就会有两个服务器(也就是所谓的脑裂)。
+
+  - 虽然某个从服务器被切换成了主服务器，但是可能客户端**还没来得及切换到新的主服务器**，客户端还继续写向旧主服务器写数据。旧的服务器重新连接时，会作为从服务器复制新的主服务器(这意味着旧数据丢失)。
+
+
+#### redis面试题
+
+![](https://note.youdao.com/yws/api/personal/file/9400E8C9419A4454B0C5E8E462D076B0?method=download&shareKey=c50cda47a5d0f23da4bcfbdbf1528665)
+
+
+
+![](https://note.youdao.com/yws/api/personal/file/5A139A125F5D4EB7864147C557561327?method=download&shareKey=3818b78dff86a6841b7f267ccd0b697d)
+
+
+
+![](https://note.youdao.com/yws/api/personal/file/88037224C4C843799B0116B26F98C164?method=download&shareKey=493c23733b63ca33586655fd7d13df67)
+
+
+
+
+
+
+
+
+
+
+
+### Redis的安装和使用
+
+**配置redis的环境变量，Path路径中添加redis文件夹路径**
+
+#### Redis命令使用参考
+
+> http://doc.redisfans.com/
+
+#### 开启Redis
+
+* 启动Redis
+
+  * ```java
+    redis-server 
+    ```
+
+  * 指定配置文件
+
+  * ```
+    ./redis-server /etc/redis/6379.conf
+    ```
+
+  * ```
+    redis-cli -p 6380
+    ```
+
+![](https://note.youdao.com/yws/api/personal/file/4AEC0ED6538A4B6496E92CC584B8274A?method=download&shareKey=5b802c9857d13525eaee3691af7e5324)
+
+启动Redis客户端
+
+- ```cmd
+  redis-cli
+  ```
+
+![](https://note.youdao.com/yws/api/personal/file/7B3497F4A2034789AAC40E34D4720AE9?method=download&shareKey=5f565ccaa9dfc3f1820b6dd8143edd05)
+
+连接客户端
+
+![](https://note.youdao.com/yws/api/personal/file/B998DDBB9855486CA7346D570882E57E?method=download&shareKey=4f29808d4c7516eb3fd1f9956b6b0091)
+
+数据类型
+
+- String（字符串）
+
+  底层实现有点类似于 Java 中的 **ArrayList**。
+
+- List（列表）
+
+  列表相当于 Java 语言中的 **LinkedList**，注意它是链表而不是数组。list 的插入和删除操作非常快，时间复杂度为 O(1)，但是索引定位很慢，时间复杂度为 O(n)。
+
+- Set 求交集、并集
+
+  集合相当于 Java 语言中的 **HashSet**，它内部的键值对是无序、唯一的。
+
+- zset(sorted set：有序集合)
+
+  类似于 Java 中 **SortedSet** 和 **HashMap** 的结合体，它是一个 set，保证了内部 value 的唯一性，另一方面它可以为每个 value 赋予一个 score 值，用来代表排序的权重。内部实现用的是一种叫做 **「跳跃表」** 的数据结构。
+
+- hash（哈希）
+
+![](https://note.youdao.com/yws/api/personal/file/556EE7CCE43743EF9D77EADEE3913F2A?method=download&shareKey=fa356fe7b337b20983518a97bb1a10f7)
+
+#### Redis事务
+
+* 启动事务：MULTI
+
+- 执行事务：EXEC
+
+![](https://note.youdao.com/yws/api/personal/file/6F682BDFB7BE4BA697E6C4AC63D386EA?method=download&shareKey=1fa526f4035634d3a51072621e51de1e)
+
+#### 消息发布
+
+![](https://note.youdao.com/yws/api/personal/file/AD5D18D39AC94E4F99BA4FA687025324?method=download&shareKey=b8907ab6785186c6753a9dcd473b3722)
+
+#### Java连接Redis数据库
+
+添加jedis-2.9.0.jar到项目中
+
+
+- Redis中java使用
+
+  - ```xml
+    首先用maven构建一个java项目，引入redis的客户端——jedis依赖：
+    
+    <!--引入redis依赖-->
+    <dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>2.9.0</version>
+    </dependency>
+    ```
+
+  - ```java
+  PONG说明操作成功，
+    接下来就可以通过jedis对象来操作Redis了；
+    
+    1.String类型的数据 : 
+    添加：set()
+    查询：get()
+    
+    2.hash类型的数据：
+    添加：hmset()
+    查询：hgetAll()
+    
+    3.List类型的数据：
+    添加：lpush()
+    查询：lrange()
+    
+    4.set类型的数据：
+    添加：sadd()
+    查询：smembers()
+    ```
+  
+- redis有三种集群方式：主从复制，哨兵模式和集群。
+
+- 数据类型：
+  - String
+  - list（链表）
+  - set
+  - zset：sorted set  有序集合
+  - hash：哈希类型
+- 特点
+  - 异常快
+  - 支持丰富的数据类型
+  - 操作具有原子性
+  - 多实用工具：缓存、消息队列、短期数据
+
+- 发消息（同步）
+
+  - 订阅：
+
+    - ```cmd
+      SUBSCRIBE redis123
+      ```
+
+  - 发布：
+
+    - ```cmd
+      PUBLISH redis123 "hello world"
+      ```
+
+- 关闭redis服务器命令
+  - 打开客户端（redis-cli）
+  - shutdown
+
+### Java应用
+
+- 获取连接
+
+  - ```java
+     Jedis jedis=new Jedis("localhost",6379);
+    ```
+
+- 指定库
+
+  - ```java
+    jedis.select(1);
+    ```
+
+- String类型
+
+  - 设置：set（key,value）
+  - 取值：get（key）
+
+- 实例：
+
+  - ```java
+    public class RedisTest {
+        static Jedis jedis=null;
+        public static Jedis getRedis(){
+            //连接的IP和端口
+            jedis=new Jedis("localhost",6379);
+            return jedis;
+        }
+        /**
+         * 字符串设置和获取
+         */
+        public static void testString(Jedis jedis){
+            //选择1号数据库
+            jedis.select(1);
+            jedis.set("city","TaiYuan");
+            jedis.set("country","china");
+            System.out.println(jedis.get("city"));
+            System.out.println(jedis.get("country"));
+        }
+        public static void main(String[] args) {
+            jedis=getRedis();
+            testString(jedis);
+        }
+    }
+    ```
+
+- List类型
+
+  - 设置：lpush（key，value1）； lpush（key，value2）；
+
+  - 取值：lrange（key，开始范围，结束范围）    集合类型接收
+
+  - 实例
+
+    - ```java
+      /**
+           * 列表操作
+           * @param jedis
+           */
+      public static void testList(Jedis jedis){
+              jedis.select(1);
+              jedis.lpush("student","liujie");
+              jedis.lpush("student","jack");
+              jedis.lpush("student","wjj");
+              List<String> list= jedis.lrange("student",0,2);
+              for(String s:list){
+                  System.out.println(s);
+              }
+          }
+      ```
+
+- Set类型
+
+  - 设置：sadd（key，value1，value2，value3）
+  - 取值：smembers（key）
+
+  - 实例
+
+    - ```java
+      /**
+           * 可变集合
+           * @param
+           */
+      public static void testSet(Jedis jedis){
+              jedis.select(1);
+              long count=jedis.sadd("citys","成都","北京","太原");
+              System.out.println(count);
+              System.out.println(jedis.smembers("citys"));
+          }
+      ```
+
+- hash类型
+
+  - 设置：hmset()
+  - 取值：hgetAll()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
