@@ -4,9 +4,9 @@
 
 [TOC]
 
-### 1.进程和线程
+## 1.进程和线程
 
-#### 1.Java多线程编程
+### 1.Java多线程编程
 
 1.**进程是操作系统中进行保护和资源分配的基本单位**，操作系统分配资源以进程为基本单位。而线程是进程的组成部分，它代表了一条顺序的执行流。
 
@@ -145,7 +145,7 @@ public class RunnableDemo {
 * java.kang.Runnable接口之中只提供有一个run()方法，并且没有返回值；
 * java.util.concurrent.Callable接口提供有call()方法，可以有返回值；
 
-#### 2.线程常用操作方法
+### 2.线程常用操作方法
 
 ##### 1.线程的命名与取得
 
@@ -359,7 +359,7 @@ public static void main(String[] args) {
 
 主线程是一个中等优先级，而默认创建的线程也是中等优先级，为5.
 
-#### 3.线程的同步与死锁
+### 3.线程的同步与死锁
 
 ##### 1.同步问题
 
@@ -436,7 +436,7 @@ public class ThreadDemo{
 
     存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
 
-#### 4.线程深入
+### 4.线程深入
 
 ##### 1.停止线程
 
@@ -581,7 +581,7 @@ class Computer{
 }
 ```
 
-#### 5.线程安全
+### 5.线程安全
 
 就是**线程同步**的意思，就是当一个程序对一个线程安全的方法或者语句进行访问的时候，其他的不能再对他进行操作了，必须等到这次访问结束以后才能对这个线程安全的方法进行访问。
 
@@ -595,7 +595,7 @@ class Computer{
 
 为保证线程安全，可以添加synchroized关键字，上Lock锁，加volatile关键字。
 
-#### 6.synchronized关键字
+### 6.synchronized关键字
 
 JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在这个关键字作用对象的作用范围内是同一时刻只能有一个线程进行操作；另一种是LOCK，是JDK提供的代码层面的锁，依赖CPU指令，代表性的是ReentrantLock。
 
@@ -616,7 +616,7 @@ JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在�
 
 Java中的synchronized，通过使用内置锁，来实现对变量的同步操作，进而实现了**对变量操作的原子性和其他线程对变量的可见性**，从而确保了并发情况下的线程安全。
 
-#### 7.volatile关键字
+### 7.volatile关键字
 
 **volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性</font>然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
 
@@ -635,7 +635,7 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 - **volatile关键字能保证数据的可见性，但不能保证数据的原子性。synchronized关键字两者都能保证。**
 - **volatile关键字用于解决变量在多个线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性。**
 
-#### 8.Lock锁
+### 8.Lock锁
 
 - Lock方式来获取锁**支持中断、超时不获取、是非阻塞的**
 - **提高了语义化**，哪里加锁，哪里解锁都得写出来
@@ -647,9 +647,61 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁~
 
-### 2.其他
+### 9.wait和sleep方法的区别
 
-#### 1.日期格式化
+- 这两个方法来自不同的类分别是Thread和Object  
+- 最主要是<font color="lighblue">sleep方法没有释放锁，而wait方法释放了锁</font>，使得其他线程可以使用同步控制块或者方法(锁代码块和方法锁)。  
+- wait，notify和notifyAll只能在同步控制方法或者同步控制块里面使用，而sleep可以在任何地方使用(使用范围)  
+- sleep必须捕获异常，而wait，notify和notifyAll不需要捕获异常  
+- sleep方法属于Thread类中方法，表示让一个线程进入睡眠状态，等待一定的时间之后，自动醒来进入到可运行状态，不会马上进入运行状态，因为线程调度机制恢复线程的运行也需要时间，一个线程对象调用了sleep方法之后，并不会释放他所持有的所有对象锁，所以也就不会影响其他进程对象的运行。但在sleep的过程中过程中有可能被其他对象调用它的interrupt(),产生InterruptedException异常，如果你的程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果你的程序捕获了这个异常，那么程序就会继续执行catch语句块(可能还有finally语句块)以及以后的代码。  
+- 注意sleep()方法是一个静态方法，也就是说他只对当前对象有效，通过t.sleep()让t对象进入sleep，这样的做法是错误的，它只会是使当前线程被sleep 而不是t线程。
+- wait属于Object的成员方法，一旦一个对象调用了wait方法，必须要采用notify()和notifyAll()方法唤醒该进程;如果线程拥有某个或某些对象的同步锁，那么在调用了wait()后，这个线程就会释放它持有的所有同步资源，而不限于这个被调用了wait()方法的对象。wait()方法也同样会在wait的过程中有可能被其他对象调用interrupt()方法而产生。
+- sleep不出让系统资源;wait是进入线程等待池等待，出让系统资源，其他线程可以占用CPU。
+
+**sleep：让出CPU资源，不释放锁资源。**
+
+**wait()：让出CPU资源和锁资源。**
+
+### 10.Java线程具有五中基本状态
+
+![](https://img-blog.csdnimg.cn/20190407112603812.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dtNTkyMA==,size_16,color_FFFFFF,t_70)
+
+* <font color="lighblue">新建状态（New）</font>：当线程对象对创建后，即进入了新建状态，如：Thread t = new MyThread();
+* <font color="lighblue">就绪状态（Runnable）</font>：当调用线程对象的start()方法（t.start();），线程即进入就绪状态。处于就绪状态的线程，只是说明此线程已经做好了准备，随时等待CPU调度执行，并不是说执行了t.start()此线程立即就会执行；
+* <font color="lighblue">运行状态（Running）</font>：当CPU开始调度处于就绪状态的线程时，此时线程才得以真正执行，即进入到运行状态。注：就 绪状态是进入到运行状态的唯一入口，也就是说，线程要想进入运行状态执行，首先必须处于就绪状态中；
+* <font color="lighblue">阻塞状态（Blocked）</font>：处于运行状态中的线程由于某种原因，暂时放弃对CPU的使用权，停止执行，此时进入阻塞状态，直到其进入到就绪状态，才 有机会再次被CPU调用以进入到运行状态。根据阻塞产生的原因不同，阻塞状态又可以分为三种：
+  * 1.等待阻塞：运行状态中的线程执行wait()方法，使本线程进入到等待阻塞状态；
+  * 2.同步阻塞 – 线程在获取synchronized同步锁失败(因为锁被其它线程所占用)，它会进入同步阻塞状态；
+  * 3.其他阻塞 – 通过调用线程的sleep()或join()或发出了I/O请求时，线程会进入到阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。
+
+* <font color="lighblue">死亡状态（Dead）</font>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
+
+### 11.线程池
+
+#### 1.线程池的概念
+
+线程池就是首先创建一些线程，它们的集合称为线程池。使用线程池可以很好地提高性能，线程池在系统启动时即创建大量空闲的线程，程序将一个任务传给线程池，线程池就会启动一条线程来执行这个任务，执行结束以后，该线程并不会死亡，而是再次返回线程池中成为空闲状态，等待执行下一个任务。
+
+#### 2.线程池的工作机制
+
+ 2.1 在线程池的编程模式下，任务是提交给整个线程池，而不是直接提交给某个线程，线程池在拿到任务后，就在内部寻找是否有空闲的线程，如果有，则将任务交给某个空闲的线程。
+
+2.1 一个线程同时只能执行一个任务，但可以同时向一个线程池提交多个任务。
+
+#### 3.使用线程池的原因
+
+多线程运行时间，系统不断的启动和关闭新线程，成本非常高，会过渡消耗系统资源，以及过渡切换线程的危险，从而可能导致系统资源的崩溃。这时，线程池就是最好的选择了。
+
+#### 4.四种常见的线程池
+
+* <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
+* <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
+* <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
+* <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程
+
+## 2.其他
+
+### 1.日期格式化
 
 为了可以格式化日期，在java.text包中提供有<font color="lighblue">SimpleDateFormat程序类</font>，该类是DateFormat的子类，在该类中提供有如下的方法：
 
@@ -683,7 +735,7 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
     }
     ```
 
-#### 2.Comparable比较器
+### 2.Comparable比较器
 
 ```java
 public interface Comparable<T>{
@@ -736,7 +788,7 @@ class Person implements Comparable<Person>{
 */
 ```
 
-#### 3.Comparator比较器
+### 3.Comparator比较器
 
 作为Comparable的挽救措施，若在定义类时，没设置排序规则，在后期需要排序，但不能修改类的时候，可以使用Compatator比较器来进行排序。
 
@@ -790,17 +842,7 @@ class Person {
 * java.lang.Comparable是在类定义的时候实现的父接口，主要用于定义排序规则，里面只有一个compareTo()的方法。
 * java.util.Comparator是挽救的比较器操作，需要设置单独的比较器规则类实现排序，里面有compare()方法。
 
-#### 4.二叉树
-
-**原理：**取第一个数据为保存的根节点，小于等于根节点的数据要放在节点的左子树，而大于节点的数据要放在该节点的右子树。
-
-**数据获取的三种形式：**
-
-* 前序遍历（根-左-右）
-* 中序遍历（左-根-右）
-* 后序遍历（左-右-根）
-
-### 3.字节流和字符流
+## 3.字节流和字符流
 
 ![](https://img-blog.csdn.net/20170105182342227?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemhhb3lhbmp1bjY=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
@@ -809,7 +851,7 @@ class Person {
 * 字节处理流：OutputStream(输出字节流)、InputStream(输入字节流)；
 * 字符处理流：Writer(输出字符流)、Reader(输入字符流)。
 
-#### 1.字节输出流：OutputStream
+### 1.字节输出流：OutputStream
 
 字节的数据是以byte类型为主实现的操作，在进行字节内容输出的时候可以使用OutputStream实现，这个类的基本定义：
 
@@ -825,7 +867,7 @@ public abstract class OutputStream extends Object implements Closeable,Flushable
 |   02   |        public void write(byte[] b)throws IOException         |   普通   |   输出一组字节数据   |
 | **03** | **public void write(byte[] b,int off,int len)throws IOException** | **普通** | **输出部分字节数据** |
 
-#### 2.字节输入流：InputStream
+### 2.字节输入流：InputStream
 
 [InputStream类](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/io/InputStream.html)主要实现的就是字节数据读取，该类定义如下：
 
@@ -854,18 +896,18 @@ public class JavaAPIDemo {
 }
 ```
 
-#### 3.字符输出流：Writer
+### 3.字符输出流：Writer
 
 * 输出字符数组：public void write(char[] cbuf) throws IOException；
 * 输出字符串：public void write(String str) throws [IOException]；
 
-#### 4.字符输入流：Reader
+### 4.字符输入流：Reader
 
 字符流读取的时候只能够按照数组的形式来实现处理操作。
 
 * 接受数据：public int read(char[] cbuf) throws IOException;
 
-#### 5.字符流和字节流的区别
+### 5.字符流和字节流的区别
 
 在使用OutputStream类输出的时候如果现在没有使用close()方法关闭输出流发现内容依然可以正常的输出。但如果在使用Writer输出的时候如果现在没有使用close()方法关闭输出流，那么这个时候内容将无法进行输出，因为Writer使用到了缓冲区。当使用close()方法的时候将会出现强制刷新缓冲区的情况，所以这个时候会将内容进行输出，如果没有关闭，那么将无法进行输出操作，所以此时如果在不关闭的情况下要想将全部的内容输出可以使用flush()方法强制清空。
 
@@ -873,19 +915,19 @@ public class JavaAPIDemo {
 
 结论：只要是纯文本数据优先使用字符流，除此之外都使用字节流。
 
-#### 6.常用的节点流
+### 6.常用的节点流
 
 * 1.文件 ：**FileInputStream 、 FileOutputStrean 、FileReader 、FileWriter** 文件进行处理的节点流
-* 2.数　组 ：**ByteArrayInputStream、 ByteArrayOutputStream、 CharArrayReader 、CharArrayWriter** 对数组进行处理的节点流
+* 2.数组 ：**ByteArrayInputStream、 ByteArrayOutputStream、 CharArrayReader 、CharArrayWriter** 对数组进行处理的节点流
 
-#### 7.常用的处理流
+### 7.常用的处理流
 
 * 1.缓冲流：**BufferedInputStrean 、BufferedOutputStream、 BufferedReader、 BufferedWriter** 增加缓冲功能，避免频繁读写硬盘。
 * 2.转换流：**InputStreamReader 、OutputStreamReader**实现字节流和字符流之间的转换。
 
 ------
 
-### 4.集合
+## 4.集合
 
 > [可参考CSDN收藏](https://blog.csdn.net/feiyanaffection/article/details/81394745)
 
@@ -893,7 +935,7 @@ public class JavaAPIDemo {
 
 ![](https://img-blog.csdn.net/20180803204923763?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZlaXlhbmFmZmVjdGlvbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-#### Collection接口
+### Collection接口
 
 **Collection** 接口的接口 对象的集合（单列集合）  
 ├——-**List** 接口：元素按进入先后有序保存，可重复  
@@ -929,7 +971,7 @@ public class JavaAPIDemo {
 
 在进行集合操作的时候有两个方法最为常用：【增加】add()、【输出】iterator()，在JDK1.5版本之后提供有了Iterable父接口。
 
-#### List接口
+### List接口
 
 List是Collection子接口，其最大的特点是允许保存<font color="lighblue">有重复元素</font>数据，该接口的定义如下：
 
@@ -1041,6 +1083,7 @@ public class JavaAPDemo {
         all.add("Hello");
         all.add("Hello");
         all.add("World");
+        //增强型for循环遍历
         for (String o:all){
             System.out.print(o+"、");
         }
@@ -1085,7 +1128,7 @@ LinkedList构造方法里并没有提供有像ArrayList那样的初始化大小�
 
 Vector是线程同步的，所以它也是线程安全的，而ArrayList是线程异步的，是不安全的。如果不考虑到线程的安全因素，一般用ArrayList效率比较高。
 
-#### Set集合
+### Set集合
 
 Set最大的特点就是**不允许保存重复元素**，其也就是Collection子接口。
 
@@ -1149,7 +1192,7 @@ implements NavigableSet<E>, Cloneable, Serializable
 
 **LinkedHashSet**底层数据结构采用链表和哈希表共同实现，链表保证了元素的顺序与存储顺序一致，哈希表保证了元素的唯一性。线程不安全，效率高。
 
-#### 集合输出
+### 集合输出
 
 对于集合操作而言，一共有四种输出形式：Iterator迭代输出(95%)，ListIterator双向迭代输出、Enumeration枚举输出(4.8)、foreach输出。
 
@@ -1236,7 +1279,7 @@ Enumeration只为Vector一个类服务。
         }
 ```
 
-#### Map
+### Map
 
 在开发中，**Collection集合**保存数据的目的是为了**输出**，**Map集合**保存数据的目的是为**进行key的查找**。
 
@@ -1353,9 +1396,9 @@ Map<Double,String> map = new HashMap();
      }
 ```
 
-### 5.JVM
+## 5.JVM
 
-#### 1.跨平台
+### 1.跨平台
 
 `.class`文件很明显是**不能直接运行**的，是交**由JVM来解析运行**
 
@@ -1363,17 +1406,17 @@ Map<Double,String> map = new HashMap();
 - 而class字节码运行在JVM之上，所以**不用关心class字节码是在哪个操作系统编译的**，只要符合JVM规范，那么，这个字节码文件就是可运行的。
 - 所以Java就做到了跨平台--->一次编译，到处运行！
 
-#### 2.Server模式和Client模式
+### 2.Server模式和Client模式
 
 - JVM Server模式与client模式启动，最主要的差别在于：-Server模式启动时，速度较慢，但是一旦运行起来后，性能将会有很大的提升。
 - JVM工作在Server模式可以大大提高性能，但应用的启动会比client模式慢大概10%。当该参数不指定时，虚拟机启动检测主机是否为服务器，如果是，则以Server模式启动，否则以client模式启动。
 - 当JVM用于启动GUI界面的交互应用时适合于使用client模式，当JVM用于运行服务器后台程序时建议用Server模式。
 
-#### 3.类的加载
+### 3.类的加载
 
 Java类的加载是动态的，它并不会一次性将所有类全部加载后再运行，而是保证程序运行的基础类(像是基类)完全加载到jvm中，至于其他类，**则在需要的时候才加载**。这当然就是为了**节省内存开销**。
 
-#### 4.如何将类加载到jvm
+### 4.如何将类加载到jvm
 
 class文件是通过**类的加载器**装载到jvm中的
 
@@ -1395,7 +1438,7 @@ class文件是通过**类的加载器**装载到jvm中的
 
 在类加载检查通过后，接下来虚拟机**将为新生对象分配内存**。
 
-#### 5.JVM的内存结构
+### 5.JVM的内存结构
 
 - <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。 [![img](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)
 - <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将 `.class` 文件搬过来就是先丢到这一块上
@@ -1428,7 +1471,7 @@ String str = new String("hello");
 
 **上面的语句中变量str放在栈上，用new创建出来的字符串对象放在堆上，而"hello"这个字面量是放在方法区的。**
 
-#### 6. GC垃圾回收
+### 6. GC垃圾回收
 
 > https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw
 
@@ -1450,7 +1493,7 @@ JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年
 
 finalize()是Object类的一个方法、一个对象的finalize()方法只会被系统自动调用一次，经过finalize()方法逃脱死亡的对象，第二次不会再调用。不推荐使用
 
-##### 垃圾回收的主要方法
+#### 垃圾回收的主要方法
 
 - 引用计数法
 - 标记清除算法
@@ -1458,7 +1501,7 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 - 标记整理法
 - 分代收集算法
 
-##### 垃圾收集器种类
+#### 垃圾收集器种类
 
 ![](https://img.tool22.com/image/5fdc971622140.jpg)
 

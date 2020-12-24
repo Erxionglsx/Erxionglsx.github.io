@@ -18,11 +18,37 @@ Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis�
 
 **Redis是单进程单线程的**
 
+![](https://note.youdao.com/yws/api/personal/file/556EE7CCE43743EF9D77EADEE3913F2A?method=download&shareKey=fa356fe7b337b20983518a97bb1a10f7)
+
+#### 数据类型
+
+- <font color="lighblue">string</font>(字符串)-->简单的`key-value`，他能够存储任何类型的字符串，底层实现有点类似于 Java 中的 **ArrayList**。
+- <font color="lighblue">list(列表)</font>-->有序链表(底层是双向链表)-->可做简单队列，可以支持反向查找和遍历，列表相当于 Java 语言中的 **LinkedList**，注意它是链表而不是数组。list 的插入和删除操作非常快，时间复杂度为 O(1)，但是索引定位很慢，时间复杂度为 O(n)。
+- <font color="lighblue">hash(字典)</font>-->哈希表-->存储结构化数据，字典相当于 Java 中的 **HashMap**，**"数组 + 链表"** 的链地址法来解决部分 **哈希冲突**，
+- <font color="lighblue">set(集合)</font>-->无序列表(去重)-->提供一系列的交集、并集、差集的命令，集合相当于 Java 语言中的 **HashSet**，它内部的键值对是无序、唯一的。
+- <font color="lighblue">zset(有序集合)</font>-->有序集合映射，类似于 Java 中 **SortedSet** 和 **HashMap** 的结合体，它是一个 set，保证了内部 value 的唯一性，另一方面它可以为每个 value 赋予一个 score 值，用来代表排序的权重。内部实现用的是一种叫做 **「跳跃表」** 的数据结构。
+
+#### Redis 优点
+
+- **读写性能优异**， Redis能读的速度是 `110000` 次/s，写的速度是 `81000` 次/s。
+- **支持数据持久化**，支持 AOF 和 RDB 两种持久化方式。
+- **支持事务**，Redis 的所有操作都是原子性的，同时 Redis 还支持对几个操作合并后的原子性执行。
+- **数据结构丰富**，除了支持 string 类型的 value 外还支持 hash、set、zset、list 等数据结构。
+- **支持主从复制**，主机会自动将数据同步到从机，可以进行读写分离。
+
+#### Redis 缺点
+
+- 数据库 **容量受到物理内存的限制**，不能用作海量数据的高性能读写，因此 Redis 适合的场景主要局限在较小数据量的高性能操作和运算上。
+- Redis **不具备自动容错和恢复功能**，主机从机的宕机都会导致前端部分读写请求失败，需要等待机器重启或者手动切换前端的 IP 才能恢复。
+- 主机宕机，宕机前有部分数据未能及时同步到从机，切换 IP 后还会引入数据不一致的问题，降低了 **系统的可用性**。
+- **Redis 较难支持在线扩容**，在集群容量达到上限时在线扩容会变得很复杂。为避免这一问题，运维人员在系统上线时必须确保有足够的空间，这对资源造成了很大的浪费。
+
 #### Redis单线程为什么快
 
-- 1）纯内存操作
-- 2）核心是基于非阻塞的IO多路复用机制
-- 3）单线程避免了多线程的频繁上下文切换问题
+- **纯内存操作**：读取不需要进行磁盘 I/O，所以比传统数据库要快上不少；*(但不要有误区说磁盘就一定慢，例如 Kafka 就是使用磁盘顺序读取但仍然较快)*
+- **单线程，无锁竞争**：这保证了没有线程的上下文切换，不会因为多线程的一些操作而降低性能；
+- **多路 I/O 复用模型，非阻塞 I/O**：采用多路 I/O 复用技术可以让单个线程高效的处理多个网络连接请求（尽量减少网络 IO 的时间消耗）；
+- **高效的数据结构，加上底层做了大量优化**：Redis 对于底层的数据结构和内存占用做了大量的优化，例如不同长度的字符串使用不同的结构体表示，HyperLogLog 的密集型存储结构等等..
 
 redis利用队列技术将并发访问变为串行访问，消除了传统数据库串行控制的开销
 
@@ -68,14 +94,6 @@ struct sdshdr{
 Redis的跳跃表实现由zskiplist和zskiplistNode两个结构组成。其中**zskiplist保存跳跃表的信息**(表头，表尾节点，长度)，**zskiplistNode则表示跳跃表的节点**。
 
 ![](https://img.tool22.com/image/5fdc9a5fa588e.jpg)
-
-#### 数据类型选择
-
-- <font color="lighblue">string</font>-->简单的`key-value`，他能够存储任何类型的字符串
-- <font color="lighblue">list</font>-->有序链表(底层是双向链表)-->可做简单队列，可以支持反向查找和遍历
-- <font color="lighblue">hash</font>-->哈希表-->存储结构化数据
-- <font color="lighblue">set</font>-->无序列表(去重)-->提供一系列的交集、并集、差集的命令
-- <font color="lighblue">sortset</font>-->有序集合映射(member-score)-->排行榜
 
 ### Redis数据库
 
@@ -256,11 +274,18 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
 
 
+![](https://note.youdao.com/yws/api/personal/file/27191F99158849CFACCF6FFD93BE65EB?method=download&shareKey=7fdcf2bc1cf8c55ea6719f65f9f2398d)
 
+#### Redis 的淘汰策略有哪些
 
-
-
-
+| 策略            | 描述                                                         |
+| :-------------- | :----------------------------------------------------------- |
+| volatile-lru    | 从已设置过期时间的 KV 集中优先对最近最少使用(less recently used)的数据淘汰 |
+| volitile-ttl    | 从已设置过期时间的 KV 集中优先对剩余时间短(time to live)的数据淘汰 |
+| volitile-random | 从已设置过期时间的 KV 集中随机选择数据淘汰                   |
+| allkeys-lru     | 从所有 KV 集中优先对最近最少使用(less recently used)的数据淘汰 |
+| allKeys-random  | 从所有 KV 集中随机选择数据淘汰                               |
+| noeviction      | 不淘汰策略，若超过最大内存，返回错误信息                     |
 
 
 
@@ -303,28 +328,6 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 连接客户端
 
 ![](https://note.youdao.com/yws/api/personal/file/B998DDBB9855486CA7346D570882E57E?method=download&shareKey=4f29808d4c7516eb3fd1f9956b6b0091)
-
-数据类型
-
-- String（字符串）
-
-  底层实现有点类似于 Java 中的 **ArrayList**。
-
-- List（列表）
-
-  列表相当于 Java 语言中的 **LinkedList**，注意它是链表而不是数组。list 的插入和删除操作非常快，时间复杂度为 O(1)，但是索引定位很慢，时间复杂度为 O(n)。
-
-- Set 求交集、并集
-
-  集合相当于 Java 语言中的 **HashSet**，它内部的键值对是无序、唯一的。
-
-- zset(sorted set：有序集合)
-
-  类似于 Java 中 **SortedSet** 和 **HashMap** 的结合体，它是一个 set，保证了内部 value 的唯一性，另一方面它可以为每个 value 赋予一个 score 值，用来代表排序的权重。内部实现用的是一种叫做 **「跳跃表」** 的数据结构。
-
-- hash（哈希）
-
-![](https://note.youdao.com/yws/api/personal/file/556EE7CCE43743EF9D77EADEE3913F2A?method=download&shareKey=fa356fe7b337b20983518a97bb1a10f7)
 
 #### Redis事务
 
@@ -377,14 +380,6 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
     查询：smembers()
     ```
   
-- redis有三种集群方式：主从复制，哨兵模式和集群。
-
-- 数据类型：
-  - String
-  - list（链表）
-  - set
-  - zset：sorted set  有序集合
-  - hash：哈希类型
 - 特点
   - 异常快
   - 支持丰富的数据类型
