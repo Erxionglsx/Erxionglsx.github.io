@@ -140,15 +140,42 @@ commit提交容器副本使之成为一个新的镜像
 
 <font color="lighblue">docker commit -m="提交的描述信息" -a="作者" 容器ID要创建的目标镜像名:[标签名]</font>
 
-### 6.安装mysql
+### 6.安装包安装JDK
+
+官网下载jdk-8u181-linux-x64.tar.gz的包（版本号可以不一样），用Xftp可导入文件到虚拟机。
+
+切换用户为root,在Linux的/usr目录(cd ~ 然后cd .. 然后cd ./usr)下新建文件夹java(mkdir java)，并且通过xftp工具将jdk安装包上传到java文件中。
+
+cd /usr/java（进入java目录下）
+
+tar xvf jdk-8u181-linux-x64.tar.gz（解压jdk安装包）
+
+vi /etc/profile（修改系统环境变量）
+
+在/etc/profile文件末尾添加这几行：
+
+修改环境变量要特别注意，到最下面添加以下代码，不要更改其他代码及格式，修改错会导致source失败。
+
+```
+JAVA_HOME=/usr/java/jdk1.8.0_121
+PATH=$PATH:$JAVA_HOME/bin
+CLASSPATH=.:$JAVA_HOME/lib
+export JAVA_HOME PATH CLASSPATH
+```
+
+在命令行输入source /etc/profile（重新加载，使其生效）
+
+查看jdk是否安装成功输入命令java -version
+
+### 7.Docker安装mysql
 
 > https://segmentfault.com/a/1190000021523570
 
 docker run -p 3306:3306 --name mysql -v  /zzyyuse/mysql/conf:/etc/mysql/conf.d -v /zzyyuse/mysql/logs:/logs -v /zzyyuse/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0  **运行mysql容器**
 
-* -p 3306:3306：将主机的12345端口映射到docker容器的3306端口。
+* -p 3306:3306：将主机的3306端口映射到docker容器的3306端口。前者是外围访问端口：后者是容器内部端口
 * --name mysql：运行服务名字
-* -v /zzyyuse/mysql/conf:/etc/mysql/conf.d：将主机/zzyyuse/mysql录下的conf/my.cnf挂载到容器的/etc/mysql/conf.d
+* -v /zzyyuse/mysql/conf:/etc/mysql/conf.d：将主机/zzyyuse/mysql录下的conf/my.cnf**挂载**到容器的/etc/mysql/conf.d
 * /zzyyuse/mysql/logs:/logs：将主机/zzyyuse/mysql目录下的logs目录挂载到容器的logs。
 * /zzyyuse/mysql/data:/var/lib/mysql：将主机/zzyyuse/mysql目录下的data目录挂载到容器的/var/lib/mysql
 * -e MYSQL_ROOT_PASSWORD=123456：初始化root用户的密码
@@ -160,17 +187,41 @@ mysql -uroot -p
 
 docker update mysql --restart=always **设置开机自动启动**
 
-### 7.安装redis
+### 8.Docker安装redis
 
+```dockerfile
 docker pull redis
 
-docker run -p 6379:6379 -v /zzyyuse/myredis/data:/data -v /zzyyuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf -d redis:latest redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+docker run -p 6379:6379 
+-v /zzyyuse/myredis/data:/data 
+-v /zzyyuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf 
+-d redis:latest redis-server /usr/local/etc/redis/redis.conf 
+--appendonly yes
 
-vim /zzyyuse/myredis/conf/redis.conf/redis.conf  填写redis.conf文件内容https://blog.csdn.net/weixin_42456466/article/details/87270959
+vim /zzyyuse/myredis/conf/redis.conf/redis.conf  
+# 填写redis.conf文件内容 https://blog.csdn.net/weixin_42456466/article/details/87270959
 
 docker exec -it 运行Redis服务的容器ID redis-cli
+```
 
 ![](https://note.youdao.com/yws/api/personal/file/ECA6C25E35834B18959E511BD73431D9?method=download&shareKey=2bbbef0ff28e604409066b996f96a504)
+
+### 9.Docker安装Nginx
+
+```dockerfile
+docker pull nginx:latest  #拉取官方的最新版本的镜像
+
+docker images  #查看是否已安装了 nginx
+
+docker run --name nginx -p 80:80 -d nginx  #运行 nginx 容器
+
+docker exec -it 299b6d99cc1c bash  #进入Nginx容器中
+# 日志位置：/var/log/nginx/
+# 配置文件位置：/etc/nginx/
+# 项目位置：/usr/share/nginx/html
+```
+
+
 
 
 

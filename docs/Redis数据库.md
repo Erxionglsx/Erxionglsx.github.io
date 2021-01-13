@@ -22,11 +22,11 @@ Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis�
 
 #### 数据类型
 
-- <font color="lighblue">string</font>(字符串)-->简单的`key-value`，他能够存储任何类型的字符串，底层实现有点类似于 Java 中的 **ArrayList**。
-- <font color="lighblue">list(列表)</font>-->有序链表(底层是双向链表)-->可做简单队列，可以支持反向查找和遍历，列表相当于 Java 语言中的 **LinkedList**，注意它是链表而不是数组。list 的插入和删除操作非常快，时间复杂度为 O(1)，但是索引定位很慢，时间复杂度为 O(n)。
-- <font color="lighblue">hash(字典)</font>-->哈希表-->存储结构化数据，字典相当于 Java 中的 **HashMap**，**"数组 + 链表"** 的链地址法来解决部分 **哈希冲突**，
-- <font color="lighblue">set(集合)</font>-->无序列表(去重)-->提供一系列的交集、并集、差集的命令，集合相当于 Java 语言中的 **HashSet**，它内部的键值对是无序、唯一的。
-- <font color="lighblue">zset(有序集合)</font>-->有序集合映射，类似于 Java 中 **SortedSet** 和 **HashMap** 的结合体，它是一个 set，保证了内部 value 的唯一性，另一方面它可以为每个 value 赋予一个 score 值，用来代表排序的权重。内部实现用的是一种叫做 **「跳跃表」** 的数据结构。
+- <font color="lighblue">string(字符串)</font>-->简单的`key-value`，他能够存储任何类型的字符串，底层实现有点类似于 Java 中的 **ArrayList**。
+- <font color="lighblue">list(链表)</font>-->有序链表(底层是双向链表)-->可做简单队列，可以支持反向查找和遍历，列表相当于 Java 语言中的 **LinkedList**，注意它是链表而不是数组。list 的插入和删除操作非常快，时间复杂度为 O(1)，但是索引定位很慢，时间复杂度为 O(n)。
+- <font color="lighblue">hash(字典)</font>-->哈希表-->存储结构化数据，字典相当于Java中的 **HashMap**，**"数组 + 链表"** 的链地址法来解决部分 **哈希冲突**。
+- <font color="lighblue">set(集合)</font>-->无序列表(**去重**)-->提供一系列的交集、并集、差集的命令，集合相当于 Java 语言中的 **HashSet**，它内部的键值对是无序、唯一的。
+- <font color="lighblue">zset(有序集合)</font>-->**有序**集合映射，类似于 Java 中 **SortedSet** 和 **HashMap** 的结合体，它是一个 set，保证了内部 value 的唯一性，另一方面它可以为每个 value 赋予一个 score 值，用来代表排序的权重。内部实现用的是一种叫做 **「跳跃表」** 的数据结构。
 
 #### Redis 优点
 
@@ -251,7 +251,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
 - 异步复制导致的数据丢失
 
-  * **有部分数据还没复制到从服务器，主服务器就宕机了**，此时这些部分数据就丢失了
+  * **有部分数据还没复制到从服务器，主服务器就宕机了**，此时这些部分数据就丢失了。
 
 - 脑裂导致的数据丢失
 
@@ -371,7 +371,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
     添加：hmset()
     查询：hgetAll()
     
-    3.List类型的数据：
+    3.list类型的数据：
     添加：lpush()
     查询：lrange()
     
@@ -425,7 +425,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
 - 实例：
 
-  - ```java
+   ```java
     public class RedisTest {
         static Jedis jedis=null;
         public static Jedis getRedis(){
@@ -449,7 +449,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
             testString(jedis);
         }
     }
-    ```
+   ```
 
 - List类型
 
@@ -500,21 +500,3 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
   - 设置：hmset()
   - 取值：hgetAll()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

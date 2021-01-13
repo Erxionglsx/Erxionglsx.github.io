@@ -40,7 +40,7 @@
 ```java
 public class ThreadDemo {
   	public static void main(String[] args) {
-  		  new MyThread("线程A").start();;
+  		  new MyThread("线程A").start();
   		  new MyThread("线程B").start();
   		  new MyThread("线程C").start();
   		  new MyThread("线程D").start();
@@ -50,7 +50,7 @@ public class ThreadDemo {
 
 虽然调用了start()方法，但最终执行的是run()方法，并且所有的线程对象都是交替执行的。
 
-线程的启动使用的是start()，但是启动的时候将进入到一种就绪状态，现在并没有执行，要等待资源调度。
+线程的启动使用的是start()，但是启动的时候将进入到一种**就绪状态**，现在并没有执行，要等待资源调度。
 
 ##### 3.Runnable接口实现多线程
 
@@ -156,7 +156,7 @@ public class RunnableDemo {
 * <font color="lighblue">取得名字</font>：public final String getName();
 
 ```java
-class MyThread extends Thread{
+class MyThread implements Runnable{
   	@Override
   	public void run() {
         System.out.println(Thread.currentThread().getName());
@@ -463,6 +463,12 @@ public class ThreadDemo{
 
 线程无法立即停止，会在执行中判断flag的内容来完成。
 
+**停止线程的方式：**
+
+* 使用退出标志，使线程正常退出，也就是当 run() 方法完成后线程中止。
+* 使用 stop() 方法强行终止线程，但是不推荐使用这个方法，该方法已被**弃用**。
+* 使用 interrupt 方法中断线程。
+
 ##### 2.守护线程
 
 主线程的程序或者其它的线程还在执行的时候，那么守护线程将一直存在，并且运行在后台状态。
@@ -500,7 +506,7 @@ public static void main(String[] args) throws Exception{
 
 用户线程执行完毕，守护线程也将消失。
 
-4.生产电脑
+3.生产电脑
 
 ```java
 public class ThreadDemo{
@@ -684,20 +690,28 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 #### 2.线程池的工作机制
 
- 2.1 在线程池的编程模式下，任务是提交给整个线程池，而不是直接提交给某个线程，线程池在拿到任务后，就在内部寻找是否有空闲的线程，如果有，则将任务交给某个空闲的线程。
+在线程池的编程模式下，任务是提交给整个线程池，而不是直接提交给某个线程，线程池在拿到任务后，就在内部寻找是否有空闲的线程，如果有，则将任务交给某个空闲的线程。
 
-2.1 一个线程同时只能执行一个任务，但可以同时向一个线程池提交多个任务。
+一个线程同时只能执行一个任务，但可以同时向一个线程池提交多个任务。
 
 #### 3.使用线程池的原因
 
 多线程运行时间，系统不断的启动和关闭新线程，成本非常高，会过渡消耗系统资源，以及过渡切换线程的危险，从而可能导致系统资源的崩溃。这时，线程池就是最好的选择了。
 
-#### 4.四种常见的线程池
+#### 4.线程池的优势
+
+第一：**降低资源消耗**。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。
+
+第二：**提高响应速度**。当任务到达时，任务可以不需要等到线程创建就能执行。
+
+第三：**提高线程的可管理性**。线程是稀缺资源，如果无限制地创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一分配、调优和监控。
+
+#### 5.四种常见的线程池
 
 * <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
 * <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
 * <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
-* <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程
+* <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
 
 ## 2.其他
 
@@ -1237,7 +1251,6 @@ public class TestIter {
 使用Iterator进行迭代输出操作有一个特点：只允许由前向后实现输出，而如果进行<font color="lighblue">双向迭代</font>处理，那么就必须依靠Iterator的子接口ListIterator实现。
 
 在ListIterator接口里面定义有如下的操作方法：
-
 * 判断是否有前一个元素：public boolean hasPrevious()；
 * 获取当前元素：public E previous()
 
@@ -1460,7 +1473,7 @@ class文件是通过**类的加载器**装载到jvm中的
 
 - 1、通过 `java.exe`运行 `Java3yTest.class`，随后被加载到JVM中，**元空间存储着类的信息**(包括类的名称、方法信息、字段信息..)。
 - 2、然后JVM找到Java3yTest的主函数入口(main)，为main函数创建栈帧，开始执行main函数
-- 3、main函数的第一条命令是 `Java3yjava3y=newJava3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
+- 3、main函数的第一条命令是 `Java3y java3y=new Java3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
 - 4、加载完Java3y类之后，Java虚拟机做的第一件事情就是在堆区中为一个新的Java3y实例分配内存, 然后调用构造函数初始化Java3y实例，这个**Java3y实例持有着指向方法区的Java3y类的类型信息**（其中包含有方法表，java动态绑定的底层实现）的引用
 - 5、当使用 `java3y.setName("Java3y");`的时候，JVM**根据java3y引用找到Java3y对象**，然后根据Java3y对象持有的引用定位到方法区中Java3y类的类型信息的**方法表**，获得 `setName()`函数的字节码的地址
 - 6、为 `setName()`函数创建栈帧，开始运行 `setName()`函数
@@ -1510,6 +1523,18 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 - 同时在新老生代工作的垃圾回收器：G1
 
 在生产环境中我们要根据**不同的场景**来选择垃圾收集器组合，如果是运行在桌面环境处于 Client 模式的，则用 Serial + Serial Old 收集器绰绰有余，如果需要响应时间快，用户体验好的，则用 ParNew + CMS 的搭配模式，即使是号称是「驾驭一切」的 G1，也需要根据吞吐量等要求适当调整相应的 JVM 参数，没有最牛的技术，只有最合适的使用场景。
+
+## 6.反射
+
+### 1.反射的概述
+
+JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。
+
+要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象。
+
+反射的原理
+
+java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载的类的类型信息。每装载一个类的时候，java 就会创建一个该类的 Class 对象实例。我们就可以通过这个实例，来访问这个类的信息。
 
 
 

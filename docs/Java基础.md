@@ -1,12 +1,10 @@
-Java基础
+# Java基础
 
-> 参考阿里云大学相关课程
+> [参考阿里云大学Java相关课程](https://edu.aliyun.com/roadmap/java?spm=5176.11400045.0.0.44d83a89exPtV4)
 
 ***
 
 [TOC]
-
-
 
 ### Java开发第一步：搭环境
 
@@ -175,8 +173,8 @@ class Person{
 
 ### 8.请解释String比较中“==”与equals()区别？
 
-* **"=="**：进行的是数值比较，如果用于对象比较上比较的是两个内存的地址数值；
-* **equals（）**：是类所提供的一个比较方法，可以直接进行字符串内容的判断。
+* **==**：进行的是数值比较，如果用于对象比较上比较的是两个内存的地址数值；
+* **equals()**：是类所提供的一个比较方法，可以直接进行字符串内容的判断。
 ```java
 //正确
 String str = "ssi";
@@ -191,7 +189,18 @@ String strA = "mldn";
 String strB = "mldn";
 System.out.println(strA==strB);//true
 ```
-​    **String类两种对象实例化方式：**
+**判断字符串是否为空的方法**
+
+```java
+if(s == null || s.equals(""));
+if(s == null || s.length() == 0);
+if(s == null || s.isEmpty());
+if(s == null || s == "");
+//null是没有地址,null代表声明了一个空对象，根本就不是一个字符串。   
+//""是有地址但是里面的内容是空的,""代表声明了一个对象实例，这个对象实例的值是一个长度为0的空字符串。
+```
+
+**String类两种对象实例化方式：**
 
 ```java
 //直接赋值，只会产生一个实例化对象，并且可以自动保存到对象池中，以实现该字符串实例的重用；
@@ -211,6 +220,7 @@ str = str+"cn";
 System.out.println(str);
 ```
 ![image](https://note.youdao.com/yws/api/personal/file/58E3597B32F04E2BABE17024C369A944?method=download&shareKey=d4d7d97b80683dfac37b4ed3792e0353)
+
 ### 9.主方法分析
 
 **public static void main(String args[])**
@@ -295,7 +305,7 @@ public class Testw
 }
 ```
 
-#### 对象向下转型：
+#### 对象向下转型
 
 * 子类  子类实例  =  （子类）父类实例、强制完成转换。
 
@@ -405,17 +415,17 @@ class MessageImpl extends Database implements IMessage
 
 | No.  |    区别    |                        抽象类                        |                      接口                      |
 | :--: | :--------: | :--------------------------------------------------: | :--------------------------------------------: |
-|  1   | 定义关键字 |             abstract class 抽象类名称{}              |                   interface                    |
+|  1   | 定义关键字 |             abstract class 抽象类名称{}              |              interface 接口名称{}              |
 |  2   |    组成    | 构造、普通方法、静态方法、全局常量、成员、static方法 |               抽象方法、全局变量               |
 |  3   |    权限    |                 可以使用各种权限定义                 |                只能够使用public                |
 |  4   |  子类使用  |       子类通过extends关键字可以继承一个抽象类        |    子类使用implements关键字可以实现多个接口    |
 |  5   |  两者关系  |               抽象类可以实现若干个接口               | 接口不允许继承抽象类，但是允许继承多个父接口。 |
 
 * 1.抽象类可以有构造方法，接口中不能有构造方法。
-* 2.抽象类中可以有普通成员变量，接口中没有普通成员变量
+* 2.抽象类中可以有普通成员变量，接口中没有普通成员变量。
 * 3.抽象类中可以包含非抽象的普通方法，接口中的所有方法必须都是抽象的，不能有非抽象的普通方法。
 * 4.抽象类中的抽象方法的访问类型可以是public，protected和（默认类型,虽然eclipse下不报错，但应该也不行），但接口中的抽象方法只能是public类型的，并且默认即为public abstract类型。
-* 5.抽象类中可以包含静态方法，接口中不能包含静态方法
+* 5.抽象类中可以包含静态方法，接口中不能包含静态方法。
 * 6.抽象类和接口中都可以包含静态成员变量，抽象类中的静态成员变量的访问类型可以任意，但接口中定义的变量只能是public static final类型，并且默认即为public static final类型。
 
 **共同点：**
@@ -888,21 +898,21 @@ Java中的数据类型分为两大类，基本数据类型和引用数据类型�
 
 ##### 1、基本数据类型
 
-* ①整数类型：`long、int、short、byte`
-* ②浮点类型：`float、double`
-* ③字符类型：`char`
-* ④布尔类型：`boolean`
+* ① 整数类型：`long、int、short、byte`
+* ② 浮点类型：`float、double`
+* ③ 字符类型：`char`
+* ④ 布尔类型：`boolean`
 
-| No.  | 数据类型           | 大小/位 |              可表示数据范围              |  默认值  |
-| :--: | :----------------- | :-----: | :--------------------------------------: | :------: |
-|  1   | `byte`（字节型）   |    8    |                 -128~127                 |    0     |
-|  2   | `short`（短整型）  |   16    |               -32768~32767               |    0     |
-|  3   | `int`（整型）      |   32    |          -2147483648~2147483647          |    0     |
-|  4   | `long`（长整型）   |   64    | -9223372036854775808~9223372036854775807 |    0     |
-|  5   | `float`（单精度）  |   32    |              -3.4E38~3.4E38              |   0.0    |
-|  6   | `double`（双精度） |   64    |             -1.7E308~1.7E308             |   0.0    |
-|  7   | `char`（字符）     |   16    |                  0~255                   | '\u0000' |
-|  8   | `boolean`（布尔）  |    -    |               true或false                |  false   |
+| No.  | 数据类型         | 大小/位 |              可表示数据范围              |  默认值  |
+| :--: | :--------------- | :-----: | :--------------------------------------: | :------: |
+|  1   | byte（字节型）   |    8    |                 -128~127                 |    0     |
+|  2   | short（短整型）  |   16    |               -32768~32767               |    0     |
+|  3   | int（整型）      |   32    |          -2147483648~2147483647          |    0     |
+|  4   | long长整型）     |   64    | -9223372036854775808~9223372036854775807 |    0     |
+|  5   | float（单精度）  |   32    |              -3.4E38~3.4E38              |   0.0    |
+|  6   | double（双精度） |   64    |             -1.7E308~1.7E308             |   0.0    |
+|  7   | char（字符）     |   16    |                  0~255                   | '\u0000' |
+|  8   | boolean（布尔）  |    -    |               true或false                |  false   |
 
 ##### 2、引用数据类型
 
@@ -915,11 +925,11 @@ Java中的数据类型分为两大类，基本数据类型和引用数据类型�
 
 **基本变量类型：**
 
-- 在方法中定义的非全局基本数据类型变量的具体内容是<font color="pink">存储在栈中</font>的
+- 在方法中定义的非全局基本数据类型变量的具体内容是<font color="lighblue">存储在栈中</font>的
 
 **引用变量类型：**
 
-- 只要是引用数据类型变量，其具体<font color="pink">内容都是存放在堆中</font>的，而<font color="pink">栈中存放的是其具体内容所在内存的地址</font>
+- 只要是引用数据类型变量，其具体<font color="lighblue">内容都是存放在堆中</font>的，而<font color="lighblue">栈中存放的是其具体内容所在内存的地址</font>
 
 **2、传递方式**
 
@@ -937,14 +947,14 @@ Java中的数据类型分为两大类，基本数据类型和引用数据类型�
 
 ```java
 public static void main(String[] args) {
-int a=1;
-change(a);
-System.out.println("交换a后的值:"+a);
+    int a=1;
+    change(a);
+    System.out.println("交换a后的值:"+a);
 }
 
 private static void change(int a) {
-a=1111;
-System.out.println("交换方法里面的a:"+a);
+    a=1111;
+    System.out.println("交换方法里面的a:"+a);
 }
 //运行输出
 //交换方法里面的a:1111
@@ -956,48 +966,43 @@ System.out.println("交换方法里面的a:"+a);
 
 ```java
 public static void main(String[] args) {
-Person p=new Person();
-p.setAge(25);
-changeAge(p);
-System.out.println("改变年龄后的年龄:"+p.getAge());
+    Person p=new Person();
+    p.setAge(25);
+    changeAge(p);
+    System.out.println("改变年龄后的年龄:"+p.getAge());
 }
 
 private static void changeAge(Person p) {
-p.setAge(35);
-System.out.println("改变年龄方法里面的年龄:"+p.getAge());
+    p.setAge(35);
+    System.out.println("改变年龄方法里面的年龄:"+p.getAge());
 }
 //运行输出
 //改变年龄方法里面的年龄:35
 //改变年龄后的年龄:35
 
 class Person{
-private int age=10;
-public int getAge() {
-return age;
-}
-public void setAge(int age) {
-this.age = age;
-}
+    private int age=10;
+    public int getAge() {
+   	    return age;
+	}
+    public void setAge(int age) {
+   	    this.age = age;
+    }
 }
 ```
 
 传递的是值的引用，也就是说传递前和传递后都指向同一个引用（也就是同一个内存空间），引用类型的传递后的修改会影响原来的值。
 
-### 22.Java中wait和sleep方法的区别
+### 22.get和post请求的区别
 
-- 这两个方法来自不同的类分别是Thread和Object  
-- 最主要是sleep方法没有释放锁，而wait方法释放了锁，使得其他线程可以使用同步控制块或者方法(锁代码块和方法锁)。  
-- wait，notify和notifyAll只能在同步控制方法或者同步控制块里面使用，而sleep可以在任何地方使用(使用范围)  
-- sleep必须捕获异常，而wait，notify和notifyAll不需要捕获异常  
-- sleep方法属于Thread类中方法，表示让一个线程进入睡眠状态，等待一定的时间之后，自动醒来进入到可运行状态，不会马上进入运行状态，因为线程调度机制恢复线程的运行也需要时间，一个线程对象调用了sleep方法之后，并不会释放他所持有的所有对象锁，所以也就不会影响其他进程对象的运行。但在sleep的过程中过程中有可能被其他对象调用它的interrupt(),产生InterruptedException异常，如果你的程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果你的程序捕获了这个异常，那么程序就会继续执行catch语句块(可能还有finally语句块)以及以后的代码。  
-- 注意sleep()方法是一个静态方法，也就是说他只对当前对象有效，通过t.sleep()让t对象进入sleep，这样的做法是错误的，它只会是使当前线程被sleep 而不是t线程  
-- wait属于Object的成员方法，一旦一个对象调用了wait方法，必须要采用notify()和notifyAll()方法唤醒该进程;如果线程拥有某个或某些对象的同步锁，那么在调用了wait()后，这个线程就会释放它持有的所有同步资源，而不限于这个被调用了wait()方法的对象。wait()方法也同样会在wait的过程中有可能被其他对象调用interrupt()方法而产生。
+* get请求用来从服务器上获得资源，而post是用来向服务器提交数据；
+* get将表单中数据按照name=value的形式，添加到action 所指向的URL 后面，并且两者使用"?"连接，而各个变量之间使用"&"连接；post是将表单中的数据放在HTTP协议的请求头或消息体中，传递到action所指向URL；
+* get传输的数据要受到URL长度限制（1024字节）；而post可以传输大量的数据，上传文件通常要使用post方式；
+* 使用get时参数会显示在地址栏上，如果这些数据不是敏感数据，那么可以使用get；对于敏感数据还是应用使用post；
+* GET请求只能进行URL编码，而POST支持多种编码；
+* GET只接受ASCII字符，而POST没有限制
 
-### 23.get和post请求的区别
-
-①get请求用来从服务器上获得资源，而post是用来向服务器提交数据；②get将表单中数据按照name=value的形式，添加到action 所指向的URL 后面，并且两者使用"?"连接，而各个变量之间使用"&"连接；post是将表单中的数据放在HTTP协议的请求头或消息体中，传递到action所指向URL；③get传输的数据要受到URL长度限制（1024字节）；而post可以传输大量的数据，上传文件通常要使用post方式；④使用get时参数会显示在地址栏上，如果这些数据不是敏感数据，那么可以使用get；对于敏感数据还是应用使用post；⑤get使用MIME类型application/x-www-form-urlencoded的URL编码（也叫百分号编码）文本的格式传递参数，保证被传送的参数由遵循规范的文本组成，例如一个空格的编码是"%20"。
-
-### 24.请求转发和重定向
+### 23.请求转发和重定向
 
 > ##### https://blog.csdn.net/weixin_37766296/article/details/80375106
 
@@ -1027,9 +1032,40 @@ this.age = age;
 
   1.forword只有一次请求；而redirect有两次请求
 
+### 23.final关键字
 
+> https://www.cnblogs.com/dolphin0520/p/3736238.html
 
+在Java中，final关键字可以用来修饰<font color="lighblue">类、方法和变量（包括成员变量和局部变量）</font>。
 
+**1.修饰类**
+
+当用final修饰一个类时，表明这个类<font color="lighblue">不能被继承</font>。也就是说，如果一个类你永远不会让他被继承，就可以用final进行修饰。
+
+**2.修饰方法**
+
+使用final方法的原因有两个。第一个原因是<font color="lighblue">把方法锁定</font>，以防任何继承类修改它的含义；第二个原因是<font color="lighblue">效率</font>。只有在想明确禁止 该方法在子类中被覆盖的情况下才将方法设置为final的。
+
+**3.修饰变量**
+
+对于一个final变量，如果是<font color="lighblue">基本数据类型</font>的变量，则其数值一旦在初始化之后便<font color="lighblue">不能更改</font>；如果是<font color="lighblue">引用类型</font>的变量，则在对其初始化之后便<font color="lighblue">不能再让其指向另一个对象，但是它指向的对象的内容是可变的。</font>。
+
+### 24.强引用、软引用、弱引用和虚引用的区别
+
+> https://blog.csdn.net/qq_36517910/article/details/94002492
+
+**1、强引用（StrongReference）**
+最普遍的一种引用方式，如String s = “abc”，变量s就是字符串“abc”的强引用，只要强引用存在，则垃圾回收器就不会回收这个对象。
+
+**2、软引用（SoftReference）**
+用于描述还有用但非必须的对象，如果内存足够，不回收，如果内存不足，则回收。一般用于实现内存敏感的高速缓存，软引用可以和引用队列ReferenceQueue联合使用，如果软引用的对象被垃圾回收，JVM就会把这个软引用加入到与之关联的引用队列中。
+
+**3、弱引用（WeakReference）**
+弱引用和软引用大致相同，弱引用与软引用的区别在于：只具有弱引用的对象拥有更短暂的生命周期。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了只具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。短时间内通过弱引用取对应的数据，可以取到，当执行过第二次垃圾回收时，将返回null。弱引用主要用于监控对象是否已经被垃圾回收器标记为即将回收的垃圾，可以通过弱引用的isEnQueued方法返回对象是否被垃圾回收器标记。
+
+**4、虚引用（PhantomReference）**
+就是形同虚设，与其他几种引用都不同，虚引用并不会决定对象的生命周期。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用主要用来跟踪对象被垃圾回收器回收的活动。
+虚引用与软引用和弱引用的一个区别在于：虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。
 
 
 

@@ -2,8 +2,6 @@
 
 ------
 
-懒得再手打一遍了，直接上图了，字不好看，忽略！
-
 ![](https://pic.downk.cc/item/5fdd63273ffa7d37b32e4738.jpg)
 
 ![](https://pic.downk.cc/item/5fdd63273ffa7d37b32e473b.jpg)
