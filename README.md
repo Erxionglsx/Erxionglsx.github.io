@@ -23,10 +23,10 @@
   - [Java进阶](./docs/Java进阶.md)
   - [Servlet](./docs/Servlet.md)
 - 数据库
-  - [MySQL数据库](./docs/数据库.md)
-  - [Redis数据库](./docs/Redis数据库.md)
-  - [Oracle数据库](./docs/Oracle.md)
-  - [MongDB数据库](./docs/MongDB.md)
+  - [MySQL](./docs/数据库.md)
+  - [Redis](./docs/Redis数据库.md)
+  - [Oracle](./docs/Oracle.md)
+  - [MongDB](./docs/MongDB.md)
 - Linux
   - [Linux](./docs/Linux.md)
 - 工具使用
@@ -40,9 +40,9 @@
 - 分布式与微服务
   - [分布式与微服务](./docs/分布式.md)
 - 设计模式
-  - [单例模式和工厂模式](./docs/设计模式.md)
+  - [单例模式and工厂模式](./docs/设计模式.md)
 - 数据结构
-  - [数据结构](./docs/数据结构.md)
+  - [数组和链表](./docs/数据结构.md)
 - 前端
   - [JSP](./docs/JSP.md)
   - [Ajax](./docs/Ajax学习.md)
@@ -50,5 +50,5 @@
   - [jQuery](./docs/jQuery学习.md)
 - 其他
   - [Eclipse快捷键](./docs/Eclipse快捷键及代码规范.md)
-  - [Windows常用运行命令](./docs/Windows常用运行命令.md)
+  - [Windows常用命令](./docs/Windows常用运行命令.md)
 
