@@ -144,18 +144,18 @@ class Person{
 
 <font color="lighblue" style="font-weight:bold;">结论</font>：一个类至少存在有一个构造方法，永恒存在。若没有手动构造，则类存在一个默认无参构造方法。
 
-#### 问题：为什么构造方法上不允许设置返回值类型？
+**问题：为什么构造方法上不允许设置返回值类型？**
 
 如果在构造方法上使用了void，那么此结构就与普通方法的结构完全相同了，这样编译器会认为此方法是一个普通方法。
 
-#### 普通方法与构造方法最大的区别：
+**普通方法与构造方法最大的区别**：
 
 构造方法是在类对象实例化的时候调用的，而普通方法是在类对象实例化产生之后调用的。
 
 ### 7.请解释String比较中“==”与equals()区别？
 
 * **==**：进行的是数值比较，如果用于对象比较上比较的是两个内存的地址数值；
-* **equals()**：是类所提供的一个比较方法，可以直接进行字符串内容的判断。
+* **equals()**：是类所提供的一个比较方法，可以直接进行字符串内容的判断，**区分大小写**。
 ```java
 //正确
 String str = "ssi";
@@ -179,6 +179,19 @@ if(s == null || s.isEmpty());
 if(s == null || s == "");
 //null是没有地址,null代表声明了一个空对象，根本就不是一个字符串。   
 //""是有地址但是里面的内容是空的,""代表声明了一个对象实例，这个对象实例的值是一个长度为0的空字符串。
+```
+
+**是否区分大小写判断**
+
+```java
+//区分大小写
+String strA = "mldn";
+String strB = "MLDN";
+System.out.println(strA.equals(strB));//false
+//不区分大小写
+String strA = "mldn";
+String strB = "MLDN";
+System.out.println(strA.equalsIgnoreCase(strB));//true
 ```
 
 **String类两种对象实例化方式：**
@@ -879,10 +892,10 @@ Java中的数据类型分为两大类，基本数据类型和引用数据类型�
 
 #### 基本数据类型
 
-* ① 整数类型：`long、int、short、byte`
-* ② 浮点类型：`float、double`
-* ③ 字符类型：`char`
-* ④ 布尔类型：`boolean`
+* ① 整数类型：long、int、short、byte
+* ② 浮点类型：float、double
+* ③ 字符类型：char
+* ④ 布尔类型：boolean
 
 | No.  | 数据类型         | 大小/位 |              可表示数据范围              |  默认值  |
 | :--: | :--------------- | :-----: | :--------------------------------------: | :------: |
@@ -1048,5 +1061,194 @@ class Person{
 就是形同虚设，与其他几种引用都不同，虚引用并不会决定对象的生命周期。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用主要用来跟踪对象被垃圾回收器回收的活动。
 虚引用与软引用和弱引用的一个区别在于：虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。
 
+### 25.String类常用方法
 
+| No.  |                           方法名称                           | 类型 |                 说明                 |
+| :--: | :----------------------------------------------------------: | :--: | :----------------------------------: |
+|  01  |  public <font color="lighblue">String(char[] value)</font>   | 构造 |    将传入的全部字符数组变为字符串    |
+|  02  | public <font color="lighblue">String(char[] value,int offset,int count)</font> | 构造 |       将部分字符数组变为字符串       |
+|  03  | public char <font color="lighblue">charAt</font>(int index)  | 普通 |        获取指定索引位置的字符        |
+|  04  |  public char[] <font color="lighblue">toCharArray</font>()   | 普通 | 将字符串中的数据以字符数组的形式返回 |
+
+```java
+public static void main(String[] args) {
+			String str = "helloworld";
+			char c=str.charAt(4); //charAt获取某一个指定索引位置的字符,从0开始
+			System.out.println(c); //输出"o"
+			char[] result=str.toCharArray();//将String转为字符存入数组中
+			System.out.println(Arrays.toString(result));
+			for (int i = 0; i < result.length; i++) {
+				result[i]-=32;//小写变大写，编码减少32
+			}
+			//将传入的全部字符数组变为字符串
+			String newStr = new String(result);
+			System.out.println(newStr);
+			//将部分字符数组变为字符串
+			System.out.println(new String(result,0,5));
+		}
+/* 输出结果：
+    o
+    [h, e, l, l, o, w, o, r, l, d]
+    HELLOWORLD
+    HELLO
+*/
+```
+
+#### 字符串比较方法
+
+| No.  |                           方法名称                           | 类型 |                             说明                             |
+| :--: | :----------------------------------------------------------: | :--: | :----------------------------------------------------------: |
+|  01  | public boolean <font color="lighblue">equals</font>(String anObject) | 普通 |                     区分大小写的相等判断                     |
+|  02  | public boolean <font color="lighblue">equalsIgnoreCase</font>(String anotherString) | 普通 |                       不区分大小写比较                       |
+|  03  | public int <font color="lighblue">compareTo</font>(String anotherString) | 普通 | 进行字符串大小比较，该方法返回一个int数据：大于、小于、等于。 |
+|  04  | public int <font color="lighblue">compareToIgnoreCase</font>(String str) | 普通 |                不区分大小写进行字符串大小比较                |
+
+```java
+String strA = "mldn";
+String strB = "mldN";
+System.out.println(strA.compareTo(strB)); // 32
+System.out.println(strB.compareTo(strA)); // -32
+System.out.println("Hello".compareTo("Hello")); // 0
+//忽略大小写
+System.out.println(strA.compareToIgnoreCase(strB)); // 0
+```
+
+#### 字符串查找
+
+| No.  |                           方法名称                           | 类型 |                  说明                  |
+| :--: | :----------------------------------------------------------: | :--: | :------------------------------------: |
+|  01  | public boolean <font color="lighblue">contains</font>(String s) | 普通 |          判断子字符串是否存在          |
+|  02  | public int <font color="lighblue">indexOf(String str)</font> | 普通 |        从头查找指定字符串的位置        |
+|  03  | public int <font color="lighblue">indexOf(String str,int fromIndex)</font> | 普通 |     从指定位置查找指定字符串的位置     |
+|  04  | public int <font color="lighblue">lastIndexOf</font>(String str) | 普通 |      由后向前查找指定字符串的位置      |
+|  05  | public int <font color="lighblue">lastIndexOf</font>(String str,int fromIndex) | 普通 | 从指定位置由后向前查找指定字符串的位置 |
+|  06  | public boolean <font color="lighblue">startsWith</font>(String prefix) | 普通 |       判断是否以指定的字符串开头       |
+|  07  | public boolean <font color="lighblue">startsWith</font>(String prefix,int toffset) | 普通 |   由指定位置判断是否以指定字符串开头   |
+|  08  | public boolean <font color="lighblue">endsWith</font>(String suffix) | 普通 |       判断是否以指定的字符串结尾       |
+
+```java
+String str = "**@@www.mldn.cn##";
+//判断子字符串是否存在
+System.out.println(str.contains("mldn"));  //true
+//查找指定字符串的位置
+System.out.println(str.indexOf("w"));  //4
+//由后向前查找指定字符串的位置
+System.out.println(str.lastIndexOf("w"));  //6
+//判断是否以指定的字符串开头
+System.out.println(str.startsWith("**"));  //true
+//判断由指定位置判断是否以指定字符串开头
+System.out.println(str.startsWith("@@",2));  //true
+//判断是否以指定的字符串"##"结尾
+System.out.println(str.endsWith("##"));  //true
+```
+
+#### 字符串替换
+
+| No.  |                           方法名称                           | 类型 |   说明   |
+| :--: | :----------------------------------------------------------: | :--: | :------: |
+|  01  | public String <font color="lighblue">replaceAll</font>(String regex,String replacement) | 普通 | 全部替换 |
+|  02  | public String <font color="lighblue">replaceFirst</font>(String regex,String replacement) | 普通 | 替换首个 |
+
+```java
+String str = "www.mldn.cn##";
+//将"w"全部替换为"X"
+System.out.println(str.replaceAll("w", "X"));  //XXX.mldn.cn##
+////将第一个"w"替换为"X"
+System.out.println(str.replaceFirst("w", "X")); //Xww.mldn.cn##
+```
+
+#### 字符串拆分
+
+| No.  |                           方法名称                           | 类型 |                    说明                    |
+| :--: | :----------------------------------------------------------: | :--: | :----------------------------------------: |
+|  01  | public String[] <font color="lighblue">split(String regex)</font> | 普通 |          按照指定的字符串全部拆分          |
+|  02  | public String[] <font color="lighblue">split(String regex,int limit)</font> | 普通 | 按照指定的字符串拆分为指定个数，后面不拆了 |
+
+```java
+String str = "hello world world mldn";
+//按空格将字符串全部拆分，以字符串数组形式返回
+String result[] = str.split(" "); 
+for (int x = 0; x < result.length; x++) {
+    System.out.println(result[x]);
+}
+/* hello
+ * world
+ * world
+ * mldn
+ * */
+//按空格将字符串拆分，截止第二个字符串
+String results[] = str.split(" ",2);
+for (int x = 0; x < results.length; x++) {
+    System.out.println(results[x]);
+}
+/*
+ * hello
+ * world world mldn
+ * */
+```
+
+遇到正则表达式可能会拆不了，需要使用转义字符"`\\`"。
+
+```java
+String str = "192.168.1.2";
+//按空格将字符串全部拆分，以字符串数组形式返回
+String result[] = str.split("\\."); 
+for (int x = 0; x < result.length; x++) {
+    System.out.println(result[x]);
+}
+```
+
+#### 字符串截取
+
+从一个完整的字符串之中截取出子字符串
+
+| No.  |                           方法名称                           | 类型 |             说明             |
+| :--: | :----------------------------------------------------------: | :--: | :--------------------------: |
+|  01  | public String <font color="lighblue">substring(int beginIndex)</font> | 普通 |     从指定索引截取到结尾     |
+|  02  | public String <font color="lighblue">substring(int beginIndex,int endIndex)</font> | 普通 | 截取指定索引范围中的子字符串 |
+
+```java
+String str = "www.zbdx.cn";
+//从下标4开始截取字符串
+System.out.println(str.substring(4));//zbdx.cn
+//截取下标为4-8的字符串
+System.out.println(str.substring(4,8));//zbdx
+```
+
+#### 其他方法
+
+| No.  |                           方法名称                           | 类型 |             说明             |
+| :--: | :----------------------------------------------------------: | :--: | :--------------------------: |
+|  01  | public String <font color="lighblue">concat</font>(String str) | 普通 |    描述的就是字符串的连接    |
+|  02  |     public String <font color="lighblue">intern</font>()     | 普通 |          字符串入池          |
+|  03  |    public boolean <font color="lighblue">isEmpty</font>()    | 普通 | 判断是否为空字符串(不是null) |
+|  04  |      public int <font color="lighblue">length</font>()       | 普通 |       计算字符串的长度       |
+|  05  |      public String <font color="lighblue">trim</font>()      | 普通 |      去除左右的空格信息      |
+|  06  |  public String <font color="lighblue">toUpperCase</font>()   | 普通 |            转大写            |
+|  07  |  public String <font color="lighblue">toLowerCase</font>()   | 普通 |            转小写            |
+
+```java
+String strA = "www.mldn.cn";
+//字符串的连接
+String strB = "www.".concat("mldn").concat(".cn");
+System.out.println(strB);//www.mldn.cn
+System.out.println(strA==strB);//false
+
+String str = "";
+//判断是否为空
+System.out.println(str.isEmpty());//true
+
+String str = "  Hello World!  ";
+System.out.println(str.length());//19
+//去除左右两边空格,中间空格无法消除
+String trimStr = str.trim();
+System.out.println(str); //  Hello World!  
+System.out.println(trimStr); //Hello World!
+
+String str = "Hello World";
+//转大写
+System.out.println(str.toUpperCase());//HELLO WORLD
+//转小写
+System.out.println(str.toLowerCase());//hello world
+```
 

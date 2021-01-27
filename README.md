@@ -41,8 +41,9 @@
   - [分布式与微服务](./docs/分布式.md)
 - 设计模式
   - [单例模式and工厂模式](./docs/设计模式.md)
-- 数据结构
+- 数据结构与算法
   - [数组和链表](./docs/数据结构.md)
+  - [排序算法](./docs/排序算法.md)
 - 前端
   - [JSP](./docs/JSP.md)
   - [Ajax](./docs/Ajax学习.md)
@@ -51,4 +52,3 @@
 - 其他
   - [Eclipse快捷键](./docs/Eclipse快捷键及代码规范.md)
   - [Windows常用命令](./docs/Windows常用运行命令.md)
-
