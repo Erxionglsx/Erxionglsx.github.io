@@ -8,6 +8,7 @@
   - [Redis](./docs/Redis数据库.md)
   - [Oracle](./docs/Oracle.md)
   - [MongDB](./docs/MongDB.md)
+  - [Nginx](./docs/Nginx.md)
 * Linux
   - [Linux](./docs/Linux.md)
 * 工具使用
@@ -27,6 +28,7 @@
   - [排序算法](./docs/排序算法.md)
 * 前端
   - [JSP](./docs/JSP.md)
+  - [Vue](./docs/Vue.md)
   - [Ajax](./docs/Ajax学习.md)
   - [JavaScript](./docs/JS.md)
   - [jQuery](./docs/jQuery学习.md)

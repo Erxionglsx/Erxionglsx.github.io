@@ -4,7 +4,7 @@
 
 ### 作者介绍
 
-我是二雄，一名在校大学生，为了更好的复习和理解所学的知识，将自己在视频网站和博客所学知识摘抄总结成了笔记。笔记是用Typora软件，使用了MarkDown语法，喜欢的朋友可以了解一下，语法简单，非常方便。希望能帮到你们，欢迎Star。
+我是二雄，一名在校大学生，为了更好的复习和理解所学的知识，将自己在视频网站和博客所学知识摘抄总结成了笔记。笔记是用Typora软件，MarkDown语法所写，喜欢的朋友可以了解一下，语法简单，非常方便。随着自己的学习，会不定期更新笔记内容，希望能帮到你们，欢迎Star。
 
 ### 推荐几个博主
 
@@ -14,7 +14,9 @@
 
 [阿里云大学](https://edu.aliyun.com/roadmap/java?spm=5176.11400045.0.0.255d3a89Gfo3XO)      [B站颜群](https://space.bilibili.com/326782142?spm_id_from=333.788.b_765f7570696e666f.1)      
 
+### 笔记发布网站
 
+[GitHub](https://github.com/Erxionglsx/ErXiong-demo)      [Gitee](https://gitee.com/two_males/ErXiong-demo)      [ErXiong-demo](https://two_males.gitee.io/erxiong-demo/)
 
 ## 内容
 
@@ -33,6 +35,7 @@
   - [Docker](./docs/Docker.md)
   - [Git](./docs/Git.md)
   - [SVN](./docs/SVN.md)
+  - [Nginx](./docs/Nginx.md)
 - 网络
   - [网络](./docs/网络.md)
 - 软件工程导论
@@ -46,6 +49,7 @@
   - [排序算法](./docs/排序算法.md)
 - 前端
   - [JSP](./docs/JSP.md)
+  - [Vue](./docs/Vue.md)
   - [Ajax](./docs/Ajax学习.md)
   - [JavaScript](./docs/JS.md)
   - [jQuery](./docs/jQuery学习.md)
