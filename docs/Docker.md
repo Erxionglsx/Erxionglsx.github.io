@@ -43,7 +43,7 @@ Docker 使用<font color="lighblue">客户端-服务器 (C/S) 架构</font>模�
 
 eg: 运行hello-world镜像：docker run hello-world 
 
-![](C:\Users\22874\AppData\Roaming\Typora\typora-user-images\1605425888205.png)
+![](https://note.youdao.com/yws/api/personal/file/6DBEA76F60FC416287F662FACA469A63?method=download&shareKey=1660b5e60bdd8256a8705b78af9e866b)
 
 ### 4.常用命令
 
@@ -215,15 +215,10 @@ docker images  #查看是否已安装了 nginx
 
 docker run --name nginx -p 80:80 -d nginx  #运行 nginx 容器
 
-docker exec -it 299b6d99cc1c bash  #进入Nginx容器中
+docker update nginx的ID --restart=always #设置开机自启动
+
+docker exec -it nginx的ID bash  #进入Nginx容器中
 # 日志位置：/var/log/nginx/
 # 配置文件位置：/etc/nginx/
 # 项目位置：/usr/share/nginx/html
 ```
-
-
-
-
-
-
-
