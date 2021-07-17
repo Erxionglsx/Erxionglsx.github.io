@@ -4,7 +4,10 @@
 
 ### 作者介绍
 
-我是二雄，一名在校大学生，为了更好的复习和理解所学的知识，将自己在视频网站和博客所学知识摘抄总结成了笔记。笔记是用Typora软件，MarkDown语法所写，喜欢的朋友可以了解一下，语法简单，非常方便。随着自己的学习，会不定期更新笔记内容，希望能帮到你们，欢迎Star。
+我是二雄，为了更好的复习和理解所学的知识，将自己在视频网站和博客所学知识摘抄总结成了笔记。笔记是用Typora软件，MarkDown语法所写，喜欢的朋友可以了解一下，语法简单，非常方便。随着自己的学习，会不定期更新笔记内容，希望能帮到你们，欢迎Star。
+
+### 由于Gitee Pages正在升级维护，所以托管的网站暂时无法访问，我将代码托管到了GitHub上，网站地址为：https://erxionglsx.github.io/#/
+
 
 ### 推荐几个博主
 
@@ -16,7 +19,7 @@
 
 ### 笔记发布网站
 
-[GitHub](https://github.com/Erxionglsx/ErXiong-demo)      [Gitee](https://gitee.com/two_males/ErXiong-demo)      [ErXiong-demo](https://two_males.gitee.io/erxiong-demo/)
+[GitHub](https://github.com/Erxionglsx/ErXiong-demo)      [Gitee](https://gitee.com/two_males/ErXiong-demo)      [ErXiong-demo（GitHub）](https://erxionglsx.github.io/#/)
 
 ## 内容
 
