@@ -56,11 +56,12 @@
   - [数据结构](./docs/数据结构.md)
   - [排序算法](./docs/排序算法.md)
 - 前端
-  - [JSP](./docs/JSP.md)
   - [Vue](./docs/Vue.md)
+  - [Angular](./docs/jAngular.md)
   - [Ajax](./docs/Ajax学习.md)
   - [JavaScript](./docs/JS.md)
   - [jQuery](./docs/jQuery学习.md)
+  - [JSP](./docs/JSP.md)
 - 其他
   - [Eclipse快捷键](./docs/Eclipse快捷键及代码规范.md)
   - [Windows常用命令](./docs/Windows常用运行命令.md)
