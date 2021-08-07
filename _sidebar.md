@@ -11,6 +11,7 @@
   - [Nginx](./docs/Nginx.md)
 * 框架
   * [Spring](./docs/Spring.md)
+  * [Mybatis-Plus](./docs/Mybatis-Plus.md)
 * Linux
   - [Linux](./docs/Linux.md)
 * 工具使用
