@@ -45,7 +45,6 @@ Java语言1991年出现，1995年全球发布。
 ### 1.static静态变量
 
 static修饰的变量我们称之为<font color="lighblue">静态变量</font>，没有用static修饰的变量称之为<font color="lighblue">实例变量</font>，他们两者的<font color="lighblue" style="font-weight:bold;" size="4">区别</font>是：
-     
 
 ​       <font color="lighblue">静态变量</font>是随着类加载时被完成初始化的，它在内存中仅有一个，且JVM也只会为它分配一次内存，同时类所有的实例都共享静态变量，可以直接通过类名来访问它。  
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;但是<font color="lighblue">实例变量</font>则不同，它是伴随着实例的，每创建一个实例就会产生一个实例变量，它与该实例同生共死。   
@@ -154,7 +153,7 @@ class Person{
 
 ### 7.请解释String比较中“==”与equals()区别？
 
-* **==**：进行的是数值比较，如果用于对象比较上比较的是两个内存的地址数值；
+* **==**：如果是基本数据类型，进行的是数值比较，如果用于引用数据类型，比较的则是两个内存的地址数值；
 * **equals()**：是类所提供的一个比较方法，可以直接进行字符串内容的判断，**区分大小写**。
 ```java
 //正确
@@ -235,7 +234,9 @@ System.out.println(str);
 
 **多态是同一个行为具有多个不同表现形式的能力。**
 
-- **多态性**：多态性是指允许不同子类型的对象对同一消息作出不同的响应。简单的说就是<font color="lighblue" >用同样的对象引用调用同样的方法但是做了不同的事情</font>。多态性分为<font color="lighblue" >编译时的多态性和运行时的多态性</font>。如果将对象的方法视为对象向外界提供的服务，那么运行时的多态性可以解释为：当A系统访问B系统提供的服务时，B系统有多种提供服务的方式，但一切对A系统来说都是透明的（就像电动剃须刀是A系统，它的供电系统是B系统，B系统可以使用电池供电或者用交流电，甚至还有可能是太阳能，A系统只会通过B类对象调用供电的方法，但并不知道供电系统的底层实现是什么，究竟通过何种方式获得了动力）。<font color="lighblue" >方法重载（overload）实现的是编译时的多态性（也称为前绑定），而方法重写（override）实现的是运行时的多态性（也称为后绑定）</font>。运行时的多态是面向对象最精髓的东西，要实现多态需要做两件事：1). 方法重写（子类继承父类并重写父类中已有的或抽象的方法）；2). 对象造型（用父类型引用引用子类型对象，这样同样的引用调用同样的方法就会根据子类对象的不同而表现出不同的行为）。
+- **多态性**：多态性是指允许不同子类型的对象对同一消息作出不同的响应。简单的说就是<font color="lighblue" >用同样的对象引用调用同样的方法但是做了不同的事情</font>。多态性分为<font color="lighblue" >编译时的多态性和运行时的多态性</font>。如果将对象的方法视为对象向外界提供的服务，那么运行时的多态性可以解释为：当A系统访问B系统提供的服务时，B系统有多种提供服务的方式，但一切对A系统来说都是透明的（就像电动剃须刀是A系统，它的供电系统是B系统，B系统可以使用电池供电或者用交流电，甚至还有可能是太阳能，A系统只会通过B类对象调用供电的方法，但并不知道供电系统的底层实现是什么，究竟通过何种方式获得了动力）。
+
+  <font color="lighblue" >方法重载（overload）实现的是编译时的多态性（也称为前绑定），而方法重写（override）实现的是运行时的多态性（也称为后绑定）</font>。运行时的多态是面向对象最精髓的东西，要实现多态需要做两件事：1). 方法重写(子类继承父类并重写父类中已有的或抽象的方法)；2). 对象造型（用父类型引用引用子类型对象，这样同样的引用调用同样的方法就会根据子类对象的不同而表现出不同的行为）。
 
 在Java之中对于多态性有两种实现的模式：
 
@@ -511,7 +512,7 @@ List<T> list = new ArrayList<T>();
 List<?> list = new ArrayList<?>();
 ```
 
-**总结**：T 是一个 确定的 类型，通常用于泛型类和泛型方法的定义，？是一个 不确定 的类型，通常用于泛型方法的调用代码和形参，不能用于定义类和泛型方法。
+**总结**：T 是一个确定的类型，通常用于泛型类和泛型方法的定义，？是一个 不确定的类型，通常用于泛型方法的调用代码和形参，不能用于定义类和泛型方法。
 
 在“？”这个通配符的基础之上实际上还提供有两类小的通配符：
 
@@ -1251,4 +1252,474 @@ System.out.println(str.toUpperCase());//HELLO WORLD
 //转小写
 System.out.println(str.toLowerCase());//hello world
 ```
+
+### 26.Scanner方法
+
+Scanner类的主要功能是简化文本扫描，这个类最实用的地方表现在**获取控制台输入**。
+
+Scanner类里面有如下几种操作方法：
+
+* <font color="lighblue">构造</font>：public Scanner(InputStream source);
+* <font color="lighblue">判断是否有数据</font>：public boolean hasNext();
+* <font color="lighblue">取出数据</font>：public String next();
+* <font color="lighblue">设置分隔符</font>：public Scanner useDelimiter(String pattern);
+
+```java
+public static void main(String[] args) {
+			//实现键盘数据输入
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入年龄:");
+			//判断是否有整数输入
+			if(scan.hasNextInt()) {
+			    //直接获取数字
+			    int age = scan.nextInt();
+			    System.out.println("您的年龄:"+age);
+			}else {
+			    System.out.println("输入格式错误！");
+			}
+			scan.close();
+		}
+```
+
+```java
+public static void main(String[] args) {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入信息:");
+			//判断是否有字符串输入
+			if(scan.hasNext()) {
+				//直接获取字符串
+				String msg = scan.next();
+				System.out.println("信息为:"+msg);
+			}
+			scan.close();
+		}
+```
+
+**使用正则进行验证判断**
+
+```java
+public static void main(String[] args) {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入您的生日:");
+			//判断是否有生日输入
+			if(scan.hasNext("\\d{4}-\\d{2}-\\d{2}")) {
+			    String str = scan.next();
+			    System.out.println("生日为:"+str);
+			}else {
+			    System.out.println("输入格式错误！");
+			}
+			scan.close();
+		}
+```
+
+**读取文件内容**
+
+```java
+public static void main(String[] args) throws FileNotFoundException {
+			Scanner scan = new Scanner(new File("D:"+File.separator+"mldn-info.txt"));;
+			scan.useDelimiter("\n");//设置读取分隔符
+			while(scan.hasNext()) {
+				System.out.println(scan.next());
+			}
+			scan.close();
+		}
+```
+
+### 27.序列化
+
+所谓的对象序列化指的是将内存中保存的对象以二进制数据流的形式进行处理，可以实现对象的保存或者是网络传输。
+
+![序列化](https://note.youdao.com/yws/api/personal/file/C21736454AB74F4E882BBEF4F05B534C?method=download&shareKey=d2467c1a0faff2c4e4dc3908a4af4518)
+
+然而并不是所有的对象都可以被系列化，在Java里面有一个强制性的要求：如果要序列化的对象，那么对象所在的类一定要实现java.io.Serializable父接口，作为序列化的标记，这个借口并没有任何的方法，因为它描述的是一种类的能力。
+
+```java
+public class JavaAPIDemo{
+		public static void main(String[] args) {
+		}
+}
+	
+@SuppressWarnings("serial")
+//Person类可以被序列化
+class Person implements Serializable {
+    private String name;
+    private int age;
+
+    private Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+    //setter、getter略
+    @Override
+    public String toString() {
+        return "姓名："+this.name + "年龄："+ this.age;
+    }
+}
+```
+
+此时Person类产生的每一个对象都可以实现二进制的数据传输，属于可以被序列化的程序类。
+
+### 28.String类方法
+
+| SN(序号) | 方法描述                                                     |
+| :------: | :----------------------------------------------------------- |
+|    1     | [char charAt(int index)](https://www.runoob.com/java/java-string-charat.html)   返回指定索引处的 char 值。 |
+|    2     | [int compareTo(Object o)](https://www.runoob.com/java/java-string-compareto.html)   把这个字符串和另一个对象比较。 |
+|    3     | [int compareTo(String anotherString)](https://www.runoob.com/java/java-string-compareto.html)    按字典顺序比较两个字符串。 |
+|    4     | [int compareToIgnoreCase(String str)](https://www.runoob.com/java/java-string-comparetoignorecase.html)     按字典顺序比较两个字符串，不考虑大小写。 |
+|    5     | [String concat(String str)](https://www.runoob.com/java/java-string-concat.html)    将指定字符串连接到此字符串的结尾。 |
+|    6     | [boolean contentEquals(StringBuffer sb)](https://www.runoob.com/java/java-string-contentequals.html)    当且仅当字符串与指定的StringBuffer有相同顺序的字符时候返回真。 |
+|    7     | [static String copyValueOf(char[\] data)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
+|    8     | [static String copyValueOf(char[\] data, int offset, int count)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
+|    9     | [boolean endsWith(String suffix)](https://www.runoob.com/java/java-string-endswith.html)    测试此字符串是否以指定的后缀结束。 |
+|    10    | [boolean equals(Object anObject)](https://www.runoob.com/java/java-string-equals.html)    将此字符串与指定的对象比较。 |
+|    11    | [boolean equalsIgnoreCase(String anotherString)](https://www.runoob.com/java/java-string-equalsignorecase.html)    将此 String 与另一个 String 比较，不考虑大小写。 |
+|    12    | [byte[\] getBytes()](https://www.runoob.com/java/java-string-getbytes.html)     使用平台的默认字符集将此 String 编码为 byte 序列，并将结果存储到一个新的 byte 数组中。 |
+|    13    | [byte[\] getBytes(String charsetName)](https://www.runoob.com/java/java-string-getbytes.html)     使用指定的字符集将此 String 编码为 byte 序列，并将结果存储到一个新的 byte 数组中。 |
+|    14    | [void getChars(int srcBegin, int srcEnd, char[\] dst, int dstBegin)](https://www.runoob.com/java/java-string-getchars.html)    将字符从此字符串复制到目标字符数组。 |
+|    15    | [int hashCode()](https://www.runoob.com/java/java-string-hashcode.html)    返回此字符串的哈希码。 |
+|    16    | [int indexOf(int ch)](https://www.runoob.com/java/java-string-indexof.html)    返回指定字符在此字符串中第一次出现处的索引。 |
+|    17    | [int indexOf(int ch, int fromIndex)](https://www.runoob.com/java/java-string-indexof.html)    返回在此字符串中第一次出现指定字符处的索引，从指定的索引开始搜索。 |
+|    18    | [int indexOf(String str)](https://www.runoob.com/java/java-string-indexof.html)     返回指定子字符串在此字符串中第一次出现处的索引。 |
+|    19    | [int indexOf(String str, int fromIndex)](https://www.runoob.com/java/java-string-indexof.html)    返回指定子字符串在此字符串中第一次出现处的索引，从指定的索引开始。 |
+|    20    | [String intern()](https://www.runoob.com/java/java-string-intern.html)     返回字符串对象的规范化表示形式。 |
+|    21    | [int lastIndexOf(int ch)](https://www.runoob.com/java/java-string-lastindexof.html)     返回指定字符在此字符串中最后一次出现处的索引。 |
+|    22    | [int lastIndexOf(int ch, int fromIndex)](https://www.runoob.com/java/java-string-lastindexof.html)    返回指定字符在此字符串中最后一次出现处的索引，从指定的索引处开始进行反向搜索。 |
+|    23    | [int lastIndexOf(String str)](https://www.runoob.com/java/java-string-lastindexof.html)    返回指定子字符串在此字符串中最右边出现处的索引。 |
+|    24    | [int lastIndexOf(String str, int fromIndex)](https://www.runoob.com/java/java-string-lastindexof.html)     返回指定子字符串在此字符串中最后一次出现处的索引，从指定的索引开始反向搜索。 |
+|    25    | [int length()](https://www.runoob.com/java/java-string-length.html)    返回此字符串的长度。 |
+|    26    | [boolean matches(String regex)](https://www.runoob.com/java/java-string-matches.html)    告知此字符串是否匹配给定的正则表达式。 |
+|    27    | [boolean regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len)](https://www.runoob.com/java/java-string-regionmatches.html)    测试两个字符串区域是否相等。 |
+|    28    | [boolean regionMatches(int toffset, String other, int ooffset, int len)](https://www.runoob.com/java/java-string-regionmatches.html)    测试两个字符串区域是否相等。 |
+|    29    | [String replace(char oldChar, char newChar)](https://www.runoob.com/java/java-string-replace.html)     返回一个新的字符串，它是通过用 newChar 替换此字符串中出现的所有 oldChar 得到的。 |
+|    30    | [String replaceAll(String regex, String replacement)](https://www.runoob.com/java/java-string-replaceall.html)    使用给定的 replacement 替换此字符串所有匹配给定的正则表达式的子字符串。 |
+|    31    | [String replaceFirst(String regex, String replacement)](https://www.runoob.com/java/java-string-replacefirst.html)     使用给定的 replacement 替换此字符串匹配给定的正则表达式的第一个子字符串。 |
+|    32    | [String[\] split(String regex)](https://www.runoob.com/java/java-string-split.html)    根据给定正则表达式的匹配拆分此字符串。 |
+|    33    | [String[\] split(String regex, int limit)](https://www.runoob.com/java/java-string-split.html)    根据匹配给定的正则表达式来拆分此字符串。 |
+|    34    | [boolean startsWith(String prefix)](https://www.runoob.com/java/java-string-startswith.html)    测试此字符串是否以指定的前缀开始。 |
+|    35    | [boolean startsWith(String prefix, int toffset)](https://www.runoob.com/java/java-string-startswith.html)    测试此字符串从指定索引开始的子字符串是否以指定前缀开始。 |
+|    36    | [CharSequence subSequence(int beginIndex, int endIndex)](https://www.runoob.com/java/java-string-subsequence.html)    返回一个新的字符序列，它是此序列的一个子序列。 |
+|    37    | [String substring(int beginIndex)](https://www.runoob.com/java/java-string-substring.html)    返回一个新的字符串，它是此字符串的一个子字符串。 |
+|    38    | [String substring(int beginIndex, int endIndex)](https://www.runoob.com/java/java-string-substring.html)    返回一个新字符串，它是此字符串的一个子字符串。 |
+|    39    | [char[\] toCharArray()](https://www.runoob.com/java/java-string-tochararray.html)    将此字符串转换为一个新的字符数组。 |
+|    40    | [String toLowerCase()   使用默认语言环境的规则将此 String 中的所有字符都转换为小写。 |
+|    41    | [String toLowerCase(Locale locale)](https://www.runoob.com/java/java-string-tolowercase.html)     使用给定 Locale 的规则将此 String 中的所有字符都转换为小写。 |
+|    42    | [String toString()](https://www.runoob.com/java/java-string-tostring.html)     返回此对象本身（它已经是一个字符串！）。 |
+|    43    | [String toUpperCase()](https://www.runoob.com/java/java-string-touppercase.html)    使用默认语言环境的规则将此 String 中的所有字符都转换为大写。 |
+|    44    | [String toUpperCase(Locale locale)](https://www.runoob.com/java/java-string-touppercase.html)    使用给定 Locale 的规则将此 String 中的所有字符都转换为大写。 |
+|    45    | [String trim()](https://www.runoob.com/java/java-string-trim.html)    返回字符串的副本，忽略前导空白和尾部空白。 |
+|    46    | [static String valueOf(primitive data type x)](https://www.runoob.com/java/java-string-valueof.html)    返回给定data type类型x参数的字符串表示形式。 |
+|    47    | [contains(CharSequence chars)](https://www.runoob.com/java/java-string-contains.html)    判断是否包含指定的字符系列。 |
+|    48    | [isEmpty()](https://www.runoob.com/java/java-string-isempty.html)    判断字符串是否为空。 |
+
+将一个对象user属性赋值给另一个对象userVo，字段名必须一样，若两对象的某个属性不一样，则不传该属性的值：
+
+BeanUtils.copyProperties(user,userVo);
+
+### 29.定时任务Spring Task
+
+如果使用的是 Spring 或 Spring Boot 框架，可以直接使用 Spring Framework 自带的定时任务
+
+以 Spring Boot 为例，实现定时任务只需两步：
+
+1. 开启定时任务；
+2. 添加定时任务。
+
+#### 开启定时任务
+
+开启定时任务只需要在 Spring Boot 的启动类上声明 `@EnableScheduling` 即可，实现代码如下：
+
+```java
+@SpringBootApplication
+@EnableScheduling // 开启定时任务
+public class DemoApplication {
+    // do someing
+}
+```
+
+#### 添加定时任务
+
+定时任务的添加只需要使用 `@Scheduled` 注解标注即可，如果有多个定时任务可以创建多个 `@Scheduled` 注解标注的方法，示例代码如下：
+
+```java
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+ 
+@Component // 把此类托管给 Spring，不能省略
+public class TaskUtils {
+    // 添加定时任务
+    @Scheduled(cron = "59 59 23 0 0 5") // cron 表达式，每周五 23:59:59 执行
+    public void doTask(){
+        System.out.println("我是定时任务~");
+    }
+}
+```
+
+注意：定时任务是自动触发的无需手动干预，也就是说 Spring Boot 启动后会自动加载并执行定时任务。
+
+#### Cron 表达式
+
+Spring Task 的实现需要使用 cron 表达式来声明执行的频率和规则，cron 表达式是由 6 位或者 7 位组成的（最后一位可以省略），每位之间以空格分隔，每位从左到右代表的含义如下：
+
+![](https://note.youdao.com/yws/api/personal/file/8A418F9FB3F34575A6C4B8EC8165E5DF?method=download&shareKey=8c4d66eee23db7e6398d161198d09f0f)
+
+其中 * 和 ? 号都表示匹配所有的时间。
+
+![](https://note.youdao.com/yws/api/personal/file/B53F0DD75836492B96D4BDCEA7141C81?method=download&shareKey=02113e09a731f4ee55c464ecbe814b87)
+
+cron 表达式在线生成地址：https://cron.qqe2.com/
+
+### 30.Lambda表达式
+
+> https://www.cnblogs.com/haixiang/p/11029639.html
+
+Lambda 表达式是 JDK8 的一个新特性，可以取代大部分的匿名内部类，写出更优雅的 Java 代码，尤其在集合的遍历和其他集合操作中，可以极大地优化代码结构。
+
+JDK 也提供了大量的内置函数式接口供我们使用，使得 Lambda 表达式的运用更加方便、高效。
+
+#### @FunctionalInterface
+
+修饰函数式接口的，要求接口中的抽象方法只有一个。 这个注解往往会和 lambda 表达式一起出现。
+
+#### Lambda 基础语法
+
+```java
+/**多参数无返回*/
+@FunctionalInterface
+public interface NoReturnMultiParam {
+    void method(int a, int b);
+}
+
+/**无参无返回值*/
+@FunctionalInterface
+public interface NoReturnNoParam {
+    void method();
+}
+
+/**一个参数无返回*/
+@FunctionalInterface
+public interface NoReturnOneParam {
+    void method(int a);
+}
+
+/**多个参数有返回值*/
+@FunctionalInterface
+public interface ReturnMultiParam {
+    int method(int a, int b);
+}
+
+/*** 无参有返回*/
+@FunctionalInterface
+public interface ReturnNoParam {
+    int method();
+}
+
+/**一个参数有返回值*/
+@FunctionalInterface
+public interface ReturnOneParam {
+    int method(int a);
+}
+```
+
+**语法形式为 () -> {}，其中 () 用来描述参数列表，{} 用来描述方法体，-> 为 lambda运算符 ，读作(goes to)。**
+
+```java
+import lambda.interfaces.*;
+
+public class Test1 {
+    public static void main(String[] args) {
+
+        //无参无返回
+        NoReturnNoParam noReturnNoParam = () -> {
+            System.out.println("NoReturnNoParam");
+        };
+        noReturnNoParam.method();
+
+        //一个参数无返回
+        NoReturnOneParam noReturnOneParam = (int a) -> {
+            System.out.println("NoReturnOneParam param:" + a);
+        };
+        noReturnOneParam.method(6);
+
+        //多个参数无返回
+        NoReturnMultiParam noReturnMultiParam = (int a, int b) -> {
+            System.out.println("NoReturnMultiParam param:" + "{" + a +"," + + b +"}");
+        };
+        noReturnMultiParam.method(6, 8);
+
+        //无参有返回值
+        ReturnNoParam returnNoParam = () -> {
+            System.out.print("ReturnNoParam");
+            return 1;
+        };
+
+        int res = returnNoParam.method();
+        System.out.println("return:" + res);
+
+        //一个参数有返回值
+        ReturnOneParam returnOneParam = (int a) -> {
+            System.out.println("ReturnOneParam param:" + a);
+            return 1;
+        };
+
+        int res2 = returnOneParam.method(6);
+        System.out.println("return:" + res2);
+
+        //多个参数有返回值
+        ReturnMultiParam returnMultiParam = (int a, int b) -> {
+            System.out.println("ReturnMultiParam param:" + "{" + a + "," + b +"}");
+            return 1;
+        };
+
+        int res3 = returnMultiParam.method(6, 8);
+        System.out.println("return:" + res3);
+    }
+}
+```
+
+#### Lambda 语法简化
+
+```java
+public class Test2 {
+    public static void main(String[] args) {
+
+        //1.简化参数类型，可以不写参数类型，但是必须所有参数都不写
+        NoReturnMultiParam lamdba1 = (a, b) -> {
+            System.out.println("简化参数类型");
+        };
+        lamdba1.method(1, 2);
+
+        //2.简化参数小括号，如果只有一个参数则可以省略参数小括号
+        NoReturnOneParam lambda2 = a -> {
+            System.out.println("简化参数小括号");
+        };
+        lambda2.method(1);
+
+        //3.简化方法体大括号，如果方法条只有一条语句，则可以省略方法体大括号
+        NoReturnNoParam lambda3 = () -> System.out.println("简化方法体大括号");
+        lambda3.method();
+
+        //4.如果方法体只有一条语句，并且是 return 语句，则可以省略方法体大括号
+        ReturnOneParam lambda4 = a -> a+3;
+        System.out.println(lambda4.method(5));
+
+        ReturnMultiParam lambda5 = (a, b) -> a+b;
+        System.out.println(lambda5.method(1, 1));
+    }
+}
+```
+
+#### Lambda 表达式常用示例
+
+有时候我们不是必须要自己重写某个匿名内部类的方法，我们可以可以利用 lambda表达式的接口快速指向一个已经被实现的方法。
+
+**方法归属者::方法名 静态方法的归属者为类名，普通方法归属者为对象**
+
+```java
+public class Exe1 {
+    public static void main(String[] args) {
+        ReturnOneParam lambda1 = a -> doubleNum(a);
+        System.out.println(lambda1.method(3));
+
+        //lambda2 引用了已经实现的 doubleNum 方法
+        ReturnOneParam lambda2 = Exe1::doubleNum;
+        System.out.println(lambda2.method(3));
+
+        Exe1 exe = new Exe1();
+
+        //lambda4 引用了已经实现的 addTwo 方法
+        ReturnOneParam lambda4 = exe::addTwo;
+        System.out.println(lambda4.method(2));
+    }
+
+    /**
+     * 要求
+     * 1.参数数量和类型要与接口中定义的一致
+     * 2.返回值类型要与接口中定义的一致
+     */
+    public static int doubleNum(int a) {
+        return a * 2;
+    }
+
+    public int addTwo(int a) {
+        return a + 2;
+    }
+}
+```
+
+**构造方法的引用**
+
+一般我们需要声明接口，该接口作为对象的生成器，通过 类名::new 的方式来实例化对象，然后调用方法返回对象。
+
+```java
+interface ItemCreatorBlankConstruct {
+    Item getItem();
+}
+interface ItemCreatorParamContruct {
+    Item getItem(int id, String name, double price);
+}
+
+public class Exe2 {
+    public static void main(String[] args) {
+        ItemCreatorBlankConstruct creator = () -> new Item();
+        Item item = creator.getItem();
+
+        ItemCreatorBlankConstruct creator2 = Item::new;
+        Item item2 = creator2.getItem();
+
+        ItemCreatorParamContruct creator3 = Item::new;
+        Item item3 = creator3.getItem(112, "鼠标", 135.99);
+    }
+}
+```
+
+**lambda 表达式创建线程**
+
+我们以往都是通过创建 Thread 对象，然后通过匿名内部类重写 run() 方法，一提到匿名内部类我们就应该想到可以使用 lambda 表达式来简化线程的创建过程。
+
+```java
+    Thread t = new Thread(() -> {
+      for (int i = 0; i < 10; i++) {
+        System.out.println(2 + ":" + i);
+      }
+    });
+  	t.start();
+```
+
+**遍历集合**
+
+```java
+    @FunctionalInterface
+    public interface Consumer<T> {
+        void accept(T t);
+        //....
+    }
+```
+
+```java
+      ArrayList<Integer> list = new ArrayList<>();
+
+      Collections.addAll(list, 1,2,3,4,5);
+
+      //lambda表达式 方法引用
+      list.forEach(System.out::println);
+
+      list.forEach(element -> {
+        if (element % 2 == 0) {
+          System.out.println(element);
+        }
+      });
+```
+
+
+
+
+
+
+
+
+
+
+
+
 

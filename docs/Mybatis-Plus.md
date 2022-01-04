@@ -394,6 +394,17 @@ public void testPage(){
 }
 ```
 
+```java
+//分页模糊查询
+public IPage<User> selectPage(Integer pageNum, Integer pageSize, String search){
+        QueryWrapper<User> queryWrapper =  new QueryWrapper<>();
+        User user = new User();
+        queryWrapper.setEntity(user);
+        Page<User> page = new Page<>(pageNum,pageSize);
+        return userMapper.selectPage(page,queryWrapper.lambda().like(User::getNickName,search));
+    }
+```
+
 ### 删除操作
 
 1、根据 id 删除记录
@@ -521,6 +532,16 @@ void contextLoads() {
 [构造器语法](https://mp.baomidou.com/guide/wrapper.html#ne)
 
 十分重要：Wrapper
+
+```sql
+Wrapper  条件构造抽象类
+    -- AbstractWrapper 查询条件封装，用于生成 sql 中的 where 语句。
+        -- QueryWrapper Entity 对象封装操作类，用于查询。
+        -- UpdateWrapper Update 条件封装操作类，用于更新。
+    -- AbstractLambdaWrapper 使用 Lambda 表达式封装 wrapper
+        -- LambdaQueryWrapper 使用 Lambda 语法封装条件，用于查询。
+        -- LambdaUpdateWrapper 使用 Lambda 语法封装条件，用于更新。
+```
 
 ![](https://note.youdao.com/yws/api/personal/file/678E8994012D40F2A2BF03E344E647B1?method=download&shareKey=4962598db4ba84c427b9be77945fd455)
 
@@ -702,6 +723,49 @@ SELECT
 * **notExists：拼接NOT EXISTS**
 
   `notExists("select id from table where age = 1")`--->`not exists (select id from table where age = 1)`
+
+### BaseMapper 接口中的常用方法
+
+```java
+【添加数据：（增）】
+    int insert(T entity);              // 插入一条记录
+注：
+    T         表示任意实体类型
+    entity    表示实体对象
+
+【删除数据：（删）】
+    int deleteById(Serializable id);    // 根据主键 ID 删除
+    int deleteByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);  // 根据 map 定义字段的条件删除
+    int delete(@Param(Constants.WRAPPER) Wrapper<T> wrapper); // 根据实体类定义的 条件删除对象
+    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList); // 进行批量删除
+注：
+    id        表示 主键 ID
+    columnMap 表示表字段的 map 对象
+    wrapper   表示实体对象封装操作类，可以为 null。
+    idList    表示 主键 ID 集合（列表、数组），不能为 null 或 empty
+
+【修改数据：（改）】
+    int updateById(@Param(Constants.ENTITY) T entity); // 根据 ID 修改实体对象。
+    int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper); // 根据 updateWrapper 条件修改实体对象
+注：
+    update 中的 entity 为 set 条件，可以为 null。
+    updateWrapper 表示实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
+
+【查询数据：（查）】
+    T selectById(Serializable id); // 根据 主键 ID 查询数据
+    List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList); // 进行批量查询
+    List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap); // 根据表字段条件查询
+    T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 根据实体类封装对象 查询一条记录
+    Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询记录的总条数
+    List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询所有记录（返回 entity 集合）
+    List<Map<String, Object>> selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询所有记录（返回 map 集合）
+    List<Object> selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询所有记录（但只保存第一个字段的值）
+    <E extends IPage<T>> E selectPage(E page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询所有记录（返回 entity 集合），分页
+    <E extends IPage<Map<String, Object>>> E selectMapsPage(E page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper); // 查询所有记录（返回 map 集合），分页
+注：
+    queryWrapper 表示实体对象封装操作类（可以为 null）
+    page 表示分页查询条件
+```
 
 ### 代码自动生成器
 

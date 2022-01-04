@@ -487,6 +487,7 @@ Vue会管理el选项<font color="lighblue">命中的元素</font>及其内部的
             </a>
             <!--图片-->
             <img :src="imgArr[index]" width="35%">
+            
             <!--右箭头-->
             <a href="javascript:void(0)" class="right" @click="next" v-show="index<imgArr.length-1">
                 <img src="img/right.png" >
@@ -920,4 +921,242 @@ var app = new Vue({
 ```
 
 ![](https://note.youdao.com/yws/api/personal/file/A1755517EB14498E9DA8578E75681678?method=download&shareKey=530d64d6b7f7417047e1a250e7155df0)
+
+## 创建项目
+
+安装命令行工具CLI：npm install -g @vue/cli
+
+#### 新建vue项目
+
+创建springboot-vue-demo项目：vue create springboot-vue-demo
+
+然后根据需要选择对应选项配置
+
+启动项目命令：npm run serve
+
+![](https://note.youdao.com/yws/api/personal/file/9DC958C84A014A2EAE7CFECF76F4E34D?method=download&shareKey=386667ef98b26dfb3f6386c27f4823cd)
+
+在WebStorm/IDEA打开项目，设置新增npm，一键快速启动项目
+
+![](https://note.youdao.com/yws/api/personal/file/DA53403DE3DD476B9142E1651C50C911?method=download&shareKey=0c36206623301f3eeac6713456004c39)
+
+启动项目的快捷命令
+
+![](https://note.youdao.com/yws/api/personal/file/0D4F4C101468436AAD7DB532612929F7?method=download&shareKey=f09c5383e84e0d494cf6606588cd0388)
+
+#### 项目目录结构
+
+![](https://note.youdao.com/yws/api/personal/file/047E253218E64442B550969180DB89DC?method=download&shareKey=fdca05da194e1122b43c730331f55649)
+
+* node_modules文件及子目录 
+  * 这个文件夹里面全部都是node的一些基础的依赖包，当我们拓展的安装一些别的插件时 也会装在这个文件夹里
+* src文件及子目录 
+  * **assets**文件夹里面主要放置一些资源文件。比如js 、css 之类的文件
+  * **components**文件夹，组件文件全部都可以放到这里面，一个vue项目就是由一个个的组件拼装起来的
+  * **router**文件夹里的是整个vue项目的路由，vue 是单页面应用的代表，这里面就是设置一个一个组件的地址的文件
+  * **App.vue**文件是整个项目的入口文件，相当于包裹整个页面的最外层的div
+  * **main.js**这个文件是项目的主js，全局的使用的各种变量、js、插件 都在这里引入 、定义
+* package.json文件是整个项目用的到的所有的插件的json的格式 比如 这个插件的名称 ，版本号。 当在项目里使用npm install 时 node 会自动安装， 这个文件里的所有插件
+
+引用网络图片
+
+![](https://img-blog.csdnimg.cn/20200420173835231.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NTYyMjU0MA==,size_16,color_FFFFFF,t_70)
+
+后端配置Result.java文件
+
+```java
+package com.example.demo.common;
+
+public class Result<T> {
+    private String code;
+    private String msg;
+    private T data;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public Result() {
+    }
+
+    public Result(T data) {
+        this.data = data;
+    }
+
+    public static Result success() {
+        Result result = new Result<>();
+        result.setCode("0");
+        result.setMsg("成功");
+        return result;
+    }
+
+    public static <T> Result<T> success(T data) {
+        Result<T> result = new Result<>(data);
+        result.setCode("0");
+        result.setMsg("成功");
+        return result;
+    }
+
+    public static Result error(String code, String msg) {
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        return result;
+    }
+}
+
+```
+
+```java
+//返回时调用该Result方法
+@PostMapping
+public Result<?> save(@RequestBody User user){
+    userService.addUserMapper(user);
+    return Result.success();
+}
+```
+
+需要使用命令
+
+前端request.js 发送请求文件
+
+```js
+import axios from 'axios'
+
+const request = axios.create({
+    timeout: 5000
+})
+
+// request 拦截器
+// 可以自请求发送前对请求做一些处理
+// 比如统一加token，对请求参数统一加密
+request.interceptors.request.use(config => {
+    config.headers['Content-Type'] = 'application/json;charset=utf-8';
+
+    // config.headers['token'] = user.token;  // 设置请求头
+    return config
+}, error => {
+    return Promise.reject(error)
+});
+
+// response 拦截器
+// 可以在接口响应后统一处理结果
+request.interceptors.response.use(
+    response => {
+        let res = response.data;
+        // 如果是返回的文件
+        if (response.config.responseType === 'blob') {
+            return res
+        }
+        // 兼容服务端返回的字符串数据
+        if (typeof res === 'string') {
+            res = res ? JSON.parse(res) : res
+        }
+        return res;
+    },
+    error => {
+        console.log('err' + error) // for debug
+        return Promise.reject(error)
+    }
+)
+
+
+export default request
+```
+
+解决跨域问题 vue.config.js
+
+```js
+// 跨域配置
+module.exports = {
+    devServer: {                //记住，别写错了devServer//设置本地默认端口  选填
+        port: 9876,
+        proxy: {                 //设置代理，必须填
+            '/api': {              //设置拦截器  拦截器格式   斜杠+拦截器名字，名字可以自己定
+                target: 'http://localhost:9090',     //代理的目标地址
+                changeOrigin: true,              //是否设置同源，输入是的
+                pathRewrite: {                   //路径重写
+                    '/api': ''                     //选择忽略拦截器里面的单词
+                }
+            }
+        }
+    }
+}
+```
+
+```js
+save(){
+        request.post("/api/user",this.form).then(res=>{
+          console.log(res);
+        })
+      },
+```
+
+使用富文本编辑器**wangEditor**
+
+```
+npm i wangeditor --save
+```
+
+vue项目打包
+
+```
+npm run build
+打包成功后生成dist文件
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

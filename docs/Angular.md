@@ -560,3 +560,9 @@ class MyComponent implements OnInit {
 | <font color="lighblue">ngOnDestroy()</font>     | 每当 Angular 每次销毁指令/组件之前调用并清扫。 在这儿反订阅可观察对象和分离事件处理器，以防内存泄漏。 | 在 Angular 销毁指令或组件之前立即调用。                      |
 
 constructor：构造函数中除了使用简单的值对局部变量进行初始化之外，什么都不应该做。**(非生命周期函数)**
+
+### 前端Debug
+
+新建JavaScript Debug，使用debug模式启动前端
+
+![](https://note.youdao.com/yws/api/personal/file/3C96D02FC4044995B4771CDE4A99AA9C?method=download&shareKey=f11dbc3744d0da2ee18e74c446fbb38e)
