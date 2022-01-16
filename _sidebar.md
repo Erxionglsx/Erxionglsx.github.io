@@ -32,7 +32,7 @@
   - [排序算法](./docs/排序算法.md)
 * 前端
   - [Vue](./docs/Vue.md)
-  - [Angular](./docs/jAngular.md)
+  - [Angular](./docs/Angular.md)
   - [Ajax](./docs/Ajax学习.md)
   - [JavaScript](./docs/JS.md)
   - [jQuery](./docs/jQuery学习.md)
