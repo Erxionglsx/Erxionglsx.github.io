@@ -25,6 +25,7 @@
 * 分布式与微服务
   - [分布式与微服务](./docs/分布式.md)
   - [Nacos](./docs/Nacos.md)
+  - [OpenFeign](./docs/OpenFeign.md)
 * 设计模式
   - [单例模式and工厂模式](./docs/设计模式.md)
 * 数据结构与算法
