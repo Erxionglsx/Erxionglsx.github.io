@@ -1,4 +1,4 @@
-# Java进阶
+Java进阶
 
 ------
 
@@ -10,7 +10,7 @@
 
 1.**进程是操作系统中进行保护和资源分配的基本单位**，操作系统分配资源以进程为基本单位。而线程是进程的组成部分，它代表了一条顺序的执行流。
 
-使用多线程最主要的原因是**提高系统的资源利用率。**
+使用多线程最主要的原因是**提高系统的资源利用率**。
 
 ##### 2.继承Thread类实现多线程
 
@@ -21,7 +21,7 @@
      ```java
      class MyThread extends Thread{
      	private String title;
-     	public  MyThread(String title) {
+     	public MyThread(String title) {
      		this.title = title;
      	}
        	@Override
@@ -132,7 +132,7 @@ class myThread implements Callable<String>{
 
 public class RunnableDemo {
 	public static void main(String[] args) throws Exception{
-		FutureTask<String> task = new FutureTask<String>(new myThread());
+	    FutureTask<String> task = new FutureTask<String>(new myThread());
         new Thread(task).start();
         System.out.println("线程返回数据"+task.get());
 	}
@@ -298,7 +298,7 @@ public static void main(String[] args) throws InterruptedException {
 public static void main(String[] args) throws InterruptedException {
 		Thread thread  = new Thread(()-> {
 			for (int x = 0; x < 50; x++) {
-				if (x%3 == 0) { //
+				if (x%3 == 0) { 
 					Thread.yield(); //线程礼让
 					System.out.println("###玩耍的线程礼让执行");
 				}
@@ -357,7 +357,7 @@ public static void main(String[] args) {
 }
 ```
 
-主线程是一个中等优先级，而默认创建的线程也是中等优先级，为5.
+主线程是一个中等优先级，而默认创建的线程也是中等优先级，为5。
 
 ### 3.线程的同步与死锁
 
@@ -420,21 +420,21 @@ public class ThreadDemo{
 
 **线程死锁的四个必要条件：**
 
-* **1、互斥条件**
+**1、互斥条件**
 
-    即一段时间内某资源仅为一个线程所占有，此时若其他线程请求该资源，则请求线程都需要等待。
+  即一段时间内某资源仅为一个线程所占有，此时若其他线程请求该资源，则请求线程都需要等待。
 
-  **2、不可剥夺条件**
+**2、不可剥夺条件**
 
-    即线程所获得的资源在未使用完毕之前，不能被其他线程强行夺走，只能由获得该资源的线程自己主动释放。
+  即线程所获得的资源在未使用完毕之前，不能被其他线程强行夺走，只能由获得该资源的线程自己主动释放。
 
-  **3、请求与保持条件**（吃着碗里的望着锅里的）
+**3、请求与保持条件**（吃着碗里的望着锅里的）
 
-    即线程已经至少保持了一个资源，但又提出了新的资源请求，而该资源已经被其他线程占有，此时请求线程被阻塞，但对自己已获得的资源保持不放。
+  即线程已经至少保持了一个资源，但又提出了新的资源请求，而该资源已经被其他线程占有，此时请求线程被阻塞，但对自己已获得的资源保持不放。
 
-  **4、循环等待条件**
+**4、循环等待条件**
 
-    存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
+  存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
 
 ### 4.线程深入
 
@@ -506,7 +506,7 @@ public static void main(String[] args) throws Exception{
 
 用户线程执行完毕，守护线程也将消失。
 
-3.生产电脑
+##### 3.生产电脑
 
 ```java
 public class ThreadDemo{
@@ -516,7 +516,7 @@ public class ThreadDemo{
 		new Thread(new Consumer(res)).start();
 	}
 }
-
+//生产者
 class Producer implements Runnable{
 	private Resource resource;
     public Producer(Resource resource) {
@@ -533,6 +533,7 @@ class Producer implements Runnable{
 		}
 	};
 }
+//消费者
 class Consumer implements Runnable{
 	private Resource resource;
     public Consumer(Resource resource) {
@@ -549,6 +550,7 @@ class Consumer implements Runnable{
 		}
 	};
 }
+
 class Resource {
 	private Computer computer;
 	private boolean flag = true;//标记
@@ -557,7 +559,7 @@ class Resource {
 			super.wait();
 		}
 		Thread.sleep(100);
-		this.computer = new Computer("MLDB电脑", 1.1);
+		this.computer = new Computer("MLDB电脑", 3500.0);
 		System.out.println("【生产电脑】"+this.computer);
 		super.notifyAll();
 	}
@@ -572,6 +574,7 @@ class Resource {
 		super.notify();
 	}
 }
+//商品
 class Computer{
 	private static int count = 0;//表示生产的个数
 	private String name;
@@ -586,6 +589,8 @@ class Computer{
 	}
 }
 ```
+
+![](https://note.youdao.com/yws/api/personal/file/6452C039B84B48E4AC3906BE9FF29C2B?method=download&shareKey=4c3f7dc82e138bb512637a6b2827dab9)
 
 ### 5.线程安全
 
@@ -619,12 +624,13 @@ JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在�
 
 - synchronized保证了线程的<font color="lighblue">原子性</font>。(被保护的代码块是一次被执行的，没有任何线程会同时访问)
 - synchronized还保证了<font color="lighblue">可见性</font>。(当执行完synchronized之后，修改后的变量对其他的线程是可见的)
+- synchronized还保证了<font color="lighblue">有序性</font>。
 
 Java中的synchronized，通过使用内置锁，来实现对变量的同步操作，进而实现了**对变量操作的原子性和其他线程对变量的可见性**，从而确保了并发情况下的线程安全。
 
 ### 7.volatile关键字
 
-**volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性</font>然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
+**volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性和有序性</font>然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
 
 volatile 修饰的成员变量在每次被线程访问时，都强制从共享内存中重新读取该成员变量的值。而且，当成员变量发生变化时，会强制线程将变化值回写到共享内存。这样在任何时刻，两个不同的线程总是看到某个成员变量的同一个值。
 
@@ -649,7 +655,7 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 - 支持Condition条件对象
 - **允许多个读线程同时访问共享资源**
 
-Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized锁用起来又特别简单。**Lock锁还得顾忌到它的特性，要手动释放锁才行**(如果忘了释放，这就是一个隐患)
+Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized锁用起来又特别简单。**Lock锁还得顾忌到它的特性，要手动释放锁才行**(如果忘了释放，这就是一个隐患)。Lock同样保证了<font color="lighblue">原子性、可见性和有序性</font>。
 
 所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁~
 
@@ -862,8 +868,8 @@ class Person {
 
 对于服务器或者是客户端而言实质上传递的就是一种数据流的处理形式，而所谓的数据流指的就是字节数据。而对于流的处理形式在java.io包里面提供有两类支持：
 
-* 字节处理流：OutputStream(输出字节流)、InputStream(输入字节流)；
-* 字符处理流：Writer(输出字符流)、Reader(输入字符流)。
+* 字节处理流：OutputStream(输出字节流)、InputStream(输入字节流)
+* 字符处理流：Writer(输出字符流)、Reader(输入字符流)
 
 ### 1.字节输出流：OutputStream
 
@@ -895,7 +901,7 @@ public abstract class InputStream extends Object implements Closeable
 | :----: | :----------------------------------------------------------: | :------: | :----------------------------------------------: |
 |   01   |        public abstract int read() throws IOException         |   普通   | 读取单个字节数据，如果现在已经读取到底了，返回-1 |
 | **02** |      **public int read(byte[] b)  throws IOException**       | **普通** |               **读取一组字节数据**               |
-|   03   | public int read(byte[] b, int off, int len) throws IOException |   普通   |        读取一组字节数据(只占数组的部分)·         |
+|   03   | public int read(byte[] b, int off, int len) throws IOException |   普通   |         读取一组字节数据(只占数组的部分)         |
 
 ```java
 public class JavaAPIDemo {
@@ -964,7 +970,7 @@ public class JavaAPIDemo {
 
 **Map** 接口 键值对的集合 （双列集合）  
 ├———**Hashtable** <font color="lighblue">数组+链表+红黑树</font>，接口实现类， 同步， 线程安全  
-├———**HashMap** <font color="lighblue">数组+链表+红黑树</font>，接口实现类 ，没有同步， 线程不安全-  
+├———**HashMap** <font color="lighblue">数组+链表+红黑树</font>，接口实现类 ，没有同步， 线程不安全  
 │—————–├ **LinkedHashMap** <font color="lighblue">双向链表和哈希表</font>实现  
 │—————–└ **WeakHashMap**  
 ├ ——–**TreeMap**  <font color="lighblue">红黑树</font>(自平衡排序二叉树)对所有的key进行排序  
@@ -1003,9 +1009,9 @@ List接口对Collection接口进行了方法扩充：
 
 **（1）ArrayList**：底层数据结构是数组，查询快，增删慢，线程不安全，效率高，可以存储重复元素
 
-**（2）LinkedList** 底层数据结构是链表，查询慢，增删快，线程不安全，效率高，可以存储重复元素
+**（2）LinkedList**： 底层数据结构是链表，查询慢，增删快，线程不安全，效率高，可以存储重复元素
 
-**（3）Vector**:底层数据结构是数组，查询快，增删慢，线程安全，效率低，可以存储重复元素
+**（3）Vector**：底层数据结构是数组，查询快，增删慢，线程安全，效率低，可以存储重复元素
 
 ##### ArrayList子类
 
@@ -1084,7 +1090,7 @@ public void testList(){
 
 上面这个例子默认使用了toString输出，在JDK1.8之后在父接口中定义有一个forEach()方法，定义如下：
 
-* 输出支持：default void forEach(Consumer<? super T>action);
+* 输出支持：default void forEach(Consumer<? super T>action)；
 
 利用**forEach()**方法输出(不是标准输出)
 
@@ -1456,8 +1462,6 @@ Java类的加载是动态的，它并不会一次性将所有类全部加载后�
 
 class文件是通过**类的加载器**装载到jvm中的
 
-![](https://img.tool22.com/image/5fdc971494ee1.jpg)
-
 **工作过程：**
 
 - 1、当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。
@@ -1477,14 +1481,12 @@ class文件是通过**类的加载器**装载到jvm中的
 ### 5.JVM的内存结构
 
 - <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。 [![img](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)
-- <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将 `.class` 文件搬过来就是先丢到这一块上。
+- <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将  `.class` 文件搬过来就是先丢到这一块上。
 - <font color="lighblue">堆</font>：**存放对象实例**，比如对象实例，数组···等，它和方法区都同属于 **线程共享区域** 。也就是说它们都是 **线程不安全** 的，主要用于存放新创建的对象，几乎所有的对象实例都在这里分配内存。
 - <font color="lighblue">栈</font>： 这是我们的代码运行空间。我们编写的每一个方法都会放到 **栈** 里面运行。
 - <font color="lighblue">虚拟机栈</font>：虚拟机栈描述的是**Java方法执行的内存结构**：每个方法被执行的时候都会同时创建一个**栈帧**（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息
 - <font color="lighblue">本地方法栈</font>：本地方法栈则是为虚拟机使用到的**Native方法服务**。
 - <font color="lighblue">程序计数器</font>：当前线程所执行的字节码的**行号指示器**，主要就是完成一个加载工作，类似于一个指针一样的，指向下一行我们需要执行的代码。和栈一样，都是 **线程独享** 的，就是说每一个线程都会有自己对应的一块区域而不会存在并发和多线程的问题。
-
-![](https://img.tool22.com/image/5fdc97167d53e.jpg)
 
 **小总结**
 
@@ -1539,8 +1541,6 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 
 #### 垃圾收集器种类
 
-![](https://img.tool22.com/image/5fdc971622140.jpg)
-
 - 在新生代工作的垃圾回收器：Serial, ParNew, ParallelScavenge
 - 在老年代工作的垃圾回收器：CMS，Serial Old, Parallel Old
 - 同时在新老生代工作的垃圾回收器：G1
@@ -1555,11 +1555,95 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 
 JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。
 
-要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象。
+要想解剖一个类，必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法，所以先要获取到每一个字节码文件对应的Class类型的对象。
 
 **反射的原理**
 
 java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载的类的类型信息。每装载一个类的时候，java 就会创建一个该类的 Class 对象实例。我们就可以通过这个实例，来访问这个类的信息。
+
+### 2.反射的基本应用
+
+**获得Class对象**
+
+1. 使用 Class 类的 `forName` 静态方法:
+
+   ```java
+   public static Class<?> forName(String className)
+   ​``` 
+   比如在 JDBC 开发中常用此方法加载数据库驱动:
+   ​```java
+    Class.forName(driver);
+   ```
+
+2. 直接获取某一个对象的 class
+
+   ```java
+   Class<?> klass = int.class;
+   Class<?> classInt = Integer.TYPE;
+   ```
+
+3. 调用某个对象的 `getClass()` 方法
+
+   ```java
+   StringBuilder str = new StringBuilder("123");
+   Class<?> klass = str.getClass();
+   ```
+
+**判断是否为某个对象的实例**
+
+我们用 `instanceof` 关键字来判断是否为某个类的实例。同时我们也可以借助反射中 Class 对象的 `isInstance()` 方法来判断是否为某个类的实例
+
+**创建实例**
+
+通过反射来生成对象主要有两种方式：
+
+- 使用Class对象的newInstance()方法来创建Class对象对应类的实例。
+
+```java
+Class<?> c = String.class;
+Object str = c.newInstance();
+```
+
+- 先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例。这种方法可以用指定的构造器构造类的实例。
+
+```java
+//获取String所对应的Class对象
+Class<?> c = String.class;
+//获取String类带一个String参数的构造器
+Constructor constructor = c.getConstructor(String.class);
+//根据构造器创建实例
+Object obj = constructor.newInstance("23333");
+```
+
+**获取方法**
+
+获取某个Class对象的方法集合，主要有以下几个方法：
+
+getDeclaredMethods方法返回类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
+
+```java
+public Method[] getDeclaredMethods() throws SecurityException
+```
+
+getMethods方法返回某个类的所有公用（public）方法，包括其继承类的公用方法。
+
+```java
+public Method[] getMethods() throws SecurityException
+```
+
+getMethod方法返回一个特定的方法，其中第一个参数为方法名称，后面的参数为方法的参数对应Class的对象。
+
+```java
+public Method getMethod(String name, Class<?>... parameterTypes)
+```
+
+**获取构造器信息**
+
+获取类构造器的用法与上述获取方法的用法类似。主要是通过Class类的getConstructor方法得到Constructor类的一个实例，而Constructor类有一个newInstance方法可以创建一个对象实例:
+
+```java
+public T newInstance(Object ... initargs)
+```
 
 **反射的优点：**
 
@@ -1574,8 +1658,6 @@ java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载
 - **性能开销** ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。
 - **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
 - **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
-
-
 
 
 
