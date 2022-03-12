@@ -31,10 +31,11 @@
   - [Servlet](./docs/Servlet.md)
   - [Quartz定时](./docs/Quartz定时.md)
 - 数据库
-  - [MySQL](./docs/数据库.md)
+  - [MySQL](./docs/MySQL.md)
   - [Redis](./docs/Redis数据库.md)
   - [Oracle](./docs/Oracle.md)
   - [MongDB](./docs/MongDB.md)
+  - [SQL优化](./docs/SQL优化.md)
 - 框架
   - [Spring](./docs/Spring.md)
   - [Mybatis-Plus](./docs/Mybatis-Plus.md)
