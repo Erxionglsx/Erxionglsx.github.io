@@ -64,42 +64,7 @@ static修饰的变量我们称之为<font color="lighblue">静态变量</font>�
 - <font color="lighblue" style="font-weight:bold;">JRE</font>提供了运行Java程序的平台，包含了JVM
 - <font color="lighblue" style="font-weight:bold;">JVM</font>是Java的虚拟机，提供了内存管理、垃圾回收和安全机制等
 
-### 3.覆写和重载是什么意思？
-
-**<font color="lighblue" style="font-weight:bold;">覆写（Override）</font>是指子类对父类方法的一种重写，** 只能比父类抛出更少的异常，访问权限不能比父类的小，被覆写的方法不能是 private 的，否则只是在子类中重新定义了一个新方法。
-
-**<font color="lighblue" style="font-weight:bold;">重载（Overload）</font>表示同一个类中可以有多个名称相同的方法，但这些方法的参数列表各不相同。**
-
-**构成重载的条件有哪些？**  参数类型不同、参数个数不同、参数顺序不同。
-
-一般认为，**Java 内的传递都是值传递，Java 中实例对象的传递是引用传递，<font color="lighblue" style="font-weight:bold;">Java 是值传递的！</font>**
-
-<font color="lighblue" style="font-weight:bold;">覆写原因</font>：子类与父类一旦产生继承关系之后，实际上子类会继承父类中的全部定义，但是这里面也有可能出现不合适的场景，子类如果发现父类中设计不足并且需要保留父类中的方法或者属性名称的情况下就会发生覆写。
-
-<font color="lighblue" style="font-weight:bold;">方法的覆写</font>：当子类定义了与父类方法名称相同，参数类型及个数完全相同（和父类方法一模一样）的时候，就称为方法的覆写。
-
-```java
-class Channel{
-    public void connect(){
-        System.out.println("父类进行资源的连接。");
-    }
-}
-class DatabaseChannel extends Channel{
-    @Override //明确表达该方法是一个覆写的方法，帮助检查出程序错误
-    public void connect(){
-        System.out.println("子类进行资源的连接。");
-    }
-}
-```
-
-| No.  |   区别   |            Overloading             |               Override               |
-| :--: | :------: | :--------------------------------: | :----------------------------------: |
-|  1   | 中文含义 |                重载                |                 覆写                 |
-|  2   |   概念   | 方法名称相同，参数的类型及个数不同 | 方法名称、参数类型及个数、返回值相同 |
-|  3   |   权限   |            没有权限限制            |  被覆写方法不能拥有更严格的控制权限  |
-|  4   |   范围   |           发生在一个类中           |          发生在继承关系类中          |
-
-### 4.堆和栈的区别，类和对象：
+### 3.堆和栈的区别，类和对象：
 
 <font color="lighblue" style="font-weight:bold;">堆内存</font>：保存的是对象的具体信息，在程序之中堆内存空间的开辟是通过new完成的；
 
@@ -116,45 +81,14 @@ class DatabaseChannel extends Channel{
 
 对象必须实例化以后才能使用，Person p = new Person();
 
-###  5.垃圾空间
+###  4.垃圾空间
 
 ​       所谓的<font color="lighblue" style="font-weight:bold;">垃圾空间</font>指的就是没有任何栈内存所指向的堆内存空间，所有的垃圾将被GC(Garbage Collector、垃圾收集器)定期进行回收并且释放无用内存，但是如果垃圾过多，一定会影响到GC的处理性能，从而降低整体的程序性能，那么在实际的开发之中，对于垃圾的产生应该越少越好。
 
-### 6.构造方法
+### 5.请解释String比较中“==”与equals()区别？
 
-```java
-class Person{
-    private String name;
-    private int id;
-    public Person(String name,int id){
-        this.name=name;
-        this.id=id;
-    }
-}
-```
-
-<font color="lighblue" style="font-weight:bold;">主要目的</font>：可以通过构造方法实现实例化对象中的属性初始化处理。相当于调用setter方法。
-
-<font color="lighblue" style="font-weight:bold;">要求如下</font>：
-
-* 构造方法必须与类名保持一致；
-* 构造方法不允许设置任何的返回值类型，即：没有返回值定义；
-* 构造方法是在使用关键字new实例化对象的时候自动调用的。
-
-<font color="lighblue" style="font-weight:bold;">结论</font>：一个类至少存在有一个构造方法，永恒存在。若没有手动构造，则类存在一个默认无参构造方法。
-
-**问题：为什么构造方法上不允许设置返回值类型？**
-
-如果在构造方法上使用了void，那么此结构就与普通方法的结构完全相同了，这样编译器会认为此方法是一个普通方法。
-
-**普通方法与构造方法最大的区别**：
-
-构造方法是在类对象实例化的时候调用的，而普通方法是在类对象实例化产生之后调用的。
-
-### 7.请解释String比较中“==”与equals()区别？
-
-* **==**：如果是基本数据类型，进行的是数值比较，如果用于引用数据类型，比较的则是两个内存的地址数值；
-* **equals()**：是类所提供的一个比较方法，可以直接进行字符串内容的判断，**区分大小写**。
+* ==：如果是基本数据类型，进行的是数值比较，如果用于引用数据类型，比较的则是两个内存的地址数值；
+* equals()：是类所提供的一个比较方法，可以直接进行字符串内容的判断，**区分大小写**。
 ```java
 //正确
 String str = "ssi";
@@ -176,7 +110,7 @@ if(s == null || s.equals(""));
 if(s == null || s.length() == 0);
 if(s == null || s.isEmpty());
 if(s == null || s == "");
-//null是没有地址,null代表声明了一个空对象，根本就不是一个字符串。   
+//null是没有地址,null代表声明了一个空对象，根本就不是一个字符串。
 //""是有地址但是里面的内容是空的,""代表声明了一个对象实例，这个对象实例的值是一个长度为0的空字符串。
 ```
 
@@ -214,7 +148,7 @@ System.out.println(str);
 ```
 ![image](https://note.youdao.com/yws/api/personal/file/58E3597B32F04E2BABE17024C369A944?method=download&shareKey=d4d7d97b80683dfac37b4ed3792e0353)
 
-### 8.主方法分析
+### 6.主方法分析
 
 **public static void main(String args[])**
 
@@ -224,13 +158,54 @@ System.out.println(str);
 * **main**：是一个系统定义好的方法名称；
 * **String args[]**：字符串的名称，可以实现程序启动参数的接收。
 
-### 9.请解释super与this的区别？
+### 7.请解释super与this的区别？
 
 * 在程序类汇总使用this表示先从本类查找所需要的属性或方法，如果本类不存在则查找父类定义，如果使用super则表示不查找子类，直接查找父类；
 * this与super都可以进行构造方法的的调用，但是this()调用的是本类构造，必须放在构造方法的首行，所以不能同时出现；
 * this可以表示当前对象。
 
-### 10.多态性
+### Java三大特性
+
+**封装、继承、多态**
+
+**封装**：是指隐藏对象的属性和实现细节，仅对外提供公共访问方式。将成员变量私有化，对外提供对应的set 、get方法对其进行访问。提高对数据访问的安全性。
+
+**继承**：继承是面向对象最显著的一个特性。 继承是从已有的类中派生出新的类， 新的类能吸收已有类的数据属性和行为，并能扩展新的能力。在JAVA中， 被继承的类叫父类或超类， 继承父类的类叫子类或派生类。
+
+**多态**：在面向对象语言中， 多态性是指一个方法可以有多种实现版本，即“一种定义， 多种实现”。 利用多态可以设计和实现可扩展的系统， 只要新类也在继承层次中。 新的类对程序的通用部分只需进行很少的修改， 或不做修改。 类的多态性表现为方法的多态性，方法的多态性主要有方法的<font color="lighblue">重载</font>和方法的<font color="lighblue">覆盖</font>。
+
+### 8.构造方法
+
+```java
+class Person{
+    private String name;
+    private int id;
+    public Person(String name,int id){
+        this.name=name;
+        this.id=id;
+    }
+}
+```
+
+<font color="lighblue" style="font-weight:bold;">主要目的</font>：可以通过构造方法实现实例化对象中的属性初始化处理。相当于调用setter方法。
+
+<font color="lighblue" style="font-weight:bold;">要求如下</font>：
+
+- 构造方法必须与类名保持一致；
+- 构造方法不允许设置任何的返回值类型，即：没有返回值定义；
+- 构造方法是在使用关键字new实例化对象的时候自动调用的。
+
+<font color="lighblue" style="font-weight:bold;">结论</font>：一个类至少存在有一个构造方法，永恒存在。若没有手动构造，则类存在一个默认无参构造方法。
+
+**问题：为什么构造方法上不允许设置返回值类型？**
+
+如果在构造方法上使用了void，那么此结构就与普通方法的结构完全相同了，这样编译器会认为此方法是一个普通方法。
+
+**普通方法与构造方法最大的区别**：
+
+构造方法是在类对象实例化的时候调用的，而普通方法是在类对象实例化产生之后调用的。
+
+### 9.多态性
 
 **多态是同一个行为具有多个不同表现形式的能力。**
 
@@ -324,6 +299,41 @@ Person per = new Person();
 System.out.println(per instanceof Person);//true
 System.out.println(per instanceof SuperMan);//false
 ```
+
+### 10.覆写和重载是什么意思？
+
+**<font color="lighblue" style="font-weight:bold;">覆写（Override）</font>是指子类对父类方法的一种重写，** 只能比父类抛出更少的异常，访问权限不能比父类的小，被覆写的方法不能是 private 的，否则只是在子类中重新定义了一个新方法。
+
+**<font color="lighblue" style="font-weight:bold;">重载（Overload）</font>表示同一个类中可以有多个名称相同的方法，但这些方法的参数列表各不相同。**
+
+**构成重载的条件有哪些？**  参数类型不同、参数个数不同、参数顺序不同。
+
+一般认为，**Java 内的传递都是值传递，Java 中实例对象的传递是引用传递，<font color="lighblue" style="font-weight:bold;">Java 是值传递的！</font>**
+
+<font color="lighblue" style="font-weight:bold;">覆写原因</font>：子类与父类一旦产生继承关系之后，实际上子类会继承父类中的全部定义，但是这里面也有可能出现不合适的场景，子类如果发现父类中设计不足并且需要保留父类中的方法或者属性名称的情况下就会发生覆写。
+
+<font color="lighblue" style="font-weight:bold;">方法的覆写</font>：当子类定义了与父类方法名称相同，参数类型及个数完全相同（和父类方法一模一样）的时候，就称为方法的覆写。
+
+```java
+class Channel{
+    public void connect(){
+        System.out.println("父类进行资源的连接。");
+    }
+}
+class DatabaseChannel extends Channel{
+    @Override //明确表达该方法是一个覆写的方法，帮助检查出程序错误
+    public void connect(){
+        System.out.println("子类进行资源的连接。");
+    }
+}
+```
+
+| No.  |   区别   |            Overloading             |               Override               |
+| :--: | :------: | :--------------------------------: | :----------------------------------: |
+|  1   | 中文含义 |                重载                |                 覆写                 |
+|  2   |   概念   | 方法名称相同，参数的类型及个数不同 | 方法名称、参数类型及个数、返回值相同 |
+|  3   |   权限   |            没有权限限制            |  被覆写方法不能拥有更严格的控制权限  |
+|  4   |   范围   |           发生在一个类中           |          发生在继承关系类中          |
 
 ###  11.Object类
 
@@ -475,7 +485,7 @@ ObjectTool<Integer> tool = new ObjectTool<Integer>();
 
 #### 增强for遍历集合
 
-在创建集合的时候，**我们明确了集合的类型了**，所以我们可以使用增强for来遍历集合:
+在创建集合的时候，**我们明确了集合的类型了**，所以我们可以使用增强for来遍历集合：
 
 ```java
         //创建集合对象
@@ -598,6 +608,65 @@ System.out.println(d1);
 
 * enum：是从JDK1.5之后提供的一个关键字，用于定义枚举类。
 * Enum：是一个抽象类，所以使用enum定义的类就默认继承了此类。
+
+```java
+public enum CfmRepairCodeEnum {
+    STAY_SUBMIT(0, "待提交"),
+    STAY_AUDIT(100, "待审核"),
+    STAY_ALLOT(200, "待分配(数据员)"),
+    NOT_ALLOT(300, "未分配"),
+    STAY_AUDIT_DESIGN(400, "待审核"),
+    STAY_PAY(500, "待付款")
+
+    private Integer code;
+    private String msg;
+
+    CfmRepairCodeEnum(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public static String getValue(Integer code) {
+        CfmRepairCodeEnum[] cfmRepairCodeEnums = values();
+        for (CfmRepairCodeEnum cfmRepairCodeEnum : cfmRepairCodeEnums) {
+            if (cfmRepairCodeEnum.code().equals(code)) {
+                return cfmRepairCodeEnum.msg();
+            }
+        }
+        return null;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    private Integer code() {
+        return this.code;
+    }
+
+    private String msg() {
+        return this.msg;
+    }
+}
+```
+
+```java
+CfmRepairCodeEnum.STAY_SUBMIT.getCode() // 0
+CfmRepairCodeEnum.STAY_SUBMIT.getMsg()  // 待提交
+CfmRepairCodeEnum.getValue(0)  // 待提交
+```
 
 ### 17.异常
 
@@ -903,11 +972,13 @@ Java中的数据类型分为两大类，基本数据类型和引用数据类型�
 |  1   | byte（字节型）   |    8    |                 -128~127                 |    0     |
 |  2   | short（短整型）  |   16    |               -32768~32767               |    0     |
 |  3   | int（整型）      |   32    |          -2147483648~2147483647          |    0     |
-|  4   | long长整型）     |   64    | -9223372036854775808~9223372036854775807 |    0     |
+|  4   | long（长整型）   |   64    | -9223372036854775808~9223372036854775807 |    0     |
 |  5   | float（单精度）  |   32    |              -3.4E38~3.4E38              |   0.0    |
 |  6   | double（双精度） |   64    |             -1.7E308~1.7E308             |   0.0    |
 |  7   | char（字符）     |   16    |                  0~255                   | '\u0000' |
 |  8   | boolean（布尔）  |    -    |               true或false                |  false   |
+
+*double 和 float 的区别是 double 精度高，有效数字 16 位，float 精度 7 位。*
 
 #### 引用数据类型
 
@@ -1043,7 +1114,7 @@ class Person{
 
 **3.修饰变量**
 
-对于一个final变量，如果是<font color="lighblue">基本数据类型</font>的变量，则其数值一旦在初始化之后便<font color="lighblue">不能更改</font>；如果是<font color="lighblue">引用类型</font>的变量，则在对其初始化之后便<font color="lighblue">不能再让其指向另一个对象，但是它指向的对象的内容是可变的。</font>。
+对于一个final变量，如果是<font color="lighblue">基本数据类型</font>的变量，则其数值一旦在初始化之后便<font color="lighblue">不能更改</font>；如果是<font color="lighblue">引用类型</font>的变量，则在对其初始化之后便<font color="lighblue">不能再让其指向另一个对象，但是它指向的对象的内容是可变的</font>。
 
 ### 24.强引用、软引用、弱引用和虚引用的区别
 
@@ -1710,6 +1781,63 @@ public class Exe2 {
         }
       });
 ```
+
+### 31.BigDecimal
+
+Java在java.math包中提供的API类BigDecimal，用来对超过16位有效位的数进行精确的运算。
+
+#### 方法描述
+
+* add(BigDecimal)        BigDecimal对象中的值相加，然后返回这个对象。
+* subtract(BigDecimal) BigDecimal对象中的值相减，然后返回这个对象。
+* multiply(BigDecimal)  BigDecimal对象中的值相乘，然后返回这个对象。
+* divide(BigDecimal)     BigDecimal对象中的值相除，然后返回这个对象。
+* toString()                将BigDecimal对象的数值转换成字符串。
+* doubleValue()          将BigDecimal对象中的值以双精度数返回。
+* floatValue()             将BigDecimal对象中的值以单精度数返回。
+* longValue()             将BigDecimal对象中的值以长整数返回。
+* intValue()               将BigDecimal对象中的值以整数返回。
+
+#### 四舍五入
+
+* BigDecimal.setScale()方法用于格式化小数点
+* setScale(1)表示保留一位小数，默认用四舍五入方式 
+* setScale(1,BigDecimal.ROUND_DOWN)直接删除多余的小数位，如2.35会变成2.3 
+* setScale(1,BigDecimal.ROUND_UP)进位处理，2.35变成2.4 
+* setScale(1,BigDecimal.ROUND_HALF_UP)四舍五入，2.35变成2.4
+* setScaler(1,BigDecimal.ROUND_HALF_DOWN)四舍五入，2.35变成2.3，如果是5则向下舍
+* setScaler(1,BigDecimal.ROUND_CEILING)接近正无穷大的舍入
+* setScaler(1,BigDecimal.ROUND_FLOOR)接近负无穷大的舍入，数字>0和ROUND_UP作用一样，数字<0和ROUND_DOWN作用一样
+* setScaler(1,BigDecimal.ROUND_HALF_EVEN)向最接近的数字舍入，如果与两个相邻数字的距离相等，则向相邻的偶数舍入。
+
+```java
+//保留两位小数并向上取整
+BigDecimal assemblyPrice = assemblyPrice.setScale(2,BigDecimal.ROUND_HALF_UP);
+```
+
+#### BigDecimal数据的比较
+
+此方法的返回类型为int ，它可以返回任何给定值
+
+num.compareTo(BigDecimal.ZERO)==0   num等于0时，返回 0
+
+num.compareTo(BigDecimal.ZERO) > 0   num大于0时，返回 1
+
+num.compareTo(BigDecimal.ZERO) < 0   num小于0时，返回 -1
+
+### 32.校验一个String类型的变量是否为空
+
+在**校验一个String类型的变量是否为空**时，通常存在3中情况：
+
+- 是否为 null
+- 是否为 ""
+- 是否为空字符串(引号中间有空格) 如： " "
+
+StringUtils的isBlank()方法可以一次性校验这三种情况，返回值都是true,否则为false
+
+
+
+
 
 
 

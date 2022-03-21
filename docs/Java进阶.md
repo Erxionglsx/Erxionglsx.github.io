@@ -1509,7 +1509,30 @@ String str = new String("hello");
 
 **上面的语句中变量str放在栈上，用new创建出来的字符串对象放在堆上，而"hello"这个字面量是放在方法区的。**
 
-### 6. GC垃圾回收
+### 6.问题排查
+
+1. 通过<font color="lighblue">jps</font>命令查看Java进程「基础」信息（进程号、主类）。这个命令很常用的就是用来看当前服务器有多少Java进程在运行，它们的进程号和加载主类是啥
+
+2. 通过<font color="lighblue">jstat</font>命令查看Java进程「统计类」相关的信息（类加载、编译相关信息统计，各个内存区域GC概况和统计）。这个命令很常用于看GC的情况
+
+   > https://www.cnblogs.com/sxdcgaq8080/p/11089841.html
+
+3. 通过<font color="lighblue">jinfo</font>命令来查看和调整Java进程的「运行参数」。
+
+4. 通过<font color="lighblue">jmap</font>命令来查看Java进程的「内存信息」。这个命令很常用于把JVM内存信息dump到文件，然后再用MAT( Memory Analyzer tool 内存解析工具)把文件进行分析
+
+5. 通过<font color="lighblue">jstack</font>命令来查看JVM「线程信息」。这个命令用常用语排查死锁相关的问题
+6. 还有近期比较热门的<font color="lighblue">Arthas</font>（阿里开源的诊断工具），涵盖了上面很多命令的功能且自带图形化界面。
+
+![](https://note.youdao.com/yws/api/personal/file/BC2C14EBF291430D9F01C36ABBE9334B?method=download&shareKey=73acd55a5a3b41b27606f17b626f55dc)
+
+
+
+
+
+
+
+### 7. GC垃圾回收
 
 > https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw
 
@@ -1597,7 +1620,7 @@ java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载
 
 通过反射来生成对象主要有两种方式：
 
-- 使用Class对象的newInstance()方法来创建Class对象对应类的实例。
+- 类加载器负责读取 Java 字节代码，并转换成 java.lang.Class类的一个实例。每个这样的实例用来表示一个 Java 类。通过此实例的 newInstance()方法就可以创建出该类的一个对象。
 
 ```java
 Class<?> c = String.class;
@@ -1645,6 +1668,62 @@ public Method getMethod(String name, Class<?>... parameterTypes)
 public T newInstance(Object ... initargs)
 ```
 
+**获取类的成员变量（字段）信息**
+
+- getFiled：访问公有的成员变量
+- getDeclaredField：所有已声明的成员变量，但不能得到其父类的成员变量
+
+**调用方法**
+
+当我们从类中获取了一个方法后，我们就可以用 `invoke()` 方法来调用这个方法。
+
+```java
+public Object invoke(Object obj, Object... args) throws IllegalAccessException,IllegalArgumentException,InvocationTargetException
+```
+
+```java
+public class test1 {
+    public static void main(String[] args) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        Class<?> klass = methodClass.class;
+        //创建methodClass的实例
+        Object obj = klass.newInstance();
+        //获取methodClass类的add方法
+        Method method = klass.getMethod("add",int.class,int.class);
+        //调用method对应的方法 => add(1,4)
+        Object result = method.invoke(obj,1,4);
+        System.out.println(result);
+    }
+}
+class methodClass {
+    public final int fuck = 3;
+    public int add(int a,int b) {
+        return a+b;
+    }
+    public int sub(int a,int b) {
+        return a+b;
+    }
+}
+```
+
+**利用反射创建数组**
+
+数组在Java里是比较特殊的一种类型，它可以赋值给一个Object Reference。
+
+```java
+public static void testArray() throws ClassNotFoundException {
+        Class<?> cls = Class.forName("java.lang.String");
+        Object array = Array.newInstance(cls,25);
+        //往数组里添加内容
+        Array.set(array,0,"hello");
+        Array.set(array,1,"Java");
+        Array.set(array,2,"fuck");
+        Array.set(array,3,"Scala");
+        Array.set(array,4,"Clojure");
+        //获取某一项的内容
+        System.out.println(Array.get(array,3));
+    }
+```
+
 **反射的优点：**
 
 - **可扩展性** ：应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。
@@ -1658,7 +1737,6 @@ public T newInstance(Object ... initargs)
 - **性能开销** ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。
 - **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
 - **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
-
 
 
 
