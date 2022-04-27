@@ -4,7 +4,7 @@
 
 ------
 
-[TOC]
+
 
 ![](https://note.youdao.com/yws/api/personal/file/407E488E01E54AE9BD7FB229812E6190?method=download&shareKey=a7651e6fbc242415d2b066ffca48b743)
 
@@ -56,7 +56,7 @@ Git使用GitHub提交：ssh -T [git@github.com](http://mailto:git@github.com)
 
 ## Gitee协同开发：
 
-**Idea**中提交项目代码到Gitee，协同开发：
+**IDEA**中提交项目代码到Gitee，协同开发：
 
 第一次打开setting，搜索git，输入本地git.exe地址。
 

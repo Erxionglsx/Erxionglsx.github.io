@@ -1526,12 +1526,6 @@ String str = new String("hello");
 
 ![](https://note.youdao.com/yws/api/personal/file/BC2C14EBF291430D9F01C36ABBE9334B?method=download&shareKey=73acd55a5a3b41b27606f17b626f55dc)
 
-
-
-
-
-
-
 ### 7. GC垃圾回收
 
 > https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw

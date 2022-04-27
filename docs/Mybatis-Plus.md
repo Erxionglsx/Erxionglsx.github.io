@@ -363,6 +363,34 @@ public void testOptimisticLocker2(){
     }
 ```
 
+### 更新操作
+
+```java
+//根据ID更新
+User user = new User();user.setUserld(1);
+user.setAge(29);
+user.updateByld();
+or
+lnteger rows = userMapper.updateByld(user);
+
+//条件构造器作为参数进行更新
+UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();updateWrapper.eq("name", "shimin");
+User user = new User();
+user.setAge(18);
+lnteger rows = userMapper.update(user, updateWrapper);
+
+//条件构造器Set方法
+//假设只更新一个字段在使用updateWrapper的构造器中也需要构造一个实体对象,这样比较麻烦。可以使用updateWrapper的set方法
+UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+updateWrapper.eq("name","shimin").set("age", 35);
+lnteger rows = userMapper.update(null, updateWrapper);
+
+//lambda构造器
+LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+lambdaUpdateWrapper.eq(User:.getRealName, "shimin").set(User::getAge,34);
+lnteger rows = userMapper.update(null, lambdaUpdateWrapper);
+```
+
 ### 分页查询
 
 1. 原始的 limit 进行分页 

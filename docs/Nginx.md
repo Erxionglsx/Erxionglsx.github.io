@@ -13,7 +13,7 @@
 **1. 使用远程连接工具连接Centos7操作系统**
 **2. 安装nginx相关依赖**
 
-```
+```nginx
 gcc
 pcre
 openssl
@@ -22,26 +22,26 @@ zlib
 
 ① 安装 nginx 需要先将官网下载的源码进行编译，编译依赖 gcc 环境，如果没有 gcc 环境，则需要安装：
 
-```
+```nginx
 $ yum install gcc-c++
 ```
 
 ② PCRE(Perl Compatible Regular Expressions) 是一个Perl库，包括 perl 兼容的正则表达式库。nginx 的 http 模块使用 pcre 来解析正则表达式，所以需要在 linux 上安装 pcre 库，pcre-devel 是使用 pcre 开发的一个二次开发库。nginx也需要此库。命令：
 
-```
+```nginx
 $ yum install -y pcre pcre-devel
 ```
 
 ③ zlib 库提供了很多种压缩和解压缩的方式， nginx 使用 zlib 对 http 包的内容进行 gzip ，所以需要在 Centos 上安装 zlib 库。
 
-```
+```nginx
 $ yum install -y zlib zlib-devel
 ```
 
 ④ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及 SSL 协议，并提供丰富的应用程序供测试或其它目的使用。
 nginx 不仅支持 http 协议，还支持 https（即在ssl协议上传输http），所以需要在 Centos 安装 OpenSSL 库。
 
-```
+```nginx
 $ yum install -y openssl openssl-devel
 ```
 
@@ -53,13 +53,13 @@ $ yum install -y openssl openssl-devel
 >
 > b. **使用wget命令下载（推荐）**。确保系统已经安装了wget，如果没有安装，执行 yum install wget 安装。
 
-```
+```nginx
 $ wget -c https://nginx.org/download/nginx-1.19.0.tar.gz
 ```
 
 ② 依然是直接命令：
 
-```
+```nginx
 $ tar -zxvf nginx-1.19.0.tar.gz$ 
 cd nginx-1.19.0
 ```
@@ -70,13 +70,13 @@ cd nginx-1.19.0
 
 1.使用默认配置
 
-```
+```nginx
 $ ./configure
 ```
 
 2.自定义配置（不推荐）
 
-```
+```nginx
 $ ./configure \--prefix=/usr/local/nginx \--conf-path=/usr/local/nginx/conf/nginx.conf \--pid-path=/usr/local/nginx/conf/nginx.pid \--lock-path=/var/lock/nginx.lock \--error-log-path=/var/log/nginx/error.log \--http-log-path=/var/log/nginx/access.log \--with-http_gzip_static_module \--http-client-body-temp-path=/var/temp/nginx/client \--http-proxy-temp-path=/var/temp/nginx/proxy \--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \--http-scgi-temp-path=/var/temp/nginx/scgi
 ```
 
@@ -84,25 +84,25 @@ $ ./configure \--prefix=/usr/local/nginx \--conf-path=/usr/local/nginx/conf/ngin
 
 ④ 编辑安装
 
-```
+```nginx
 $ make && make install
 ```
 
 查看版本号(`使用nginx操作命令前提条件:必须进入nginx的目录/usr/local/nginx/sbin`.)
 
-```
+```nginx
 $ ./nginx -v
 ```
 
 查找安装路径：
 
-```
+```nginx
 $ whereis nginx
 ```
 
 ⑤ 启动，停止nginx
 
-```
+```nginx
 $ cd /usr/local/nginx/sbin/
 $ ./nginx 
 $ ./nginx -s stop
@@ -112,7 +112,7 @@ $ ./nginx -s reload
 
 查询nginx进程：
 
-```
+```nginx
 $ ps aux|grep nginx
 ```
 
@@ -128,8 +128,7 @@ $ ps aux|grep nginx
 
 ![](https://note.youdao.com/yws/api/personal/file/7748A991B4A44E59A30D37D336053642?method=download&shareKey=87d920f263eded84e2529d2670f6ac38)
 
-**反向代理**：其实客户端对代理是无感知的，因为客户端不需要任何配置就可以访问，我们只需要将请求发送到反向代理服务器，由反向代理服务器去选择目标服务器获取数据后,
-再返回给客户端，此时反向代理服务器和目标服务器对外就是一个服务器，暴露的是代理服务器地址，隐藏了真实服务器IP地址。
+**反向代理**：其实客户端对代理是无感知的，因为客户端不需要任何配置就可以访问，我们只需要将请求发送到反向代理服务器，由反向代理服务器去选择目标服务器获取数据后，再返回给客户端，此时反向代理服务器和目标服务器对外就是一个服务器，暴露的是代理服务器地址，隐藏了真实服务器IP地址。
 
 ![](https://note.youdao.com/yws/api/personal/file/650E9C0D631B4D958BE223B2EE771700?method=download&shareKey=f24b20edfe96f9f120cce6b71fbacdad)
 
@@ -151,25 +150,25 @@ $ ps aux|grep nginx
 
 2.查看Nginx的版本号
 
-```java
+```nginx
 ./nginx -v
 ```
 
 3.启动Nginx
 
-```java
+```nginx
 ./nginx
 ```
 
 4.关闭Nginx
 
-```java
+```nginx
 ./nginx -s stop
 ```
 
 5.重启Nginx
 
-```java
+```nginx
 ./nginx -s reload
 ```
 
@@ -260,7 +259,7 @@ location指令说明，该指令用于匹配URL。
 
 语法如下:
 
-```java
+```
 location [ = | ~ | ~* | ^~] uri {
 
 }
@@ -343,9 +342,7 @@ Nginx动静分离简单来说就是把动态跟静态请求分开，可以理解
 
 ![](https://note.youdao.com/yws/api/personal/file/AE6BF2D8C2AB45FA91644088533C2F75?method=download&shareKey=ddbe64f5c2e89e4fec1b88ebb6ae5137)
 
-```
-通过location指定不同的后缀名实现不同的请求转发。通过expires参数设置，可以使浏览器缓存过期时间，减少与服务器之前的请求和流量。具体Expires定义: 是给一个资源设定一个过期时间，也就是说无需去服务端验证，直接通过浏览器自身确认是否过期即可，所以不会产生额外的流量。此种方法非常适合不经常变动的资源。(如果经常更新的文件，不建议使用Expires来缓存)，如果设置3d, 表示在这3天之内访问这个URL, 发送一个请求，比对服务器该文件最后更新时间没有变化，则不会从服务器抓取，返回状态码304,如果有修改，则直接从服务器重新下载，返回状态码200。
-```
+​       通过location指定不同的后缀名实现不同的请求转发。通过expires参数设置，可以使浏览器缓存过期时间，减少与服务器之前的请求和流量。具体Expires定义: 是给一个资源设定一个过期时间，也就是说无需去服务端验证，直接通过浏览器自身确认是否过期即可，所以不会产生额外的流量。此种方法非常适合不经常变动的资源。(如果经常更新的文件，不建议使用Expires来缓存)，如果设置3d, 表示在这3天之内访问这个URL, 发送一个请求，比对服务器该文件最后更新时间没有变化，则不会从服务器抓取，返回状态码304,如果有修改，则直接从服务器重新下载，返回状态码200。
 
 **2、准备工作**
 
@@ -383,7 +380,7 @@ http://192.168.17.129/www/a.html
 
 ![](https://note.youdao.com/yws/api/personal/file/4855DE92BA5840A6ABD976882360353C?method=download&shareKey=afeb059f5ff78504ab3f3ff1c5d6e5e4)
 
-* 需要两台nginx服务器。
+* 需要两台nginx服务器
 * 需要keepalived
 * 需要虚拟ip
 
@@ -397,7 +394,7 @@ http://192.168.17.129/www/a.html
 
 使用yum命令进行安装
 
-```
+```nginx
 $ yum install keepalived  #安装命令
 $ rpm -q -a keepalived    #查看是否已经安装上
 ```
@@ -410,7 +407,7 @@ $ rpm -q -a keepalived    #查看是否已经安装上
 
 （1）修改keepalived的配置文件`keepalived.conf`为：
 
-```
+```nginx
 global_defs {
 	notification_email {
 	  acassen@firewall.loc
@@ -447,7 +444,7 @@ vrrp_instance VI_1 {
 
 （2）在路径/usr/local/src/ 下新建检测脚本 nginx_check.sh，相当于哨兵一直在监视。
 
-```shell
+```sh
 #! /bin/bash
 A=`ps -C nginx -no-header | wc - 1`
 if [ $A -eq 0];then
@@ -461,7 +458,7 @@ fi
 
 (3) 把两台服务器上nginx和keepalived启动
 
-```
+```nginx
 $ systemctl start keepalived.service		#keepalived启动
 $ ps -ef I grep keepalived		#查看keepalived是否启动
 ```
@@ -472,7 +469,7 @@ $ ps -ef I grep keepalived		#查看keepalived是否启动
 
 (2) 把主服务器(192.168.17.129) nginx和keealived停止，再输入192.168.17.50.
 
-```
+```nginx
 $ systemctl stop keepalived.service  #keepalived停止
 ```
 
@@ -498,7 +495,7 @@ Nginx同redis类似都采用了io多路复用机制，每个worker都是一个�
 
 **5、连接数worker_ connection**
 
-`这个值是表示每个worker进程所能建立连接的最大值，所以，一个nginx 能建立的最大连接数，应该是worker.connections * worker processes。当然，这里说的是最大连接数，对于HTTP 请求本地资源来说，能够支持的最大并发数量是worker.connections * worker processes,如果是支持http1.1的浏览器每次访问要占两个连接，所以普通的静态访问最大并发数是: worker.connections * worker.processes / 2, 而如果是HTTP作为反向代理来说，最大并发数量应该是worker.connections * worker_proceses/4. 因为作为反向代理服务器，每个并发会建立与客户端的连接和与后端服务的连接，会占用两个连接.`
+这个值是表示每个worker进程所能建立连接的最大值，所以，一个nginx 能建立的最大连接数，应该是worker.connections * worker processes。当然，这里说的是最大连接数，对于HTTP 请求本地资源来说，能够支持的最大并发数量是worker.connections * worker processes,如果是支持http1.1的浏览器每次访问要占两个连接，所以普通的静态访问最大并发数是: worker.connections * worker.processes / 2, 而如果是HTTP作为反向代理来说，最大并发数量应该是worker.connections * worker_proceses/4. 因为作为反向代理服务器，每个并发会建立与客户端的连接和与后端服务的连接，会占用两个连接。
 
 第一个: 发送请求，占用了woker的几个连接数?
 答案: 2或者4个。

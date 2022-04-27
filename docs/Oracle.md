@@ -146,9 +146,9 @@ grant connect,resource to t514;
 
 ```sql
 create table 表名(
-字段1 数据类型,
-字段2 数据类型,
-....
+  字段1 数据类型,
+  字段2 数据类型,
+  ....
 );
 ```
 
@@ -218,7 +218,7 @@ alter table stu add phone char(11);
 Oracle：
 
 - **用户是属于某个数据库**（不是数据库软件）的，在数据库中我们创建新用户。
-- 一个数据库中可以创建多个用户，不同数据库之间用户是不通用的
+- 一个数据库中可以创建多个用户，不同数据库之间用户是不通用的。
 - 每个用户都可以创建属于自己的表，用户之间的表不通用。
 
 ![](https://note.youdao.com/yws/api/personal/file/C6A4D2142A19469592EF30A343ED5C99?method=download&shareKey=e397153a6a5cdbf0631a98a556bc7390)

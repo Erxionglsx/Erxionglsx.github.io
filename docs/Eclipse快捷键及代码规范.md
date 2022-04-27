@@ -111,3 +111,11 @@ Project--Generate Javadoc--展开项目--选择项目的所有包--Next--Next--�
 **生成移动webapp：**
 
 使用HBuilder，选中项目，右键选择转成移动App，生成json文件，双击json文件，云端获取id，下边可选择图标配置（png），启动图片配置(png)，Ctrl+S保存。选中工程，发行-云打包-打原生安装包，可取消广告。打包后下载文件。
+
+
+
+**使用postman调用后台接口**
+
+选中请求的方法，右键/Copy/Copy as cURL(bash)
+
+postman的Import/Raw text

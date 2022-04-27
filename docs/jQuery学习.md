@@ -2,13 +2,15 @@
 
 > JavaScript框架
 >
+> 代码参考：E:\编程软件\HBuilderX\训练\JQuery
+>
 > 视频参考B站颜群的jQuery视频
 
 ------
 
 [TOC]
 
-## 1.JQuery包的下载和导入
+### 1.JQuery包的下载和导入
 
 下载的版本：
 
@@ -25,7 +27,7 @@ jquery-3.3.1.js ：常规版，开发版265KB
 		<script type="text/javascript">
 ```
 
-## 2.DOM对象与JQuery对象
+### 2.DOM对象与JQuery对象
 
 <font color="lighblue">$(document).ready(function(){...})</font>：初始化函数， 当网页中的dom元素（不包含图片、视频、资源）全部加载完毕后 立刻执行
 onload :  
@@ -94,7 +96,7 @@ js对象 直接写title
 * 数组：jquery对象[0]
 * 集合：jquery对象.get(0)
 
-## 3.jQuery选择器
+### 3.jQuery选择器
 
 **1.基本选择器**
 
@@ -291,7 +293,7 @@ jquery:没有onclick();
 	});
 });
 ```
-## 4.windows事件：ready();
+### 4.windows事件：ready();
 
 <font color="lighblue">>鼠标事件</font> ：
 	
@@ -494,7 +496,7 @@ function test()
   
 * 隐藏：hide()	fadeOut()	slideUp();
 
-## 5.操作DOM
+### 5.操作DOM
 
 **a.样式操作**
 
@@ -695,18 +697,19 @@ b.**内容操作**
 
 * <font color="lighblue">后代集合</font> (不推荐使用，影响性能)
   		 $(...).find( "li")
-
-        		 ```jsp
-        		 <script type="text/javascript">
-        		    $("#ul1").children().css({
-        		        "color":"blue";
-        		    });
-        		    $("#ul2").find("#li2").css({
-        		        "color":"red";
-        		    });
-        		 </script>
-        		 ```
-  
+				
+     
+     ```jsp
+     <script type="text/javascript">
+         $("#ul1").children().css({
+             "color":"blue";
+         });
+         $("#ul2").find("#li2").css({
+             "color":"red";
+         });
+     </script>
+     ```
+     
 * <font color="lighblue">同辈集合</font> 
 
   * next()：后一个  +
@@ -748,7 +751,7 @@ b.**内容操作**
        });
        ```
 
-## 6.CSS-dom操作
+### 6.CSS-dom操作
 
 * offset()：偏移量（左上角的点）,left top
   	
@@ -879,6 +882,180 @@ if(....不合理的情况) alert() ; return false ;
 
 使用：
 手写的正则表达式规则.test(校验的值) -> true|false
+
+### 7.jQuery操作Ajax
+
+#### 1.jQuery.load()方法
+
+* load()方法从服务器加载数据，并把返回的数据放入被选元素中。
+
+* 语法：$(selector).load(URL,data,callback);
+
+  * 必须的URL参数规定您希望请求的URL
+  * 可选的data参数规定连同请求发送的数据
+  * 可选的callback参数是请求成功后所执行的函数名
+
+  ```jsp
+  <script type="text/javascript">
+      $("document").ready(function(){
+          $("#1").click(function () {
+                $("#div1").load(
+                    "http://localhost:8080/train_8_4_war_exploded/ZB/ajax/text.txt",
+                    function (data,status) {
+                        alert(status);
+                    }
+                );
+          });
+      });
+  </script>
+  <body>
+      <div id="div1">
+          加载服务器的数据
+      </div>
+      <button id="1">测试load</button>
+  </body>
+  ```
+
+#### 2.jQuery.get()请求
+
+  * $.get()方法通过GET请求从服务器上请求数据。
+
+  语法：$.get(URL,data.callback);
+
+  * 必须的URL参数规定您希望请求的URL
+  * 可选的data参数规定连同请求发送的数据
+  * 可选的callback参数是请求成功后所执行的函数名
+
+  ```jsp
+<script type="text/javascript">
+    $("document").ready(function() {
+            $("#1").click(function () {
+                $.get(
+                    "http://localhost:8080/train_8_4_war_exploded/ZB/ajax/success.jsp",
+                    {
+                        "city":"成都",
+                        "street":"天府"
+                     },
+                    function(data,status){
+                        alert(status)
+                        $("#div1").html(data)
+                    });
+            });
+    });
+</script>
+<body>
+    <div id="div1">服务器的返回数据</div>
+    <button id="1">测试get</button>
+</body>
+  ```
+
+```jsp
+<!--success.jsp-->
+<%
+   String city=request.getParameter("city");
+   String street=request.getParameter("street");
+%>
+<body>
+    <%
+        out.print(city);
+        out.print(street);
+    %>
+</body>
+```
+
+#### 3..jQuery.post()请求
+
+* $.post()方法通过POST请求从服务器上请求数据。
+
+  语法：$.post(URL,data,callback);
+
+  * 必须的URL参数规定您希望请求的URL
+  * 可选的data参数规定连同请求发送的数据
+  * 可选的callback参数是请求成功后所执行的函数名
+
+  ```jsp
+  <script type="text/javascript">
+     $("document").ready(function(){
+         $("#1").clcik(function(){
+             $.post(
+                "http://localhost:8080/train_8_4_war_exploded/ZB/ajax/check.jsp",
+                 {
+                     "username":document.getElementById("username").value,
+                     "password":document.getElementById("password").value           
+                 },
+                 function (data,status){
+                     $("#div1").html(data)
+                 }
+             );
+         });
+     });
+  </script>
+  <body>
+      用户名：<input type="text" name="username">
+      密码：<input type="password" name="password">
+      <div id="div1"></div>
+      <button id="1">测试post</button>
+  </body>
+  ```
+
+  ```jsp
+  <!--check.jsp-->
+  <% String username = request.getParmeter("username");
+  String password = request.getParmeter("password");%>
+  <body>
+      <%
+          if(username.equals("bobo")&&password.equals("123")){
+              out.println("登陆成功");
+          }else{
+              out.println("登陆失败");
+          }
+      %>
+  </body>
+  ```
+
+#### 4.jQuery.ajax()请求
+
+```jsp
+<script type="text/javascript">
+    $("document").ready(function(){
+        $("#1").click(function(){
+            $.ajax({
+                url:"http://localhost:8080/train_8_4_war_exploded/ZB/ajax/result.jsp",
+                type:"get",
+                data:{
+                    "city":document.getElementById("city").value,
+                    "street":document.getElementById("street").value
+                },
+                success:function (data,status) {
+                    alert(status);
+                    $("#div1").html(data);
+                }
+            });
+        });
+    });
+</script>
+<body>
+  城市：<input id="city" type="text" name="city">
+  街道：<input id="street" type="text" name="street">
+  <div id="div1">
+      服务器加载数据
+  </div>
+<button id="1">通用测试</button>
+</body>
+```
+
+```jsp
+<%
+    String city=request.getParameter("city");
+    String street=request.getParameter("street");
+%>
+<body>
+<%
+    out.print(city);
+    out.print(street);
+%>
+</body>
+```
 
 
 

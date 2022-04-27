@@ -4,10 +4,11 @@
 
 > 阿里云大学Servlet课程
 >
+> 创建Servlet项目，web工程使用New Dynamic Web Project
 
 [TOC]
 
-## 1.什么是Servlet
+#### 1.什么是Servlet
 
   Servlet是JavaWeb的三大组件之一，它属于动态资源。Servlet的作用是处理请求，服务器会把接受到的请求交给Servlet来处理，在Servlet中通常需要：
 
@@ -19,7 +20,7 @@
 
   例如客户端发出登录请求，或者输出注册请求，这些请求都应该有Servlet来完成处理！Servlet需要我们自己来编写，每个Servlet必须实现javax.servlet.Servlet接口。
   
-## 2.实现Servlet的方式
+#### 2.实现Servlet的方式
 
 实现Servlet有三种方式：
 
@@ -31,7 +32,7 @@
 
   通常我们会去继承HttpServlet类来完成我们的Servlet,但学习Servlet还要从javax.servlet.Servlet接口开始学习。
 
-## 3.生命周期方法： 
+#### 3.生命周期方法： 
 
 * void init(ServletConfig)：出生之后（1次）
 * void service(ServiceRequest request,ServletResponse response)：每次处理请求时都会被调用；
@@ -94,7 +95,7 @@ public class AServlet implements Servlet {
 
 **注：Servlet类由我们来写，但对象由服务器来创建，并且有服务器来调用相应的方法。**
 
-## 4.ServletConfig
+#### 4.ServletConfig
 
 1个ServletConfig对象，对应一段wen.xml中Servlet的配置信息！
 
@@ -140,7 +141,7 @@ public class AServlet implements Servlet {
 }
 ```
 
-## 5.HttpServlet
+#### 5.HttpServlet
 
 ```java
 HttpServlet extends GenderServlet {
@@ -163,7 +164,7 @@ HttpServlet extends GenderServlet {
 * 可以创建无状态成员！
 * 可以创建有状态的成员，但状态必须为只读的！
 
-## 6.url-pattern
+#### 6.url-pattern
 
 <url-pattern>是<servlet-mapping>的子元素，用来指定Servlet的访问路径，即URL。它必须是以"/"开头。
 
@@ -190,7 +191,7 @@ HttpServlet extends GenderServlet {
 
 通配符是一种模糊匹配URL的方式，如果存在更具体的<url-pattern>，那么访问路径会去匹配具体的<url-pattern>。
 
-## 7.ServletContext（重要）
+#### 7.ServletContext（重要）
 
 > 一个项目只有一个ServletContext对象
 >
@@ -324,7 +325,7 @@ public void doGet(...) ...{
   	}
   ```
 
-## 8.BeanServlet
+#### 8.BeanServlet
 
 > 代码参考day09_5 
 
@@ -334,7 +335,7 @@ public void doGet(...) ...{
 * 请求客户端必须传递名为method的参数
 * 请求转发和重定向
 
-## 9.JSP和Servlet
+#### 9.JSP和Servlet
 
 JSP是一种特殊的Servlet
 
@@ -375,7 +376,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 </body>
 ```
 
-## 10.过滤器
+#### 10.过滤器
 
 当需要限制用户访问某些服务器上的资源时，需要提前实现某些拦截功能的时候，就可以使用过滤器完成。可以定义多个过滤器。
 
@@ -417,4 +418,8 @@ public class LoginFilter implements Filter {
 <!--注解方式，在LoginFilter类上添加
 @WebFilter("/LoginServlet")-->
 ```
+
+### Servlet项目及分页
+
+> 参考：E:\IdeaWork\Product_Trade\Product_Trade
 

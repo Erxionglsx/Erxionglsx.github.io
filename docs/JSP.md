@@ -1,4 +1,4 @@
-# JSP
+# JSP入门
 
 > Cookie、验证码、HttpSession、pageContext、EL表达式、标签库
 
@@ -6,9 +6,7 @@
 
 [TOC]
 
-## JSP入门
-
-### 1.JSP和Servlet
+#### 1.JSP和Servlet
 
 JSP是一种特殊的Servlet
 
@@ -113,7 +111,9 @@ public class LoginServlet extends HttpServlet {
 </html>
 ```
 
-### 2.Cookie和验证码
+#### 2.Cookie和验证码
+
+> 代码参考day09_5和day09_3
 
 1. ##### Http协议和Cookie
 
@@ -173,7 +173,7 @@ response.addCookie(cookie);
  用户名：<input type="text" name="username" value="<%=uname%>"/></br> 
 ```
 
-### 3.HttpSession
+#### 3.HttpSession
 
 1. ##### HttpSession概述
 
@@ -212,7 +212,7 @@ response.addCookie(cookie);
      ```
 
 
-### 4.page指令
+#### 4.page指令
 
 1. pageEncoding和contentType
 
@@ -264,7 +264,7 @@ response.addCookie(cookie);
    </error-page>
    ```
 
-### 5.九大内置对象
+#### 5.九大内置对象
 
 * <font color="lighblue" >out</font>：jsp的输出流，用来向客户端响应
 * <font color="lighblue" >page</font>：当前jsp对象，它的引用类型是Object，即真身中的如下代码：Object page = this;
@@ -276,7 +276,7 @@ response.addCookie(cookie);
 * <font color="lighblue" >session</font>：HttpSession类的对象
 * <font color="lighblue" >application</font>：ServletContext类的对象
 
-### 6.pageContext
+#### 6.pageContext
 
 Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
 
@@ -289,7 +289,7 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
   * 全域查找：pageContext.findAttribute("xxx");从小到大，依次查找
   * 获取其他8个内置对象
 
-### 7.EL表达式
+#### 7.EL表达式
 
 ![](https://note.youdao.com/yws/api/personal/file/77545D9098404F7886A5910B829F429F?method=download&shareKey=a4d8835d97878cc433cf38ca1c23054c)
 
@@ -363,7 +363,7 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
        %>
    ```
 
-### 8.重定向、请求转发
+#### 8.重定向、请求转发
 
 ```jsp
 <body>
@@ -379,11 +379,11 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
 </body>
 ```
 
-## 标签库
+### 标签库
 
-### core标签库 --> c标签
+#### core标签库 --> c标签
 
-### 1.set、out标签
+#### 1.set、out标签
 
 <font color="lighblue" >头标签添加：<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %></font>
 
@@ -414,13 +414,13 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
   <!--结果：<script>alert('hello')</script> -->
   ```
 
-### 2.remove标签
+#### 2.remove标签
 
 * <remove>:删除域变量
   * var:变量名
   * scope:如果不给出scope，表示删除所有域中的该名称的变量：如果指定了域，那么只删除该域的变量。
 
-### 3.url标签
+#### 3.url标签
 
 * value:指定一个路径，它会在路径前面自动添加项目名。
 
@@ -439,7 +439,7 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
 
 * scope:它与var一起使用，用来保存url。
 
-### 4.if标签，对应java中的if语句
+#### 4.if标签，对应java中的if语句
 
 * <c: if test="布尔类型">....</c: if>，if标签的test属性必须是一个boolean类型的值，如果test的值为true，那么执行if标签的内容，否则不执行。
 
@@ -450,7 +450,7 @@ Servlet中有三大域，而JSP中有四大域，它就是最后一个域对象
 </c:if><!--hello-->
 ```
 
-### 5.choose标签，对应java中if/else 结构
+#### 5.choose标签，对应java中if/else 结构
 
 when标签的test为true时，会执行这个when的内容。当所有的when标签的test都是false是，才执行otherwise标签的内容。
 
@@ -471,7 +471,7 @@ http://localhost:8080/day13_1/index.jsp?soore=77 C级
 -->
 ```
 
-### 6.forEach标签
+#### 6.forEach标签
 
 > 需要导入standard.jar和jstl.jar包
 
@@ -555,7 +555,7 @@ for(String str : strs){
 -->
 ```
 
-### 7.fmt标签
+#### 7.fmt标签
 
 <font color="lighblue" >头标签添加:<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %></font>
 
@@ -589,7 +589,7 @@ fmt库，它是格式化库
    <fmt:formatNumber value="${requestScope.num1 }" pattern="0.000"/> <!--结果：3.142-->
 ```
 
-### 8.include标签
+#### 8.include标签
 
 <font color="lighblue" >动态包含标签</font>，将多个文件通过jsp包含展示出来，但是每个jsp文件都是独立的文件。
 
@@ -614,7 +614,7 @@ fmt库，它是格式化库
 </body>
 ```
 
-### 9.forward标签
+#### 9.forward标签
 
 <font color="lighblue" >请求转发</font>
 
@@ -629,7 +629,7 @@ fmt库，它是格式化库
 </jsp:forward>
 ```
 
-### 10.forTokens标签
+#### 10.forTokens标签
 
 <c: forTokens>标签用于输出操作，像是String类的split()方法和循环输出的一种集合。
 
@@ -666,7 +666,7 @@ fmt库，它是格式化库
     M N O-->
 ```
 
-### 11.redirect标签
+#### 11.redirect标签
 
 进行客户端跳转
 

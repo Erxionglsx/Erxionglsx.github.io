@@ -281,5 +281,3 @@ ps –o nlwp 端口号
 ps -eLo pid ,stat | grep 端口号 | grep running | wc -l
 ```
 
-
-

@@ -52,8 +52,6 @@ Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis�
 
 redis利用队列技术将并发访问变为串行访问，消除了传统数据库串行控制的开销
 
-![](https://img.tool22.com/image/5fdc9a5fc8696.jpg)
-
 Redis的存储是以`key-value`的形式的。Redis中的<font color="lighblue">key一定是字符串</font>，value可以是string、list、hash、set、sortset这几种常用的。
 
 #### SDS简单动态字符串
@@ -92,8 +90,6 @@ struct sdshdr{
 跳跃表(shiplist)是实现sortset(**有序**集合)的底层数据结构之一！
 
 Redis的跳跃表实现由zskiplist和zskiplistNode两个结构组成。其中**zskiplist保存跳跃表的信息**(表头，表尾节点，长度)，**zskiplistNode则表示跳跃表的节点**。
-
-![](https://img.tool22.com/image/5fdc9a5fa588e.jpg)
 
 ### Redis数据库
 
@@ -139,8 +135,6 @@ AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的�
 - 文件写入：调用flushAppendOnlyFile函数，考虑是否要将aof_buf缓冲区写入AOF文件中
 - 文件同步：考虑是否将内存缓冲区的数据真正写入到硬盘
 
-![](https://img.tool22.com/image/5fdc9a5fc8239.jpg)
-
 <font color="lighblue">AOF重写</font>由Redis自行触发(参数配置)，也可以用`BGREWRITEAOF`命令**手动触发**重写操作。
 
 - 要值得说明的是：**AOF重写不需要对现有的AOF文件进行任何的读取、分析。AOF重写是通过读取服务器当前数据库的数据来实现的**！
@@ -148,8 +142,6 @@ AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的�
 <font color="lighblue">AOF后台重写</font>是不会阻塞主进程接收请求的，新的写命令请求可能会导致**当前数据库和重写后的AOF文件的数据不一致**！
 
 为了解决数据不一致的问题，Redis服务器设置了一个**AOF重写缓冲区**，这个缓存区会在服务器**创建出子进程之后使用**。
-
-![](https://img.tool22.com/image/5fdc9a5fc87b5.jpg)
 
 #### RDB和AOF对过期键的策略
 
@@ -184,7 +176,9 @@ RDB和AOF并不互斥，它俩可以**同时使用**。
 
 **主从架构特点：**
 
-![](https://img.tool22.com/image/5fdc9a5f54587.jpg)
+![](https://note.youdao.com/yws/api/personal/file/915454C08E0C4ABDA4CBC2A5FB239494?method=download&shareKey=3b9f4e39570bd5ea676632392595e9b8)
+
+![](https://note.youdao.com/yws/api/personal/file/3F6AB64607AA432589F91B6791764331?method=download&shareKey=8661786fec5aa41a3b4935ee1e9b3f50)
 
 主从架构的**好处**：
 
@@ -204,8 +198,7 @@ RDB和AOF并不互斥，它俩可以**同时使用**。
 - <font color="lighblue">命令传播(command propagate)</font>
   * 主服务器的数据库状态**被修改**，导致主从服务器的数据库状态**不一致**，让主从服务器的数据库状态**重新回到一致状态**。
 
-
-![](https://img.tool22.com/image/5fdc9a5f0297a.jpg)
+![](https://note.youdao.com/yws/api/personal/file/A0C624C3A6F24D85A5593F029C1A7031?method=download&shareKey=ebd42206a16d3723a7ed07dca25f8b53)
 
 ![](https://note.youdao.com/yws/api/personal/file/F12C5A558A8C444F829936F0724A5489?method=download&shareKey=85fab767d8552f10534b82a622316ce9)
 

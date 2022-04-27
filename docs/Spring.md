@@ -162,7 +162,6 @@ spring-scope.xml
 **当我们使用singleton【单例】的时候，从IOC容器获取的对象都是同一个。**
 
 **2、prototype** 
-　　
 
 **当我们使用prototype【多例】的时候，从IOC容器获取的对象都是不同的。**
 

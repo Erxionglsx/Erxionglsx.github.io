@@ -1,4 +1,4 @@
-# Ajax学习
+Ajax学习
 
 > 参考阿里云大学Ajax课程
 
@@ -6,9 +6,9 @@
 
 [TOC]
 
-## 认识Ajax
+## 1.认识Ajax
 
-### 1.Ajax是什么？
+#### 1.ajax是什么？
 
 * aaynchronous javascript and xml；异步的js和xml
 * 它能使用js访问服务器，而且是异步访问
@@ -17,7 +17,7 @@
   * xml:大家都熟悉，java和js都认识
   * json:它是js提供的数据层交互格式，它在ajax中最受欢迎
 
-### 2.异步交互和同步交互
+#### 2.异步交互和同步交互
 
 * **同步：**
   * 发送一个请求，就要等待服务器的响应结束，然后才能发第二个请求！中间这段时间就是一个字“卡”
@@ -51,13 +51,13 @@
     </html>
 ```
 
-### 3.Ajax应用场景
+#### 3.ajax应用场景
 
 * 百度的搜索框
 * 用户注册时（）校验用户名是否被注册过
 * 视频下方的点赞按钮
 
-### 4.Ajax的优缺点
+#### 4.ajax的优缺点
 
 优点：
 
@@ -69,7 +69,9 @@
 * ajax不能应用在所有场景。
 * ajax无端的增多了对服务区的访问次数，给服务器带来了压力。
 
-### 5.Ajax发送异步请求（四步操作）
+#### 5.ajax发送异步请求（四步操作）
+
+> 代码参考ajax2工程
 
 <font color="bluesas">重要一步:在工程中添加 jstl.jar 和 standard.jar 包</font>
 
@@ -172,7 +174,7 @@
   </script>
 ```
 
-### 6.发送post请求
+#### 6.发送post请求
 
 > 如果发送请求时需要带有参数，一般都用POST请求
 
@@ -203,7 +205,9 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
 </script>
 ```
 
-### 7.注册表单之校验用户是否注册
+#### 7.注册表单之校验用户是否注册
+
+> 代码参考web工程的ajax3.jsp和ajax2工程的ajax4.jsp
 
 * 编写页面
 
@@ -284,7 +288,7 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
   ```
 
 
-### 8.响应内容为xml数据
+#### 8.响应内容为xml数据
 
 > 代码参考web/ajax4.jsp和ajax2/ajax3.jsp
 
@@ -293,7 +297,7 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
 * 客户端：
   * var doc = xmlHttp.responseXML; //得到的是Document对象
 
-### 9.省市联动
+#### 9.省市联动
 
 1. 页面
 
@@ -330,7 +334,7 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
    
 6. XStream可以吧JavaBean转换为（序列化为）xml
 
-### 9.JSON的概述
+#### 9.JSON的概述
 
 > 代码参考web工程的json1.jsp和json2.jsp
 
@@ -387,7 +391,7 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
    * 可读性：XML胜出
    * 解析难度：JSON本身就是JS对象（主场作战），所有简单很多
    * 流行度：XML以及流行好多年，但在AJAX领域，JSON更受欢迎。
-## jQuery操作Ajax
+### jQuery操作Ajax
 
 #### 1.jQuery.load()方法
 
@@ -467,7 +471,7 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
 </body>
 ```
 
-#### 3.jQuery.post()请求
+#### 3..jQuery.post()请求
 
 * $.post()方法通过POST请求从服务器上请求数据。
 
@@ -560,7 +564,3 @@ xmlHttp.onreadystatechange = finction() { //xmlHttp的5种状态都会调用本�
 %>
 </body>
 ```
-
-
-
-

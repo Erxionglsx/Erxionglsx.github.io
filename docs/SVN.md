@@ -4,7 +4,7 @@
 
 [TOC]
 
-## 1.SVN是什么？
+#### 1.SVN是什么？
 
 * 代码版本管理工具
 * 它能记住你每次的修改
@@ -34,7 +34,7 @@ TortoiseSVN
 
 Cornstone
 
-## 2.基本操作
+#### 2.基本操作
 
 在https://svnbucket.com创建项目，添加项目简介
 
@@ -68,7 +68,7 @@ Cornstone
 
 ![](https://img.tool22.com/image/5f7310089e2bf.jpg)
 
-## 3.撤销修改或者恢复到某一版本
+#### 3.撤销修改或者恢复到某一版本
 
 撤销本次修改
 
@@ -86,7 +86,7 @@ Cornstone
 
 ![](https://note.youdao.com/yws/api/personal/file/7593E87FF3AA481CA60A77F31DF66B05?method=download&shareKey=4b0b688695fb744385a1315b8e9ea628)
 
-## 4.忽略文件或文件夹
+#### 4.忽略文件或文件夹
 
 忽略文件夹，该文件夹不进行提交(若已提交过，则删除)
 
@@ -114,7 +114,7 @@ Cornstone
 * 经常update同步下他人的代码
 * 二进制文件不要多个人同时操作
 
-## 5.发生提交冲突
+#### 5.发生提交冲突
 
 ![](https://note.youdao.com/yws/api/personal/file/18C8A689E54145B38D2420DD19FB0DB2?method=download&shareKey=c09837805c14a92f9d4e240ce640dc48)
 
@@ -134,7 +134,7 @@ Cornstone
 
 ![](https://note.youdao.com/yws/api/personal/file/105D74FE13324306A5AF84953E5B2893?method=download&shareKey=0546e5695c4b7d59d9af58afb1715308)
 
-## 6.分支
+#### 6.分支
 
 什么时候需要开分支？
 

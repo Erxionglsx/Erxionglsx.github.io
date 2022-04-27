@@ -208,7 +208,40 @@ Nacos支持三种部署模式:
 * 多集群模式-用于多数据中心场景。
   
 
+#### Nacos-Gateway
 
+![](https://note.youdao.com/yws/api/personal/file/66D2BB1169AC4308BA72A103F92C23B3?method=download&shareKey=a8564c87da9abbaf55e1b6be58f54288)
+
+gateway-dev.yaml
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: api-web-lsx #路由id,唯一
+          uri: lb://api-web-lsx #负载到api-web-lsx
+          predicates:
+            - Path=/lsx/apicenter/** #以lsx开头的请求都负载到api-web-lsx服务
+          filters:
+            - StripPrefix=1  
+```
+
+![](https://note.youdao.com/yws/api/personal/file/BB92E09C326A451C9F3894DE08961A89?method=download&shareKey=8342df64676351a8fc8b13d9065298dd)
+
+![](https://note.youdao.com/yws/api/personal/file/F6CD0DE7AF9D411597C484FA7897A338?method=download&shareKey=6d1c640f56626d69aaf1d7ac887702bd)
+
+访问示例：
+
+```
+// gateway访问
+http://192.168.33.7:8001/lsx/apicenter/configDingDing/queryInterfaceConfigPageList
+// 本地访问
+http://localhost:8190/apicenter/configDingDing/queryInterfaceConfigPageList
+```
 
 
 
