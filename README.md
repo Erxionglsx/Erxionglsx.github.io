@@ -58,7 +58,7 @@
   - [OpenFeign](./docs/OpenFeign.md)
   - [GateWay](./docs/GateWay.md)
   - [RocketMQ](./docs/RocketMQ.md)
-  - [SpringCloud Stream](./docs/SpringCloud Stream.md)
+  - [Stream](./docs/Stream.md)
 - 设计模式
   - [设计模式](./docs/设计模式.md)
 - 数据结构与算法

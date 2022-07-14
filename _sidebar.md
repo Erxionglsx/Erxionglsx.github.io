@@ -42,7 +42,7 @@
   - [OpenFeign](./docs/OpenFeign.md)
   - [GateWay](./docs/GateWay.md)
   - [RocketMQ](./docs/RocketMQ.md)
-  - [SpringCloud Stream](./docs/SpringCloud Stream.md)
+  - [Stream](./docs/Stream.md)
   
 * 设计模式
   
