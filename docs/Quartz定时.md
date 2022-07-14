@@ -45,6 +45,16 @@ Quartz比较关键的两个核心组件分别为Job和Trigger
 
 Job 是一个接口，只有一个方法 void execute(JobExecutionContext context)，开发者实现接口来定义任务。JobExecutionContext 类提供了调度上下文的各种信息。
 
+**实现quartz定时的两种方法**
+
+实现Job
+
+```java
+public interface BaseJob extends Job{
+	void execute(JobExecutionContext context) throws JobExecutionException;
+}
+```
+
 ```java
 public class HelloJob implements BaseJob {
   
@@ -55,7 +65,22 @@ public class HelloJob implements BaseJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         _log.error("Hello Job执行时间: " + new Date());
     }
-}  
+} 
+```
+
+继承QuartzJobBean
+
+```java
+public class HelloJob extends QuartzJobBean {
+
+    private static Logger _log = LoggerFactory.getLogger(HelloJob.class);  
+     
+    public HelloJob() {}
+     
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        _log.error("Hello Job执行时间: " + new Date());
+    }
+}
 ```
 
 #### JobDetailImpl 类 / JobDetail 接口

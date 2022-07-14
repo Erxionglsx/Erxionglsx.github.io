@@ -434,7 +434,7 @@ Vue会管理el选项<font color="lighblue">命中的元素</font>及其内部的
 #### v-bind:title
 
 - title属性规定关于元素的额外信息。
-- 这些信息通常会在鼠标移到元素上时显示一段工具<font color="lighblue">提示文本</font>
+- 这些信息通常会在鼠标移到元素上时显示一段工具<font color="lighblue">提示文本</font>。
 - v-bind:title 指令把所在的<span>元素的 title 的值和 message这个属性值绑定在一起了。
 - 网页效果：title 显示的值就是message的属性值
 
@@ -1124,38 +1124,6 @@ vue项目打包
 npm run build
 打包成功后生成dist文件
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -8,7 +8,9 @@
 
 非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。
 
-Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis存储的方式是以`key-value`的形式。
+Redis是**基于内存**，常用作于**缓存**的一种技术，并且Redis存储的方式是以`key-value`的形式。默认有16个库，编号从0开始，0-15，默认使用0号库，库与库之间相互隔离
+
+切换库的命令： select dbid(库编号)  eg：select 1
 
 **Redis作为一个高性能的key-value数据库具有以下特征：**
 
@@ -114,20 +116,45 @@ Redis采用的是**惰性删除+定期删除**两种策略，所以说，在Redi
 
 Redis是基于内存的，如果不想办法将数据保存在硬盘上，一旦Redis重启(退出/故障)，内存的数据将会全部丢失。
 
+**快照(RDB)**：保存这一时刻的数据状态，默认开启
+
+**AOF**：将所有redis写命令记录到日志文件中
+
 #### RDB(快照持久化)
 
-<font color="lighblue">RDB持久化</font>可以**手动**执行，也可以根据服务器配置**定期**执行。RDB持久化所生成的RDB文件是一个经过**压缩**的二进制文件，Redis可以通过这个文件**还原**数据库的数据
+<font color="lighblue">RDB持久化</font>可以**手动**执行，也可以根据服务器配置**定期**执行。RDB持久化所生成的RDB文件是一个经过**压缩**的二进制文件，Redis可以通过这个文件**还原**数据库的数据。生成的文件名为dump.rdb
 
-**两个命令可以生成RDB文件：**
+通过手动调用**SAVE或者BGSAVE**命令或者配置条件触发，将数据库**某一时刻**的数据快照，生成RDB文件实现持久化。
 
-- `SAVE`会**阻塞**Redis服务器进程，服务器不能接收任何请求，直到RDB文件创建完毕为止。
-- `BGSAVE`创建出一个**子进程**，由子进程来负责创建RDB文件，服务器进程可以继续接收请求。
+**两个命令可以手动执行生成RDB文件：**
 
-通过手动调用`SAVE`或者`BGSAVE`命令或者配置条件触发，将数据库**某一时刻**的数据快照，生成RDB文件实现持久化。
+**BGSAVE**创建出一个**子进程**，由子进程来负责创建RDB文件，服务器进程可以继续接收请求。
+
+![](https://note.youdao.com/yws/api/personal/file/B6A9E249EE324FE987B7D624D0124458?method=download&shareKey=5ef826e43cba3ca38ff243d2de5665bc)
+
+**SAVE**会**阻塞**Redis服务器进程，服务器不能接收任何请求，直到RDB文件创建完毕为止。
+
+![](https://note.youdao.com/yws/api/personal/file/E59FAE4EE6AB4576A975ACDFE71742CF?method=download&shareKey=8ecb6d462d2abfe3df13fbda9fe8031c)
 
 #### AOF(文件追加)
 
-AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的数据的。
+AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的数据的。生成的文件名为appendonly.aof。默认不开启，开启持久化命令：appendonly yes
+
+**日志追加频率**
+
+1. always(谨慎使用)
+
+   每个redis写命令都要同步写入硬盘，严重降低redis速度
+
+2. everysec(推荐)
+
+   每秒执行一次同步显示的将多个写命令同步到磁盘
+
+3. no(不推荐)
+
+   由操作系统决定何时同步
+
+配置文件修改频率命令：appendfsync  everysec | always | no
 
 <font color="lighblue">AOF持久化</font>功能的实现可以分为3个步骤：
 
@@ -135,13 +162,18 @@ AOF是通过保存Redis服务器所执行的**写命令**来记录数据库的�
 - 文件写入：调用flushAppendOnlyFile函数，考虑是否要将aof_buf缓冲区写入AOF文件中
 - 文件同步：考虑是否将内存缓冲区的数据真正写入到硬盘
 
-<font color="lighblue">AOF重写</font>由Redis自行触发(参数配置)，也可以用`BGREWRITEAOF`命令**手动触发**重写操作。
+<font color="lighblue">AOF重写</font>由Redis自行触发(参数配置)，也可以用`BGREWRITEAOF`命令**手动触发**重写操作。为了一定程度上减小AOF文件的体积。
 
-- 要值得说明的是：**AOF重写不需要对现有的AOF文件进行任何的读取、分析。AOF重写是通过读取服务器当前数据库的数据来实现的**！
+* 执行BGREWRITEAOF命令，不会阻塞redis的服务。
+* 服务器配置方式自动触发。在redis.conf中，如果设置auto-aof-rewrite-percentage值为100和auto-aof-rewrite-min-size 64mb,并且启用的AOF持久化时,那么当AOF文件体积大于64N,并且AOF文件的体积比上一次重写之后体积大了至少一倍(108%)时，会自动触发。
+
+重写原理：重写aof文件的操作，并没有读取旧的aof文件，而是将整个内存中的数据库内容用命令的方式重写了一个新的aof文件,替换原有的文件这点和快照有点类似。
 
 <font color="lighblue">AOF后台重写</font>是不会阻塞主进程接收请求的，新的写命令请求可能会导致**当前数据库和重写后的AOF文件的数据不一致**！
 
 为了解决数据不一致的问题，Redis服务器设置了一个**AOF重写缓冲区**，这个缓存区会在服务器**创建出子进程之后使用**。
+
+![](https://note.youdao.com/yws/api/personal/file/A13525BECD8A4E97AF030F3899184B19?method=download&shareKey=c2756c1cd942a9cfc389f1fe48a185eb)
 
 #### RDB和AOF对过期键的策略
 
@@ -176,6 +208,10 @@ RDB和AOF并不互斥，它俩可以**同时使用**。
 
 **主从架构特点：**
 
+主从复制架构仅仅用来解决数据的冗余备份，从节点仅仅用来同步数据。
+
+无法解决: 1.master节点出现故障的自动故障转移
+
 ![](https://note.youdao.com/yws/api/personal/file/915454C08E0C4ABDA4CBC2A5FB239494?method=download&shareKey=3b9f4e39570bd5ea676632392595e9b8)
 
 ![](https://note.youdao.com/yws/api/personal/file/3F6AB64607AA432589F91B6791764331?method=download&shareKey=8661786fec5aa41a3b4935ee1e9b3f50)
@@ -184,7 +220,7 @@ RDB和AOF并不互斥，它俩可以**同时使用**。
 
 - 读写分离(主服务器负责写，从服务器负责读)
 - 高可用(某一台从服务器挂了，其他从服务器还能继续接收请求，不影响服务)
-- 处理更多的并发量(每台从服务器**都可以接收读请求**，读QPS就上去了)
+- 处理更多的并发量(每台从服务器**都可以接收读请求**，读QPS就上去了)从复制：
 
 #### 复制功能
 
@@ -207,11 +243,45 @@ RDB和AOF并不互斥，它俩可以**同时使用**。
 - 初次同步：从服务器**没有复制过任何**的主服务器，或者从服务器要复制的主服务器跟上次复制的主服务器**不一样**。
 - 断线后同步：处于**命令传播阶段**的主从服务器因为**网络原因**中断了复制，从服务器通过**自动重连**重新连接主服务器，并继续复制主服务器
 
+#### 搭建主从复制
+
+```properties
+# 1.准备3台机器并修改配置,master为主服务器,redis.conf文件
+- master
+  port 6379
+  bind 0.0.0.0
+  
+- slave1
+  port 6380
+  bind 0.0.0.0
+  slaveof masterip masterport
+  # slaveof指定主服务器ip和端口port，bind开启远程连接权限
+  
+- slave2
+  port 6381
+  bind 0.0.0.0
+  slaveof masterip masterport
+```
+
+![](https://note.youdao.com/yws/api/personal/file/9B31B5C1E2F64ADABD1FEA4AC82301B8?method=download&shareKey=009febd2a1693f5f68b845e8ecf667f7)
+
+```properties
+#2.启动3台机器进行测试
+- cd /usr/redis/bin
+- ./redis-server /root/master/redis.conf
+- ./redis-server /root/slave1/redis.conf
+- ./redis-server /root/slave2/ redis.conf
+```
+
 ### 哨兵(Sentinel)机制
 
 > https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&mid=2247484451&idx=1&sn=5495b1165954cd6b84b011489e04a66b&chksm=ebd74522dca0cc3416ab0ccd3a4ddb4ddd28290c9769596a069d81df3b03f4bad72e27d30a6d&token=620000779&lang=zh_CN&scene=21###wechat_redirect
 
-主服务器挂了，我们可以将从服务器**升级**为主服务器，等到旧的主服务器(挂掉的那个)重连上来，会将它(挂掉的主服务器)变成从服务器。
+主服务器挂了，我们可以将从服务器**升级**为主服务器，等到旧的主服务器(挂掉的那个)重连上来，会将它(挂掉的主服务器)变成从服务器。哨兵就是带有自动故障转移功能的主从架构。可设置多个哨兵，防止脑裂。
+
+无法解决：1.单节点并发压力问题  2.单节点内存和磁盘物理上限
+
+![](https://note.youdao.com/yws/api/personal/file/6B0E6BEDA2F146448BFDF90561A7A31D?method=download&shareKey=153cec115a91a574de66a07f5a851fff)
 
 在正常的情况下，主从加哨兵(Sentinel)机制是这样子的：
 
@@ -238,7 +308,41 @@ Redis提供哨兵机制可以将**选举**一台从服务器变成主服务器
 
 Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因为Sentinel做的事情和Redis服务器是不一样的，所以它们的初始化是有所区别的(比如，Sentinel在初始化的时候并不会载入AOF/RDB文件，因为Sentinel根本就不用数据库)。
 
-主从+哨兵架构可以说Redis是高可用的，但要清楚的是：Redis还是会**丢失数据**的
+#### 搭建哨兵机制
+
+```properties
+#1.在主节点上创建哨兵配置
+-在Master对应redis.conf同目录下新建sentinel.conf文件，名字绝对不能错;
+
+#2.配置哨兵,在sentine1.conf文件中填入内容;
+- sentinel monitor 哨兵监听的名称（自己起名字) ip port 1
+eg:sentinel monitor mymaster 192.168.121.102 6379 1
+
+#3.启动哨兵模式进行测试
+- redis-sentinel /myredis/sentinel.conf
+  说明:这个后面的数字2,是指当有两个及以上的sentinel服务检测到master宕机，才会去执行主从切换的功能。
+```
+
+![](https://note.youdao.com/yws/api/personal/file/0BFF65B195E741A7B85AB53845EE58DE?method=download&shareKey=f41414438a45785da80d7462b32843c5)
+
+application.properties
+
+```properties
+#redis单节点
+#spring.redis.host=192.168.202.206
+#spring.redis.port=7000
+#spring.redis.database=0
+
+#redis sentinel 配置
+#master书写是使用哨兵监听的那个名称
+spring .redis .sentinel.master=mymaster
+#连接的不再是一个具体redis主机,书写的是多个哨兵节点
+spring.redis.sentine1.nodes=192.168.202.206:26379
+```
+
+![](https://note.youdao.com/yws/api/personal/file/BE8A60F50A094CD194B015BAD84CC565?method=download&shareKey=ede8c71f84c099792d77497da8890d6f)
+
+主从+哨兵架构可以说Redis是高可用的，但要清楚的是：Redis还是会**丢失数据**的。
 
 **丢失数据有两种情况：**
 
@@ -280,25 +384,36 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 | allKeys-random  | 从所有 KV 集中随机选择数据淘汰                               |
 | noeviction      | 不淘汰策略，若超过最大内存，返回错误信息                     |
 
+### 集群
+
+Redis在3.0后开始支持Cluster(模式)模式,目前redis的集群支持节点的自动发现,支持slave-master选举和容错,支持在线分片等特性。
+
+- 所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽。
+- 节点的fail是通过集群中超过半数的节点检测失效时才生效。
+- 客户端与redis节点直连,不需要中间proxy层.客户端不需要连接集群所有节点,连接集群中任何一个可用节点即可
+- redis-cluster把所有的物理节点映射到[0-16383]slot上,cluster 负责维护node<->slot<->value
 
 
-### Redis的安装和使用
+
+### Redis的使用
+
+#### Redis的安装和使用
 
 **配置redis的环境变量，Path路径中添加redis文件夹路径**
 
 #### Redis命令使用参考
 
-> http://doc.redisfans.com/
+> https://www.bilibili.com/video/BV1jD4y1Q7tU?p=12
 
 #### 开启Redis
 
 * 启动Redis
 
   * ```java
-    redis-server 
+    redis-server
     ```
 
-  * 指定配置文件
+* 指定配置文件
 
   * ```
     ./redis-server /etc/redis/6379.conf
@@ -324,7 +439,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
 #### Redis事务
 
-* 启动事务：MULTI
+- 启动事务：MULTI
 
 - 执行事务：EXEC
 
@@ -334,14 +449,165 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
 ![](https://note.youdao.com/yws/api/personal/file/AD5D18D39AC94E4F99BA4FA687025324?method=download&shareKey=b8907ab6785186c6753a9dcd473b3722)
 
-#### Java连接Redis数据库
+#### 常用命令
+
+```java
+数据: <key value>  eg:<name zhangsan>
+1.查看当前库的数据: keys *
+2.清空当前库数据: FLUSHDB
+  清空所有库数据: FLUSHALL
+3.添加: set name zhangsan
+4.查询: get name
+5.删除: del name
+6.判断数据是否存在：exists name //存在则返回1
+7.设置有效期: expire name 10  //10秒后过期被清除
+  设置有效期: pxpire name 1000 //毫秒为单位，1000毫秒后过期
+8.返回剩余有效时间: TTL name  //key不存在，返回-2，没有设置有效期，返回-1，存在返回剩余有效时间
+  返回剩余有效时间: pttl name  //毫秒为单位
+9.移动数据至其他数据库: move name 1   //移动key为name的数据至1号数据库
+10.修改key值: rename name names  //改名
+11.查询key存储数据的类型: type name  //若key不存在，返回none，否则返回value对应类型
+```
+
+![](https://note.youdao.com/yws/api/personal/file/A8A3A0B5613844398B778083005CFF79?method=download&shareKey=0f95310e7366f2b00cf5137e5588f4ea)
+
+#### String类型
+
+![](https://note.youdao.com/yws/api/personal/file/91024A389FA1454BAD154A410E3B86E9?method=download&shareKey=c0f9afcfeceb41273245b5cc4a87f9ad)
+
+常用操作命令
+
+| 命令                                       | 说明                                       |
+| ------------------------------------------ | ------------------------------------------ |
+| set                                        | 设置一个key/value                          |
+| get                                        | 根据key获得对应的value                     |
+| mset                                       | 一次设置多个key value                      |
+| mget                                       | —次获得多个key的value                      |
+| getset                                     | 获得原始key的值，同时设置新值              |
+| strlen                                     | 获得对应key存储value的长度                 |
+| append                                     | 为对应key的value追加内容                   |
+| getrange索引0开始                          | 截取value的内容                            |
+| setex                                      | 设置一个key存活的有效期（秒)               |
+| psetex                                     | 设置一个key存活的有效期（毫秒)             |
+| setnx                                      | 存在不做任何操作,不存在添加                |
+| msetnx原子操作(只要有一个存在不做任何操作) | 可以同时设置多个key,只有有一个存在都不保存 |
+| decr                                       | 进行数值类型的-1操作                       |
+| decrby                                     | 根据提供的数据进行减法操作                 |
+| Incr                                       | 进行数值类型的+1操作                       |
+| incrby                                     | 根据提供的数据进行加法操作                 |
+| lncrbyfloat                                | 根据提供的数据加入浮点数                   |
+
+![](https://note.youdao.com/yws/api/personal/file/6BC6CDACB74946898D208A70E2FA18A1?method=download&shareKey=04d99ce5f7a911e5ee433cab7ef7c093)
+
+#### List类型
+
+元素有序且可重复
+
+![](https://note.youdao.com/yws/api/personal/file/2051F5FBE2534AEEAE3FCBC921FC2A36?method=download&shareKey=407a191c87b53c7abec03b0a875bc047)
+
+常用操作命令
+
+| 命令    | 说明                                                         |
+| ------- | ------------------------------------------------------------ |
+| lpush   | 将某个值加入到一个key列表头部                                |
+| lpushx  | 同lpush,但是必须要保证这个key存在                            |
+| rpush   | 将某个值加入到一个key列表末尾                                |
+| rpushx  | 同rpush,但是必须要保证这个key存在                            |
+| lpop    | 返回和移除列表左边的第一个元素                               |
+| rpop    | 返回和移除列表右边的第一个元素                               |
+| lrange  | 获取某一个下标区间内的元素，lrange key start end             |
+| llen    | 获取列表元素个数                                             |
+| lset    | 设置某一个指定索引的值(索引必须存在)                         |
+| lindex  | 获取某一个指定索引位置的元素                                 |
+| lrem    | 删除重复元素                                                 |
+| ltrim   | 保留列表中特定区间内的元素                                   |
+| linsert | 在某一个元素value1之前\|之后插入新元素value2，linsert key before\|after value1 value2 |
+
+![](https://note.youdao.com/yws/api/personal/file/886B631CBA614597A5B1D6C1B3F8285E?method=download&shareKey=4a3d29d0b32cab2eecd795d1cf524265)
+
+#### Set类型
+
+元素无序 不可以重复
+
+**内存存储模型**
+
+![](https://note.youdao.com/yws/api/personal/file/1C9B97948F6542B990D99B1945B6B6F6?method=download&shareKey=fe1743e74b100490d24da9d4a3893ebd)
+
+常用操作命令
+
+| 命令        | 说明                                   |
+| ----------- | -------------------------------------- |
+| sadd        | 为集合添加元素                         |
+| smembers    | 显示集合中所有元素无序                 |
+| scard       | 返回集合中元素的个数                   |
+| spop        | 随机返回一个元素并将元素在集合中删除   |
+| smove       | 从一个集合中向另一个集合移动元素       |
+| srem        | 从集合中删除一个元素                   |
+| sismember   | 判断一个集合中是否含有这个元素         |
+| srandmember | 随机返回元素                           |
+| sdiff       | 去掉第一个集合中其它集合含有的相同元素 |
+| sinter      | 求交集                                 |
+| sunion      | 求和集                                 |
+
+![](https://note.youdao.com/yws/api/personal/file/6F83838AD3BD4EE7A311B59DCEB95D35?method=download&shareKey=864b851ebe09478e790ff08c31a61062)
+
+#### ZSet类型
+
+可排序的set集合，排序 不可重复
+
+![](https://note.youdao.com/yws/api/personal/file/82BC8728EDD147A99644B6BA4CEE1716?method=download&shareKey=90b58ade6ec3d1856a599f99b2b2c8c5)
+
+常用操作命令
+
+| 命令                    | 说明                         |
+| ----------------------- | ---------------------------- |
+| zadd                    | 添加一个有序集合元素         |
+| zcard                   | 返回集合的元素个数           |
+| zrange升序zrevrange降序 | 返回一个范围内的元素         |
+| zrangebyscore           | 按照分数查找一个范围内的元素 |
+| zrank                   | 返回排名                     |
+| zrevrank                | 倒序排名                     |
+| zscore                  | 显示某一个元素的分数         |
+| zrem                    | 移除某一个元素               |
+| zincrby                 | 给某个特定元素加分           |
+
+![](https://note.youdao.com/yws/api/personal/file/6D386F3B333A40CD947616C53B387258?method=download&shareKey=6d13fe0cfa3c30d40a43401b7b985666)
+
+#### Hash类型
+
+value是一个map结构，存在key value key无序的
+
+![](https://note.youdao.com/yws/api/personal/file/1D6A31E661294855AD6FCE466AE16199?method=download&shareKey=87b9944732f9b8539bfbceea27aa0cb7)
+
+常用操作命令
+
+| 命令         | 说明                    |
+| ------------ | ----------------------- |
+| hset         | 设置一个key/value对     |
+| hget         | 获得一个key对应的value  |
+| hgetall      | 获得所有的key/value对   |
+| hdel         | 删除某一个key/value对   |
+| hexists      | 判断一个key是否存在     |
+| hkeys        | 获得所有的key           |
+| hvals        | 获得所有的value         |
+| hmset        | 设置多个key/value       |
+| hmget        | 获得多个key的value      |
+| hsetnx       | 设置一个不存在的key的值 |
+| hincrby      | 为value进行加法运算     |
+| hincrbyfloat | 为value加入浮点值       |
+
+![](https://note.youdao.com/yws/api/personal/file/0E5A5BC4CD214164B1D9D2C0071A24BD?method=download&shareKey=99c87c985fc1ead4ca092207d9b91614)
+
+### 连接Redis数据库
+
+#### Java连接Redis数据库(jedis)
 
 添加jedis-2.9.0.jar到项目中
 
 
 - Redis中java使用
 
-  - ```xml
+   ```xml
     首先用maven构建一个java项目，引入redis的客户端——jedis依赖：
     
     <!--引入redis依赖-->
@@ -350,9 +616,9 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
     <artifactId>jedis</artifactId>
     <version>2.9.0</version>
     </dependency>
-    ```
+   ```
 
-  - ```java
+   ```java
   PONG说明操作成功，
     接下来就可以通过jedis对象来操作Redis了；
     
@@ -371,7 +637,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
     4.set类型的数据：
     添加：sadd()
     查询：smembers()
-    ```
+  ```
   
 - 特点
   - 异常快
@@ -396,8 +662,6 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 - 关闭redis服务器命令
   - 打开客户端（redis-cli）
   - shutdown
-
-### Java应用
 
 - 获取连接
 
@@ -440,6 +704,7 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
         public static void main(String[] args) {
             jedis=getRedis();
             testString(jedis);
+            jedis.close();
         }
     }
    ```
@@ -493,3 +758,394 @@ Sentinel本质上只是一个**运行在特殊模式下的Redis服务器**。因
 
   - 设置：hmset()
   - 取值：hgetAll()
+
+#### SpringBoot引入Redis
+
+https://www.bilibili.com/video/BV1jD4y1Q7tU?p=12
+
+​		Spring Boot Data(数据) Redis 中提供了<font color="lighblue">RedisTemplate和StringRedisTemplate</font>，其中StringRedisTemplate是RedisTemplate的子类，两个方法基本一致，不同之处主要体现在操作的数据类型不同，RedisTemplate中的两个泛型都是object，意味着存储的key和value都可以是一个对象，而StringRedisTemplate的两个泛型都是String，意味着stringRedisTemplate的key和value都只能是字符串。
+
+**注意**：使用RedisTemplate默认是将对象序列化到Redis中,所以放入的对象必须实现对象序列化接口。
+
+引入依赖
+
+```xml
+<!--Redis-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+application.properties
+
+```properties
+# redis的使用
+spring.session.store-type=redis
+spring.redis.host=127.0.0.1
+spring.redis.port=6379
+```
+
+##### StringRedisTemplate
+
+###### key相关操作
+
+```java
+//操作redis中key相关
+	@Test
+	public void testRedis1() {
+		stringRedisTemplate.delete("name");//删除一个key
+		Boolean hasKey = stringRedisTemplate.hasKey("name");//删除一个key
+		DataType name = stringRedisTemplate.type("name");//判断key所对应值的类型
+		Set<String> keys = stringRedisTemplate.keys("*");//获取redis中所有值
+		keys.forEach(key -> System.out.println("key = " +key ));
+		stringRedisTemplate.opsForValue().set("age","18");
+		Long expire = stringRedisTemplate.getExpire("age");//获取key超时时间 -1 永不超时 -2 key不存在 》=0 过期时间
+		stringRedisTemplate.randomKey();//在redis中随机获取一个key
+		stringRedisTemplate.rename("age","age1");//给key改名
+		stringRedisTemplate.move("age1",1);//移动key到指定库
+	}
+```
+
+###### String相关操作
+
+```java
+//操作redis中字符串 opsForValue 实际操作就是redis中string类型
+	@Test
+	public void testRedis() {
+		//1.将对象保存到redis中
+		stringRedisTemplate.opsForValue().set("name","小陈");//set 用来设置一个key value
+		String value = stringRedisTemplate.opsForValue().get("name");//用来获取一个key对应的value
+		stringRedisTemplate.opsForValue().set("code","1886555",120, TimeUnit.SECONDS);//设置一个key超时时间
+		stringRedisTemplate.opsForValue().append("name","张三");//追加内容
+	}
+```
+
+###### List相关操作
+
+```java
+//操作redis中list类型，opsForList实际操作就是redis中list类型
+	@Test
+	public void testList() {
+		stringRedisTemplate.opsForList().leftPush("names","张三");//创建一个列表，并放入一个元素
+		stringRedisTemplate.opsForList().leftPushAll("names","小三","小四","小五");//创建一个列表，并放入多个元素
+		List<String> names = new ArrayList<>();
+		names.add("小红");
+		names.add("小兰");
+		stringRedisTemplate.opsForList().leftPushAll("names",names);//创建一个列表，并放入多个元素
+		List<String> stringList = stringRedisTemplate.opsForList ().range("names",0,-1);//遍历list
+		stringList.forEach(value-> System.out.println("value"+value));
+		stringRedisTemplate.opsForList().trim("name",1,3);//截取指定区间的list
+	}
+```
+
+###### Set相关操作
+
+```java
+//操作redis中set类型，opsForSet实际操作就是redis中set类型
+	@Test
+	public void testSet() {
+		stringRedisTemplate.opsForSet().add("sets", "张三", "张三", "小陈", "xiaoming"); //创建set 并放入多个元素
+		Set<String> sets = stringRedisTemplate.opsForSet().members("sets");//查看set中成员
+		sets.forEach(value -> System.out.println("value = " + value));
+		Long size = stringRedisTemplate.opsForSet().size("sets"); //获取set集合元素个数;
+	}
+```
+
+###### ZSet相关操作
+
+```java
+//操作redis中Zset类型opsForSet 实际操作就是redis中set类型Test
+	@Test
+	public void testZset () {
+		stringRedisTemplate.opsForZSet().add("zsets", "小黑", 20); //创建并放入元素
+		Set<String> zsets = stringRedisTemplate.opsForZSet().range("zsets", 0, -1);//指定范围查询
+		zsets.forEach(value -> System.out.println(value));
+		Set<ZSetOperations.TypedTuple<String>> zsets1 = stringRedisTemplate.opsForZSet().rangeByScoreWithScores("zsets",0,1000);//获取指定元素以及分数
+		zsets1.forEach(typedTuple -> {
+			System.out.println(typedTuple.getValue());
+			System.out.println(typedTuple.getScore());
+		});
+	}
+```
+
+###### Hash相关操作
+
+```java
+//操作redis中Hash类型opsForHash 实际操作就是redis中Hash类型
+	@Test
+	public void testHash () {
+		stringRedisTemplate.opsForHash().put("maps", "name", "张三");//创建一个nash类型并放入key value
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("age", "12");
+		map.put("bir", "2012-12-12");
+		stringRedisTemplate.opsForHash().putAll("maps", map);//放入多个key value
+		List<Object> values = stringRedisTemplate.opsForHash().multiGet("maps", Arrays.asList("name", "age"));//获取多个key的值
+		values.forEach(value -> System.out.println(value));
+		String value = (String) stringRedisTemplate.opsForHash().get("maps", "name");//获取hash中某个key的值
+		List<Object> vals = stringRedisTemplate.opsForHash().values("maps");//获取所有values
+		Set<Object> keys = stringRedisTemplate.opsForHash().keys("maps");//获取所有keys
+	}
+```
+
+##### RedisTemplate
+
+使用RedisTemplate默认是将对象序列化到Redis中，所以放入的对象必须实现对象序列化接口
+
+测试示例
+
+```java
+@TableName("user")
+@Data
+public class User implements Serializable {
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+    private String username;
+    private String password;
+    private String nickName;
+    private Integer age;
+    private String sex;
+    private String address;
+    private String phoneNumber;
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+    @TableLogic
+    private Integer deleted;
+
+    @TableField(exist = false)
+    private List<Book> bookList;
+
+    public User(String username,String nickName,int age,String sex){
+        this.username = username;
+        this.nickName = nickName;
+        this.age = age;
+        this.sex = sex;
+    }
+}
+
+```
+
+```java
+	@Autowired
+    private RedisTemplate redisTemplate;
+
+    @Test
+    public void testRedis(){
+
+        //修改key序列化方案string类型序列
+        redisTemplate.setKeySerializer(new StringRedisSerializer( ) ) ;
+        //修改hash key序列化方案
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
+        User user = new User("张三","长久",18,"男");
+        redisTemplate.opsForValue().set("user",user);//redis进行设置，对象需要经过序列化
+        User user1 = (User)redisTemplate.opsForValue().get("user");
+        redisTemplate.opsForList().leftPush ( "list",user);
+        redisTemplate.opsForSet().add ("set",user);
+        redisTemplate.opsForZSet().add ("zset",user, 10);
+        redisTemplate.opsForHash().put( "map","name",user);
+    }
+```
+
+![](https://note.youdao.com/yws/api/personal/file/56C519E6CC604BF781259684995E001A?method=download&shareKey=c9bf171be7642b643c5449437b1cbf9e)
+
+**解决Redis插入乱码**
+
+https://blog.csdn.net/LLLLLLL_LLLLLLL/article/details/124104800
+
+**解决JSONException报错**
+
+报错信息：com.alibaba.fastjson.JSONException: autoType is not support. com.example.demo.entity.Role
+
+![](https://note.youdao.com/yws/api/personal/file/9CF14CFF8F0E41CFB4E63F9EFDA0D09C?method=download&shareKey=4eaf2d60fb66a3a9970c2b413b350e9e)
+
+-Dfastjson.parser.autoTypeAccept=com.taobao.pac.client.sdk.dataobject.,com.example.demo
+
+com.example.demo为项目路径
+
+**注意**：
+
+1. 针对于日后处理key value都是 string使用stringRedisTemplate
+2. 针对于日后处理的key value存在对象使用RedisTemplate
+3. 针对于同一个key多次操作可以使用boundXXxOps () value List Set set Hash的api简化书写
+
+### Redis中分布式缓存实现
+
+1. 什么是缓存(Cache)
+
+   定义:就是计算机内存中一段数据
+
+2. 内存中数据特点
+   * 读写快
+   * 断电立即丢失
+
+3. 缓存解决了什么问题?
+   * 提高网站吞吐量提高网站运行效率
+   * 核心解决问题:缓存的存在是用来减轻数据库访问压力
+
+4. 既然缓存能提高效率，那项目中所有数据加入缓存岂不是更好?
+   注意:使用缓存时一定是数据库中数据极少发生修改,更多用于查询这种情况
+
+5. 本地缓存和分布式缓存区别?
+   **本地缓存**:存在应用服务器内存中数据称之为本地缓存(local cache)
+   **分布式缓存**:存储在当前应用服务器内存之外数据称之为分布式缓存(distribute cache)集群:将同一种服务的多个节点放在一起共同对系统提供服务过程称之为集群
+   **分布式**:有多个不同服务集群共同对系统提供服务这个系统称之为分布式系统(distribute system)
+
+#### 自定义Redis缓存实现
+
+```java
+//用来获取springboot创建好的工厂
+@Component
+public class ApplicationContextUtil implements ApplicationContextAware {
+
+    //保留下来工厂
+    private static ApplicationContext applicationContext;
+
+    //将创建好工厂以参数形式传递给这个类
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ApplicationContextUtil.applicationContext = applicationContext;
+    }
+
+    //提供在工厂中过去对象的方法 //RedisTemplate redisTemplate
+    public static Object getBean(String beanName){
+        return applicationContext.getBean(beanName);
+    }
+}
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.BookMapper">
+
+    <!-- 开启mybatis二级缓存-->
+    <cache type="com.example.demo.cache.RedisCache"/>
+
+    <select id="selectBookByUserId" resultType="com.example.demo.entity.Book">
+        select `book`.*, `user`.nick_name
+        from `book`
+        left join `user` on `book`.user_id = `user`.id
+        where `book`.user_id = #{userId} and book.DELETED = 0
+    </select>
+</mapper>
+```
+
+```java
+//自定义Redis缓存实现
+public class RedisCache implements Cache {
+
+    //当前放入缓存的mapper的namespace
+    private final String id;
+
+    //必须存在构造方法
+    public RedisCache(String id) {
+        System.out.println("id：=========" + id);
+        this.id = id;
+    }
+
+    //返回cache唯一标识
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    //缓存放入值
+    @Override
+    public void putObject(Object key, Object value) {
+        //使用redishash类型作为缓存存储模型keyhashkey value
+        getRedisTemplate().opsForHash().put(id.toString(), getKeyToMD5(key.toString()), value);
+        if(id.equals("com.example.demo.mapper.UserMapper")){
+            //缓存超时失效
+            getRedisTemplate().expire(id.toString(),1, TimeUnit.HOURS);
+        }
+        if(id.equals("com.example.demo.mapper.RoleMapper")){
+            //缓存超时失效
+            getRedisTemplate().expire(id.toString(),30, TimeUnit.MINUTES);
+        }
+        //...指定不同业务模块设置不同缓存超时时间
+    }
+
+    //获取数据
+    @Override
+    public Object getObject(Object key) {
+        //根据key从redis的hash类型中获取数据
+        return getRedisTemplate().opsForHash().get(id.toString(), getKeyToMD5(key.toString()));
+    }
+
+    @Override
+    public Object removeObject(Object o) {
+        return null;
+    }
+
+    @Override
+    public void clear() {
+        //清空namespace
+        getRedisTemplate().delete(id.toString());//清空缓存,新增、修改、删除会触发
+    }
+
+    @Override
+    public int getSize() {
+        //获取hash中的key value数量
+        return getRedisTemplate().opsForValue().size(id.toString()).intValue();
+    }
+
+    //封装RedisTemplate
+    public RedisTemplate getRedisTemplate() {
+        // 通过application工具类获取redisTemplate
+        RedisTemplate redisTemplate = (RedisTemplate) ApplicationContextUtil.getBean("redisTemplate");
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
+
+    //封装一个对key进行rmd5处理方法
+    private String getKeyToMD5(String key) {
+        return DigestUtils.md5DigestAsHex(key.getBytes());
+    }
+}
+```
+
+![](https://note.youdao.com/yws/api/personal/file/106BCF7E46E5411EAD769707FBB9A4DD?method=download&shareKey=3e864907d7f4682439d797a7e508dd40)
+
+![](https://note.youdao.com/yws/api/personal/file/87344AC7CE0649B4B2AF911AC09EF574?method=download&shareKey=db565a5e6e1d2edfcea14a6ab64c8d04)
+
+上面的方法只适用于单表查询
+
+在mybatis的缓存中如何要解决关联关系时更新缓存信息的问题?
+
+<cache-ref/> 用来将多个具有关联关系查询缓存放在一起处理
+
+```xml
+<mapper namespace="com.example.demo.mapper.RoleMapper">
+<!-- 开启mybatis二级缓存-->
+<!--    <cache type="com.example.demo.cache.RedisCache"/>-->
+
+<cache-ref namespace="com.example.demo.mapper.UserMapper"/>
+```
+
+无论哪个数据进行了增删改操作，都会清空缓存
+
+#### 缓存优化
+
+对放入redis中key进行优化: key的长度不能太长
+
+算法:MD5处理加密特点:
+
+1. 一切文件字符串等经过md5处理之后都会生成32位16进制字符串
+2. 不同内容文件经过md5进行加密，加密结果一定不一致
+3. 相当内容文件多次经过md5生成结果始终─致
+
+推荐:在redis整合mybatis过程中建议将key进行md5优化处理
+
+
+
+https://www.bilibili.com/video/BV1jD4y1Q7tU?p=23&spm_id_from=pageDriver
+
+
+
+
+

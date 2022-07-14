@@ -40,6 +40,9 @@
   - [分布式与微服务](./docs/分布式.md)
   - [Nacos](./docs/Nacos.md)
   - [OpenFeign](./docs/OpenFeign.md)
+  - [GateWay](./docs/GateWay.md)
+  - [RocketMQ](./docs/RocketMQ.md)
+  - [SpringCloud Stream](./docs/SpringCloud Stream.md)
   
 * 设计模式
   
