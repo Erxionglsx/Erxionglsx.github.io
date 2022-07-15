@@ -1,4 +1,4 @@
-Java进阶
+#### Java进阶
 
 ------
 
@@ -144,6 +144,10 @@ public class RunnableDemo {
 * Runnable是在JDK1.0的时候提出的多线程的实现接口，而Callable是在JDK1.5之后提出的；
 * java.kang.Runnable接口之中只提供有一个run()方法，并且没有返回值；
 * java.util.concurrent.Callable接口提供有call()方法，可以有返回值；
+
+#### 什么时候使用多线程？
+
+使用多线程技术，即将数据一致性不强的操作派发给其他线程处理
 
 ### 2.线程常用操作方法
 
@@ -718,6 +722,151 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 * <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
 * <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
 * <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
+
+#### 6.核心线程池内部实现了解吗
+
+对于核心的几个线程池，无论是 newFixedThreadPool() 方法，newSingleThreadExecutor() 还是 newCachedThreadPool() 方法，虽然看起来创建的线程有着完全不同的功能特点，但其实内部实现均使用了 ThreadPoolExecutor 实现，其实都只是 ThreadPoolExecutor 类的封装。
+
+```java
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler)
+```
+
+函数的参数含义如下：
+
+- corePoolSize：指定了线程池中的线程数量
+- maximumPoolSize：指定了线程池中的最大线程数量
+- keepAliveTime：当线程池线程数量超过 corePoolSize 时，多余的空闲线程的存活时间。即，超过了 corePoolSize 的空闲线程，在多长时间内，会被销毁。
+- unit: keepAliveTime 的单位。
+- workQueue：任务队列，被提交但尚未被执行的任务。
+- threadFactory：线程工厂，用于创建线程，一般用默认的即可。
+- handler：拒绝策略。当任务太多来不及处理，如何拒绝任务。
+
+#### 7.ThreadPoolTaskExecutor线程池
+
+> https://zhuanlan.zhihu.com/p/346086161
+
+ThreadPoolTaskExecutor配置
+
+application.properties
+
+```properties
+# 核心线程池数
+spring.task.execution.pool.core-size=5
+# 最大线程池数
+spring.task.execution.pool.max-size=10
+# 任务队列的容量
+spring.task.execution.pool.queue-capacity=5
+# 非核心线程的存活时间
+spring.task.execution.pool.keep-alive=60
+# 线程池的前缀名称
+spring.task.execution.thread-name-prefix=god-jiang-task-
+```
+
+ThreadConfig.java
+
+```java
+//启用异步任务
+@Configuration
+@EnableAsync
+public class AsyncScheduledTaskConfig {
+
+    @Value("${spring.task.execution.pool.core-size}")
+    private int corePoolSize;
+    @Value("${spring.task.execution.pool.max-size}")
+    private int maxPoolSize;
+    @Value("${spring.task.execution.pool.queue-capacity}")
+    private int queueCapacity;
+    @Value("${spring.task.execution.thread-name-prefix}")
+    private String namePrefix;
+    @Value("${spring.task.execution.pool.keep-alive}")
+    private int keepAliveSeconds;
+    @Bean
+    public Executor myAsync() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        //最大线程数
+        executor.setMaxPoolSize(maxPoolSize);
+        //核心线程数
+        executor.setCorePoolSize(corePoolSize);
+        //任务队列的大小
+        executor.setQueueCapacity(queueCapacity);
+        //线程前缀名
+        executor.setThreadNamePrefix(namePrefix);
+        //线程存活时间
+        executor.setKeepAliveSeconds(keepAliveSeconds);
+
+        /**
+         * 拒绝处理策略
+         * CallerRunsPolicy()：交由调用方线程运行，比如 main 线程。
+         * AbortPolicy()：直接抛出异常。
+         * DiscardPolicy()：直接丢弃。
+         * DiscardOldestPolicy()：丢弃队列中最老的任务。
+         */
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        //线程初始化
+        executor.initialize();
+        return executor;
+    }
+}
+```
+
+在方法上添加@Async注解，然后还需要在@SpringBootApplication启动类或者@Configuration注解类上 添加注解@EnableAsync启动多线程注解，@Async就会对标注的方法开启异步多线程调用，注意，这个方法的类一定要交给Spring容器来管理。
+
+ScheduleTask.java
+
+```java
+@Component
+public class ScheduleTask {
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    @Async("myAsync")
+    @Scheduled(fixedRate = 2000)
+    public void testScheduleTask() {
+        try {
+            Thread.sleep(6000);
+            System.out.println("Spring1自带的线程池" + Thread.currentThread().getName() + "-" + sdf.format(new Date()));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Async("myAsync")
+    @Scheduled(cron = "*/2 * * * * ?")
+    public void testAsyn() {
+        try {
+            Thread.sleep(1000);
+            System.out.println("Spring2自带的线程池" + Thread.currentThread().getName() + "-" + sdf.format(new Date()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+
+![](https://note.youdao.com/yws/api/personal/file/6CDDF77986E844C3ADC0E1B3923D9FA0?method=download&shareKey=f433080ad78bf876c50e82e99c8f2336)
+
+#### 拒绝策略
+
+**rejectedExectutionHandler参数字段用于配置绝策略，常用拒绝策略如下**
+
+- AbortPolicy：用于被拒绝任务的处理程序，它将抛出RejectedExecutionException
+- CallerRunsPolicy：用于被拒绝任务的处理程序，它直接在execute方法的调用线程中运行被拒绝的任务。
+- DiscardOldestPolicy：用于被拒绝任务的处理程序，它放弃最旧的未处理请求，然后重试execute。
+- DiscardPolicy：用于被拒绝任务的处理程序，默认情况下它将丢弃被拒绝的任务。
+
+**处理流程**
+
+1. 查看核心线程池是否已满，不满就创建一条线程执行任务，否则执行第二步。
+2. 查看任务队列是否已满，不满就将任务存储在任务队列中，否则执行第三步。
+3. 查看线程池是否已满，即就是是否达到最大线程池数，不满就创建一条线程执行任务，否则就按照策略处理无法执行的任务。
+
+![](https://pic1.zhimg.com/80/v2-11da400eea7f7bd30b95b9b344258cec_720w.jpg)
 
 ## 2.其他
 
