@@ -50,6 +50,9 @@ RocketMQ主要由 Producer、Broker、Consumer 三部分组成，其中Producer 
 
 负责消费消息，一般是后台系统负责异步消费。一个消息消费者会从Broker服务器拉取消息、并将其提供给应用程序。从用户应用的角度而言提供了两种消费形式：pull拉取式消费、push推送式消费。
 
+- **Pull**：拉取型消费者（Pull Consumer）主动从消息服务器拉取信息，只要批量拉取到消息，用户应用就会启动消费过程，所以 Pull 称为主动消费型。
+- **Push**：推送型消费者（Push Consumer）封装了消息的拉取、消费进度和其他的内部维护工作，将消息到达时执行的回调接口留给用户应用程序来实现。所以 Push 称为被动消费类型，但从实现上看还是从消息服务器中拉取消息，不同于 Pull 的是 Push 首先要注册消费监听器，当监听器处触发后才开始消费消息。
+
 #### 主题（Topic）
 
 表示一类消息的集合，每个主题包含若干条消息，每条消息只能属于一个主题，是RocketMQ进行消息订阅的基本单位。
@@ -126,7 +129,7 @@ Consumer消费的一种类型，该模式下Broker收到数据后会主动推送
 
 #### 消息服务器（Broker）
 
-是消息存储中心，主要作用是接收来自 Producer 的消息并存储， Consumer 从这里取得消息，负责接收从生产者发送来的消息并存储、同时为消费者的拉取请求作准备。**一个 Topic 分布在多个 Broker上，一个 Broker 可以配置多个 Topic ，它们是多对多的关系。主题中存在多个队列。**
+是消息存储中心，负责**存储消息**，转发消息。负责接收从生产者发送来的消息并存储、同时为消费者的拉取请求作准备。单个Broker节点与所有的NameServer节点保持长连接及心跳，并会定时将**Topic**信息注册到NameServer。**一个 Topic 分布在多个 Broker上，一个 Broker 可以配置多个 Topic ，它们是多对多的关系。主题中存在多个队列。**
 
 #### 名称服务器（NameServer）
 
@@ -152,9 +155,9 @@ Consumer消费的一种类型，该模式下Broker收到数据后会主动推送
 
 这里只讨论普通的消息发送方式，区别于顺序、事务、延迟/定时等消息发送方式，当前分为三种：
 
-- **同步（sync）：** 同步发送就是指 producer 发送消息后，会同步等待，在接收到 broker 响应结果后才继续发下一条消息。
-- **异步（async）：** 异步发送是指 producer 发出一条消息后，不需要等待 broker 响应，就接着发送下一条消息的通信方式。异步发送同样可以对消息的响应结果进行处理，需要在发送消息时实现异步发送回调接口。
-- **单方向（oneWay）：** 是一种单方向通信方式，也就是说 producer 只负责发送消息，不等待 broker 发回响应结果，而且也没有回调函数触发，这也就意味着 producer 只发送请求不等待响应结果。
+- **同步（sync）：** 同步发送就是指 producer 发送消息后，会同步等待，在接收到 broker 响应结果后才继续发下一条消息。一般用于重要通知消息，例如重要通知邮件、营销短信。
+- **异步（async）：** 异步发送是指 producer 发出一条消息后，不需要等待 broker 响应，就接着发送下一条消息的通信方式。异步发送同样可以对消息的响应结果进行处理，需要在发送消息时实现异步发送回调接口。一般用于可能链路耗时较长而对响应时间敏感的业务场景，例如用户视频上传后通知启动转码服务。
+- **单方向（oneWay）：** 是一种单方向通信方式，也就是说 producer 只负责发送消息，不等待 broker 发回响应结果，而且也没有回调函数触发，这也就意味着 producer 只发送请求不等待响应结果。适用于某些耗时非常短但对可靠性要求并不高的场景，例如日志收集。
 
 **三种发送方式对比**
 
@@ -283,7 +286,7 @@ RocketMQ目前只能保证同一个分区内的顺序消息，那么队列中的
      * 同步顺序发送
      *
      * @param hashKey 根据 hashKey 和 队列size() 取模，保证同一 hashKey 的消息发往同一个队列，以实现 同一hashKey下的消息 顺序发送
-     *                因此 hashKey 建议取 业务上唯一标识符，如：订单号，只需保证同一订单号下的消息顺序发送
+     *  因此 hashKey 建议取 业务上唯一标识符，如：订单号，只需保证同一订单号下的消息顺序发送
      */
     public SendResult syncSendOrderly(String topic, String tag, String content, String hashKey) {
         String destination = this.convertDestination(topic, tag);
@@ -377,7 +380,17 @@ RocketMQ 会为每个消费组都设置一个 topic 名称为 `“%RETRY%+consum
 
 ### Stream+RocketMQ实例
 
-nacos配置文件
+**Topic主题**
+
+![](https://note.youdao.com/yws/api/personal/file/81381B5021D74E4EBEA714A7CF2EB24E?method=download&shareKey=8b8c4d10b151d9992f0d93dab6b81170)
+
+![](https://note.youdao.com/yws/api/personal/file/04FE15BFF9C0448B91706ADC17382079?method=download&shareKey=9346c62ca82496d6c1f4db0e7dbcc8fb)
+
+![](https://note.youdao.com/yws/api/personal/file/F4377187AD284274A43E097AE95A0D09?method=download&shareKey=da3f3a047985f2690f1662539674ba45)
+
+**生产者**
+
+生产者nacos配置文件
 
 ```yaml
 spring:
@@ -396,23 +409,7 @@ spring:
           group: SELF_PUSH_CHACONTRACT_P_GROUP
           # 消息格式：这里采取json
           content-type: application/json
-        messageMgtInPut:
-          # 消息的目标Topic
-          destination: queue_message_mgt_topic
-          # 消费者所属消费者组
-          group: QUEUE_MESSAGE_MGT_C_GROUP
-          # 消息格式：这里采取json
-          content-type: application/json
-        toVoidChaContractOut:
-          # 消息的目标Topic
-          destination: to_void_chacontract_topic
-          # 生产者所属生产者组
-          group: SELF_TO_VOID_CHACONTRACT_P_GROUP
-          # 消息格式：这里采取json
-          content-type: application/json
 ```
-
-生产者
 
 业务类
 
@@ -454,7 +451,36 @@ public interface ChacontractStreamOutput {
 }
 ```
 
-消费者：
+
+**消费者**
+
+![](https://note.youdao.com/yws/api/personal/file/48C4F38891C04055A1D8835AA43A404A?method=download&shareKey=303c08c9c6359fc19273fb8bd79e9c4d)
+
+![](https://note.youdao.com/yws/api/personal/file/8CF17E1A613E4A41A88BD5CCB1E8867D?method=download&shareKey=a45043e118d1421cf7ac3faaf4a81317)
+
+![](https://note.youdao.com/yws/api/personal/file/66A001D892C24E0390D29EF47808C60D?method=download&shareKey=3ea8404c524b2612d373292cdbbcd6b9)
+
+消费者nacos配置文件
+
+```yaml
+spring:
+  cloud:
+    stream:
+      rocketmq:
+        binder:
+          # nameServer地址
+          name-server: 192.168.33.7:9866
+      bindings:
+         #消费者input相关配置 合同推送
+        pushChaContractInput:
+          #消息的目标Topic
+          destination: push_chacontract_topic
+          #消费者所属消费者组
+          group: SELF_PUSH_CHACONTRACT_C_GROUP
+          #消息格式：这里采取json
+          content-type: application/json
+```
+
 
 StreamInput.java
 
@@ -492,3 +518,10 @@ public void sendContractPush(ToCdcContractSendDto toCdcContractSendDto) throws I
     //业务代码
 }
 ```
+
+**消息**
+
+![](https://note.youdao.com/yws/api/personal/file/0552F3C827A94E29B5D37EF2F93A07A9?method=download&shareKey=426857a0d1f09fb9664811190f81774c)
+
+![](https://note.youdao.com/yws/api/personal/file/0481E2444031437C91ED8FAECE68079F?method=download&shareKey=c9553192c4b4aa69f57561cf8b8be992)
+

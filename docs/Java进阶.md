@@ -1100,9 +1100,9 @@ public class JavaAPIDemo {
 
 > [可参考CSDN收藏](https://blog.csdn.net/feiyanaffection/article/details/81394745)
 
-![](https://img-blog.csdn.net/20180803184611883?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZlaXlhbmFmZmVjdGlvbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://note.youdao.com/yws/api/personal/file/1DAEDB91D81843268E64815C13A33E9A?method=download&shareKey=1e4056915c12d2ea885e8ec76722e191)
 
-![](https://img-blog.csdn.net/20180803204923763?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZlaXlhbmFmZmVjdGlvbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![](https://note.youdao.com/yws/api/personal/file/8FE2515E8565455A8C1692B539E01349?method=download&shareKey=de84cb3bd75b0585aac196bb701a915e)
 
 ### Collection接口
 
@@ -1270,6 +1270,8 @@ public class JavaAPDemo {
 | ArrayList构造(无参)：     | public ArrayList()                        |
 | ------------------------- | ----------------------------------------- |
 | **ArrayList构造(有参)：** | **public ArrayList(int initialCapacity)** |
+
+Arraylist默认容量10，按1.5倍扩容。扩容的计算方式是向右位移一位，只有在当前值为偶数时，才除以2，奇数时是抹去最后一位，也就是减1，然后除以2。
 
 ##### LinkedList子类
 
