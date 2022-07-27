@@ -4,11 +4,13 @@
 
 [TOC]
 
-## 1.进程和线程
+## 进程和线程
 
 ### 1.Java多线程编程
 
-1.**进程是操作系统中进行保护和资源分配的基本单位**，操作系统分配资源以进程为基本单位。而线程是进程的组成部分，它代表了一条顺序的执行流。
+##### 1.进程和线程
+
+**进程是操作系统中进行保护和资源分配的基本单位**，操作系统分配资源以进程为基本单位。而线程是进程的组成部分，它代表了一条顺序的执行流。
 
 使用多线程最主要的原因是**提高系统的资源利用率**。
 
@@ -145,11 +147,20 @@ public class RunnableDemo {
 * java.kang.Runnable接口之中只提供有一个run()方法，并且没有返回值；
 * java.util.concurrent.Callable接口提供有call()方法，可以有返回值；
 
-#### 什么时候使用多线程？
+### 2.Java线程具有五中基本状态
 
-使用多线程技术，即将数据一致性不强的操作派发给其他线程处理
+![](https://img-blog.csdnimg.cn/20190407112603812.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dtNTkyMA==,size_16,color_FFFFFF,t_70)
 
-### 2.线程常用操作方法
+- <font color="lighblue">新建状态（New）</font>：当线程对象对创建后，即进入了新建状态，如：Thread t = new MyThread();
+- <font color="lighblue">就绪状态（Runnable）</font>：当调用线程对象的start()方法（t.start();），线程即进入就绪状态。处于就绪状态的线程，只是说明此线程已经做好了准备，随时等待CPU调度执行，并不是说执行了t.start()此线程立即就会执行；
+- <font color="lighblue">运行状态（Running）</font>：当CPU开始调度处于就绪状态的线程时，此时线程才得以真正执行，即进入到运行状态。注：就 绪状态是进入到运行状态的唯一入口，也就是说，线程要想进入运行状态执行，首先必须处于就绪状态中；
+- <font color="lighblue">阻塞状态（Blocked）</font>：处于运行状态中的线程由于某种原因，暂时放弃对CPU的使用权，停止执行，此时进入阻塞状态，直到其进入到就绪状态，才 有机会再次被CPU调用以进入到运行状态。根据阻塞产生的原因不同，阻塞状态又可以分为三种：
+  - 1.等待阻塞：运行状态中的线程执行wait()方法，使本线程进入到等待阻塞状态；
+  - 2.同步阻塞 – 线程在获取synchronized同步锁失败(因为锁被其它线程所占用)，它会进入同步阻塞状态；
+  - 3.超时阻塞 – 通过调用线程的sleep()或join()或发出了I/O请求时，线程会进入到阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。
+- <font color="lighblue">死亡状态（Dead）</font>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
+
+### 3.线程常用操作方法
 
 ##### 1.线程的命名与取得
 
@@ -363,7 +374,7 @@ public static void main(String[] args) {
 
 主线程是一个中等优先级，而默认创建的线程也是中等优先级，为5。
 
-### 3.线程的同步与死锁
+### 4.线程的同步与死锁
 
 ##### 1.同步问题
 
@@ -440,7 +451,7 @@ public class ThreadDemo{
 
   存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
 
-### 4.线程深入
+### 5.线程深入
 
 ##### 1.停止线程
 
@@ -596,7 +607,7 @@ class Computer{
 
 ![](https://note.youdao.com/yws/api/personal/file/6452C039B84B48E4AC3906BE9FF29C2B?method=download&shareKey=4c3f7dc82e138bb512637a6b2827dab9)
 
-### 5.线程安全
+### 6.线程安全
 
 就是**线程同步**的意思，就是当一个程序对一个线程安全的方法或者语句进行访问的时候，其他的不能再对他进行操作了，必须等到这次访问结束以后才能对这个线程安全的方法进行访问。
 
@@ -610,7 +621,7 @@ class Computer{
 
 为保证线程安全，可以添加synchroized关键字，上Lock锁，加volatile关键字。
 
-### 6.synchronized关键字
+### 7.synchronized关键字
 
 JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在这个关键字作用对象的作用范围内是同一时刻只能有一个线程进行操作；另一种是LOCK，是JDK提供的代码层面的锁，依赖CPU指令，代表性的是ReentrantLock。
 
@@ -632,9 +643,9 @@ JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在�
 
 Java中的synchronized，通过使用内置锁，来实现对变量的同步操作，进而实现了**对变量操作的原子性和其他线程对变量的可见性**，从而确保了并发情况下的线程安全。
 
-### 7.volatile关键字
+### 8.volatile关键字
 
-**volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性和有序性</font>然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
+**volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性和有序性</font>，然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
 
 volatile 修饰的成员变量在每次被线程访问时，都强制从共享内存中重新读取该成员变量的值。而且，当成员变量发生变化时，会强制线程将变化值回写到共享内存。这样在任何时刻，两个不同的线程总是看到某个成员变量的同一个值。
 
@@ -651,7 +662,7 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 - **volatile关键字能保证数据的可见性，但不能保证数据的原子性。synchronized关键字两者都能保证。**
 - **volatile关键字用于解决变量在多个线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性。**
 
-### 8.Lock锁
+### 9.Lock锁
 
 - Lock方式来获取锁**支持中断、超时不获取、是非阻塞的**
 - **提高了语义化**，哪里加锁，哪里解锁都得写出来
@@ -663,34 +674,27 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁~
 
-### 9.wait和sleep方法的区别
+### 10.wait和sleep方法的区别
 
-- 这两个方法来自不同的类分别是Thread和Object  
-- 最主要是<font color="lighblue">sleep方法没有释放锁，而wait方法释放了锁</font>，使得其他线程可以使用同步控制块或者方法(锁代码块和方法锁)。  
-- wait，notify和notifyAll只能在同步控制方法或者同步控制块里面使用，而sleep可以在任何地方使用(使用范围)  
-- sleep必须捕获异常，而wait，notify和notifyAll不需要捕获异常  
-- sleep方法属于Thread类中方法，表示让一个线程进入睡眠状态，等待一定的时间之后，自动醒来进入到可运行状态，不会马上进入运行状态，因为线程调度机制恢复线程的运行也需要时间，一个线程对象调用了sleep方法之后，并不会释放他所持有的所有对象锁，所以也就不会影响其他进程对象的运行。但在sleep的过程中过程中有可能被其他对象调用它的interrupt(),产生InterruptedException异常，如果你的程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果你的程序捕获了这个异常，那么程序就会继续执行catch语句块(可能还有finally语句块)以及以后的代码。  
-- 注意sleep()方法是一个静态方法，也就是说他只对当前对象有效，通过t.sleep()让t对象进入sleep，这样的做法是错误的，它只会是使当前线程被sleep 而不是t线程。
-- wait属于Object的成员方法，一旦一个对象调用了wait方法，必须要采用notify()和notifyAll()方法唤醒该进程;如果线程拥有某个或某些对象的同步锁，那么在调用了wait()后，这个线程就会释放它持有的所有同步资源，而不限于这个被调用了wait()方法的对象。wait()方法也同样会在wait的过程中有可能被其他对象调用interrupt()方法而产生。
-- sleep不出让系统资源;wait是进入线程等待池等待，出让系统资源，其他线程可以占用CPU。
+* 来自不同的类
+  * wait():来自 Object 类； 
+  * sleep():来自 Thread 类； 
+
+* 关于锁的释放
+  * wait():在等待的过程中会释放锁； 
+  * sleep():在等待的过程中不会释放锁 
+
+* 使用的范围
+  * wait():必须在同步代码块中使用； 
+  * sleep():可以在任何地方使用； 
+
+* 是否需要捕获异常
+  * wait():不需要捕获异常； 
+  * sleep():需要捕获异常； 
 
 **sleep：让出CPU资源，不释放锁资源。**
 
 **wait()：让出CPU资源和锁资源。**
-
-### 10.Java线程具有五中基本状态
-
-![](https://img-blog.csdnimg.cn/20190407112603812.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dtNTkyMA==,size_16,color_FFFFFF,t_70)
-
-* <font color="lighblue">新建状态（New）</font>：当线程对象对创建后，即进入了新建状态，如：Thread t = new MyThread();
-* <font color="lighblue">就绪状态（Runnable）</font>：当调用线程对象的start()方法（t.start();），线程即进入就绪状态。处于就绪状态的线程，只是说明此线程已经做好了准备，随时等待CPU调度执行，并不是说执行了t.start()此线程立即就会执行；
-* <font color="lighblue">运行状态（Running）</font>：当CPU开始调度处于就绪状态的线程时，此时线程才得以真正执行，即进入到运行状态。注：就 绪状态是进入到运行状态的唯一入口，也就是说，线程要想进入运行状态执行，首先必须处于就绪状态中；
-* <font color="lighblue">阻塞状态（Blocked）</font>：处于运行状态中的线程由于某种原因，暂时放弃对CPU的使用权，停止执行，此时进入阻塞状态，直到其进入到就绪状态，才 有机会再次被CPU调用以进入到运行状态。根据阻塞产生的原因不同，阻塞状态又可以分为三种：
-  * 1.等待阻塞：运行状态中的线程执行wait()方法，使本线程进入到等待阻塞状态；
-  * 2.同步阻塞 – 线程在获取synchronized同步锁失败(因为锁被其它线程所占用)，它会进入同步阻塞状态；
-  * 3.其他阻塞 – 通过调用线程的sleep()或join()或发出了I/O请求时，线程会进入到阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。
-
-* <font color="lighblue">死亡状态（Dead）</font>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
 
 ### 11.线程池
 
@@ -716,14 +720,23 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 第三：**提高线程的可管理性**。线程是稀缺资源，如果无限制地创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一分配、调优和监控。
 
-#### 5.四种常见的线程池
+#### 5.线程池的工作流程
+
+![](https://note.youdao.com/yws/api/personal/file/E37E86934C90414696F230CE9D750A7B?method=download&shareKey=906dedaf3b87101ecdd2bab8347cdcf9)
+
+1. 线程在有任务的时候会创建核心的线程数corePoolSize。
+2. 当线程满了（有任务但是线程被使用完）不会立即扩容，而是放到阻塞队列中，当阻塞队列满了之后才会继续创建线程。
+3. 如果队列满了，线程数达到最大线程数则会执行拒绝策略。
+4. 当线程数大于核心线程数时，超过KeepAliveTime(闲置时间)，线程会被回收，最终会保持corePoolSize个线程。
+
+#### 6.四种常见的线程池
 
 * <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
 * <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
 * <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
 * <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
 
-#### 6.核心线程池内部实现了解吗
+#### 7.核心线程池内部实现了解吗
 
 对于核心的几个线程池，无论是 newFixedThreadPool() 方法，newSingleThreadExecutor() 还是 newCachedThreadPool() 方法，虽然看起来创建的线程有着完全不同的功能特点，但其实内部实现均使用了 ThreadPoolExecutor 实现，其实都只是 ThreadPoolExecutor 类的封装。
 
@@ -747,7 +760,16 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 - threadFactory：线程工厂，用于创建线程，一般用默认的即可。
 - handler：拒绝策略。当任务太多来不及处理，如何拒绝任务。
 
-#### 7.ThreadPoolTaskExecutor线程池
+#### 8.拒绝策略
+
+**RejectedExectutionHandler参数字段用于配置绝策略，常用拒绝策略如下**
+
+- AbortPolicy(系统默认) ：丢弃任务并抛出RejectedExecutionException 异常，让你感知到任务被拒绝了，我们可以根据业务逻辑选择重试或者放弃提交等策略。
+- DiscardPolicy：也是丢弃任务，但是不抛出异常，相对而言存在一定的风险，因为我们提交的时候根本不知道这个任务会被丢弃，可能造成数据丢失。 
+- DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务(重复此过程)，通常是存活时间最长的任务，它也存在一定的数据丢失风险。
+- CallerRunsPolicy：既不抛弃任务也不抛出异常，而是将某些任务回退到调用者，让调用者去执行它。
+
+#### 9.ThreadPoolTaskExecutor线程池
 
 > https://zhuanlan.zhihu.com/p/346086161
 
@@ -850,25 +872,6 @@ public class ScheduleTask {
 ```
 
 ![](https://note.youdao.com/yws/api/personal/file/6CDDF77986E844C3ADC0E1B3923D9FA0?method=download&shareKey=f433080ad78bf876c50e82e99c8f2336)
-
-#### 拒绝策略
-
-**rejectedExectutionHandler参数字段用于配置绝策略，常用拒绝策略如下**
-
-- AbortPolicy：用于被拒绝任务的处理程序，它将抛出RejectedExecutionException
-- CallerRunsPolicy：用于被拒绝任务的处理程序，它直接在execute方法的调用线程中运行被拒绝的任务。
-- DiscardOldestPolicy：用于被拒绝任务的处理程序，它放弃最旧的未处理请求，然后重试execute。
-- DiscardPolicy：用于被拒绝任务的处理程序，默认情况下它将丢弃被拒绝的任务。
-
-**处理流程**
-
-1. 查看核心线程池是否已满，不满就创建一条线程执行任务，否则执行第二步。
-2. 查看任务队列是否已满，不满就将任务存储在任务队列中，否则执行第三步。
-3. 查看线程池是否已满，即就是是否达到最大线程池数，不满就创建一条线程执行任务，否则就按照策略处理无法执行的任务。
-
-![](https://pic1.zhimg.com/80/v2-11da400eea7f7bd30b95b9b344258cec_720w.jpg)
-
-## 2.其他
 
 ### 1.日期格式化
 
@@ -1107,14 +1110,14 @@ public class JavaAPIDemo {
 ### Collection接口
 
 **Collection** 接口的接口 对象的集合（单列集合）  
-├——-**List** 接口：元素按进入先后有序保存，可重复  
+├——-**List** 接口：有序，可重复  
 │—————-├ **LinkedList** 接口实现类， <font color="lighblue">链表</font>， 插入删除， 没有同步， 线程不安全  
 │—————-├ **ArrayList** 接口实现类， <font color="lighblue">数组</font>， 随机访问， 没有同步， 线程不安全  
 │—————-└ **Vector** 接口实现类 <font color="lighblue">数组</font>， 同步， 线程安全  
 │ ———————-└ **Stack** 是Vector类的实现类  
-└——-**Set** 接口： 仅接收一次，不可重复，并做内部排序   
+└——-**Set** 接口： 无序，不可重复  
 ├—————-└**HashSet** <font color="lighblue">数组+链表+红黑树</font>，使用hash表（数组）存储元素   
-│————————└ **LinkedHashSet**  <font color="lighblue">链表</font>维护元素的插入次序  
+│————————└ **LinkedHashSet**  <font color="lighblue">链表+哈希表</font>，链表维护元素的插入次序，哈希表保证元素唯一  
 └ —————-**TreeSet** 底层实现为<font color="lighblue">红黑树</font>，元素排好序 
 
 **Map** 接口 键值对的集合 （双列集合）  
@@ -1311,7 +1314,9 @@ public interface Set<E> extends Collection<E>
 
 **Set无法使用List的get方法实现指定索引数据的获取。**
 
-具体实现唯一性的比较过程：存储元素首先会使用hash()算法函数生成一个int类型hashCode散列值，然后已经的所存储的元素的hashCode值比较，如果hashCode不相等，则所存储的两个对象一定不相等，此时存储当前的新的hashCode值处的元素对象；如果hashCode相等，存储元素的对象还是不一定相等，此时会调用equals()方法判断两个对象的内容是否相等，如果内容相等，那么就是同一个对象，无需存储；如果比较的内容不相等，那么就是不同的对象，就该存储了，此时就要采用哈希的解决地址冲突算法，在当前hashCode值处类似一个新的链表， 在同一个hashCode值的后面存储存储不同的对象，这样就保证了元素的唯一性。
+**具体实现唯一性的比较过程**
+
+存储元素首先会使用hash()算法函数生成一个int类型hashCode散列值，然后已经的所存储的元素的hashCode值比较，如果hashCode不相等，则所存储的两个对象一定不相等，此时存储当前的新的hashCode值处的元素对象；如果hashCode相等，存储元素的对象还是不一定相等，此时会调用equals()方法判断两个对象的内容是否相等，如果内容相等，那么就是同一个对象，无需存储；如果比较的内容不相等，那么就是不同的对象，就该存储了，此时就要采用哈希的解决地址冲突算法，在当前hashCode值处类似一个新的链表， 在同一个hashCode值的后面存储存储不同的对象，这样就保证了元素的唯一性。
 
 ##### HashSet子类
 
@@ -1501,16 +1506,20 @@ implements Map<K,V>, Cloneable, Serializable
 
 2. 使用 <font color="lighblue" style="font-weight:bold;">2次扰动函数</font>（hash函数）来降低哈希冲突的概率，使得数据分布更平均；
 
-3. <font color="lighblue" style="font-weight:bold;">引入红黑树</font>进一步降低遍历的时间复杂度，使得遍历更快；
+3. <font color="lighblue" style="font-weight:bold;">引入红黑树</font>进一步降低遍历的时间复杂度，使得遍历更快，提高查找效率；
+
+链地址法的基本思想是：每个哈希表节点都有一个next指针，多个哈希表节点可以用next指针构成一个单向链表，被分配到同一个索引上的多个节点可以用这个单向链表连接起来。
 
 **HashMap在JDK1.7和JDK1.8中有哪些不同**
+
+![](https://note.youdao.com/yws/api/personal/file/6983209F21AD4039AA0FF43657A78188?method=download&shareKey=e631c6e5c753cd885ace1534c13173b6)
 
 | 不同                     | JDK 1.7                                                      | JDK 1.8                                                      |
 | :----------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
 | 存储结构                 | 数组 + 链表                                                  | 数组 + 链表 + 红黑树                                         |
 | 初始化方式               | 单独函数：`inflateTable()`                                   | 直接集成到了扩容函数`resize()`中                             |
 | hash值计算方式           | 扰动处理 = 9次扰动 = 4次位运算 + 5次异或运算                 | 扰动处理 = 2次扰动 = 1次位运算 + 1次异或运算                 |
-| 存放数据的规则           | 无冲突时，存放数组；冲突时，存放链表                         | 无冲突时，存放数组；冲突 & 链表长度 <= 8：存放单链表；冲突 & 链表长度 > 8：树化并存放红黑树 |
+| 存放数据的规则           | 无冲突时，存放数组；冲突时，存放链表                         | 无冲突时，存放数组；冲突 & 链表长度 <= 8：存放单链表；冲突 & 链表长度 > 8：树化并存放红黑树，当红黑树节点小于等于6时又会退化为链表 |
 | 插入数据方式             | 头插法（先讲原位置的数据移到后1位，再插入数据到该位置）      | 尾插法（直接插入到链表尾部/红黑树）                          |
 | 扩容后存储位置的计算方式 | 全部按照原来方法进行计算（即hashCode ->> 扰动函数 ->> (h&length-1)） | 按照扩容后的规律计算（即扩容后的位置=原位置 or 原位置 + 旧容量） |
 
@@ -1551,10 +1560,16 @@ implements Map<K,V>, Cloneable, Serializable
 
 **注意：Hashtable中key与value都不允许为空**
 
-面试题：请解释HashMap与Hashtable的区别：
+**请解释HashMap与Hashtable的区别**
 
-* HashMap中的方法都属于异步操作(非线程安全),HashMap允许保存有null数据；
+* HashMap中的方法都属于异步操作(非线程安全)，HashMap允许保存有null数据；
 * Hashtable中的方法都属于同步方法(线程安全)，Hashtable不允许保存null，否则会出现NullPointException。
+
+**HashTable 和 ConcurrentHashMap 区别**
+
+* HashTable 使用的是 Synchronized 关键字修饰，ConcurrentHashMap 是JDK1.7 使用了锁分段技术来保证线程安全的。JDK1.8ConcurrentHashMap 取消了 Segment 分段锁，采用 CAS 和 synchronized 来保证并发安全。数据结构跟 HashMap1.8 的结构类似，数组+链表/红黑二叉树。 
+* synchronized 只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升 N 倍。
+* 一般现在不建议用 HashTable，即使在多线程环境下，现在也有同步的 ConcurrentHashMap 替代。
 
 ##### Map.Entry接口
 
@@ -1623,7 +1638,9 @@ class文件是通过**类的加载器**装载到jvm中的
 
 其实这就是所谓的**双亲委派模型**。简单来说：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把**请求委托给父加载器去完成，依次向上**。
 
-好处：**防止内存中出现多份同样的字节码**(安全性角度)
+注意：这里存在的加载器之间的层级关系并不是以继承的方式存在的，而是以组合的方式处理的。
+
+好处：**防止内存中出现多份同样的字节码**(安全性角度)，避免类的重复加载
 
 **加载器加载到jvm中，接下来其实又分了好几个步骤**：加载-->连接(验证，准备，解析)-->初始化-->卸载
 
@@ -1681,7 +1698,7 @@ String str = new String("hello");
 
 > https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw
 
-JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年轻代**和**老年代**，而非堆内存则为**方法区(元空间)**。
+JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年轻代**和**老年代**，而非堆内存则为**方法区**(元空间)。
 
 当我们new一个对象后，会先放到Eden划分出来的一块作为存储空间的内存，当Eden空间满了之后，会触发一个叫做**Minor GC**（就是一个发生在年轻代的GC）的操作，存活下来的对象移动到Survivor0区。Survivor0区满后触发 Minor GC，就会将存活对象移动到Survivor1区，此时还会把from和to两个指针交换，这样保证了一段时间内总有一个survivor区为空且to所指向的survivor区为空。经过多次的 Minor GC后仍然存活的对象（**这里的存活判断是15次，对应到虚拟机参数为 -XX:MaxTenuringThreshold 。为什么是15，因为HotSpot会在对象投中的标记字段里记录年龄，分配到的空间仅有4位，所以最多只能记录到15**）会移动到老年代。老年代是存储长期存活的对象的，占满时就会触发我们最常听说的**Full GC**，期间会停止所有线程等待GC的完成。所以对于响应要求高的应用应该尽量去减少发生Full GC从而避免响应超时的问题。
 
@@ -1715,6 +1732,20 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 
 在生产环境中我们要根据**不同的场景**来选择垃圾收集器组合，如果是运行在桌面环境处于 Client 模式的，则用 Serial + Serial Old 收集器绰绰有余，如果需要响应时间快，用户体验好的，则用 ParNew + CMS 的搭配模式，即使是号称是「驾驭一切」的 G1，也需要根据吞吐量等要求适当调整相应的 JVM 参数，没有最牛的技术，只有最合适的使用场景。
 
+### 8.JVM调优参数
+
+-Xmx3550m：设置 JVM 最大可用内存为 3550M。 
+
+-Xms3550m：设置 JVM 初始内存为 3550m。注意：此值一般设置成和-Xmx 相同， 以避免每次垃圾回收完成后 JVM 重新分配内存。 
+
+-Xmn2g：设置年轻代大小为 2G。整个 JVM 内存大小=年轻代大小 + 年老代大小 + 持久代大小。此值对系统性能影响较大，Sun 官方推荐配置为整个堆的 3/8。 
+
+-Xss256k：设置每个线程的栈大小。JDK5.0 以后每个线程栈大小为 1M，以前每个线 程栈大小为 256K。根据应用的线程所需内存大小进行调整。在相同物理内存下，减小这个值能生成更多的线程。 
+
+-XX:NewRatio=4:设置年轻代（包括 Eden 和两个 Survivor 区）与年老代的比值（除去持久代）。设置为 4，则年轻代与年老代所占比值为 1：4。（该值默认为 2） 
+
+-XX:SurvivorRatio=4：设置年轻代中 Eden 区与 Survivor 区的大小比值。设置为 4，则两个 Survivor 区与一个 Eden 区的比值为 2:4。 
+
 ## 6.反射
 
 > https://www.sczyh30.com/posts/Java/java-reflection-1/#comments
@@ -1727,7 +1758,7 @@ JAVA反射机制是在运行状态中，对于任意一个类，都能够知道�
 
 **反射的原理**
 
-java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载的类的类型信息。每装载一个类的时候，java 就会创建一个该类的 Class 对象实例。我们就可以通过这个实例，来访问这个类的信息。
+java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载的类的类型信息。每装载一个类的时候，Java 就会创建一个该类的 Class 对象实例。我们就可以通过这个实例，来访问这个类的信息。
 
 ### 2.反射的基本应用
 

@@ -37,7 +37,7 @@ public interface IOrdCfmRepairServiceFacade extends IBaseServiceFacade {
 例：http://127.0.0.1:8287/ordercenter/ordCfmRepair/queryOrdCfmRepairPageList
 ```
 
-声明接口之后，在代码中通过@Resource注入之后即可使用。**@FeignClient**标签的常用属性如下：
+声明接口之后，在代码中通过@Resource注入之后即可使用。@FeignClient标签的常用属性如下：
 
 - name：指定FeignClient的名称，如果项目使用了Ribbon，name属性会作为微服务的名称，用于服务发现
 - url: url一般用于调试，可以手动指定@FeignClient调用的地址
