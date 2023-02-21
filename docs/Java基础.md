@@ -1527,6 +1527,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
  
 @Component // 把此类托管给 Spring，不能省略
+@ConditionalOnProperty(prefix = "opent.evaluationTimeout.scheduling", name = "enabled", havingValue = "true")//当某个组件没有属性可以控制是否在项目中动态的控制生效，则可以使用该注解
 public class TaskUtils {
     // 添加定时任务
     @Scheduled(cron = "59 59 23 0 0 5") // cron 表达式，每周五 23:59:59 执行
@@ -1537,6 +1538,14 @@ public class TaskUtils {
 ```
 
 注意：定时任务是自动触发的无需手动干预，也就是说 Spring Boot 启动后会自动加载并执行定时任务。
+
+```yml
+# 配置定时是否生效
+opent:
+  evaluationTimeout:
+    scheduling:
+      enabled: true
+```
 
 #### Cron 表达式
 
@@ -1549,6 +1558,29 @@ Spring Task 的实现需要使用 cron 表达式来声明执行的频率和规�
 ![](https://note.youdao.com/yws/api/personal/file/B53F0DD75836492B96D4BDCEA7141C81?method=download&shareKey=02113e09a731f4ee55c464ecbe814b87)
 
 cron 表达式在线生成地址：https://cron.qqe2.com/
+
+#### @ConditionalOnProperty
+
+当某个组件没有属性可以控制是否在项目中动态的控制生效，则可以使用该注解。
+
+比如spring自带的定时，当定时注解配置在项目中，而因为某些原因暂时不想让定时不起作用，可以在配置类中使用该注解
+
+```java
+@Configuration
+@EnableScheduling
+@ConditionalOnProperty(prefix = "scheduling", name = "enabled", havingValue = "true",,matchIfMissing = true)
+//当name的值与havingValue 值相等的时候该定时生效
+//也就是当配置文件中 scheduling.enabled = true 时定时生效，否则不生效
+
+public class ScheduledDemo {
+    @Scheduled(fixedDelayString = "5000" ,initialDelay=60)
+    public void scheduledDemo() {
+        System.out.println("test"+new Date());
+    }
+}
+```
+
+matchIfMissing  默认值为false ,当matchIfMissing 为false的时候表示如果没有在配置文件配置相应的属性时则自动配置不生效。当为true时，则自动配置生效。
 
 ### 30.Lambda表达式
 
@@ -1845,9 +1877,26 @@ num.compareTo(BigDecimal.ZERO) < 0   num小于0时，返回 -1
 
 StringUtils的isBlank()方法可以一次性校验这三种情况，返回值都是true,否则为false
 
+**对于对象和对象属性的判空，不能放在同一个判断中，否则可能会出现空指针异常**
 
+```java
+//如果user为空，则下面的判断会出现空指针异常，应该分别判断
+if(usr != null && user.getName !=null){
+    ......
+}
+//正确写法
+if(user != null){
+    if(user.getName !=null){
+        ......
+    }
+}
+```
 
+33.Java对象转JSON
 
+```java
+String json = JSONObject.toJSONString(list);
+```
 
 
 

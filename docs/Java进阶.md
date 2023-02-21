@@ -1914,6 +1914,78 @@ public static void testArray() throws ClassNotFoundException {
 - **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
 - **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
 
+## 7.队列
+
+### PriorityBlockingQueue
+
+PriorityBlockingQueue是一个支持优先级的无界阻塞队列，直到系统资源耗尽。默认情况下元素采用自然顺序升序排列。也可以自定义类实现compareTo()方法来指定元素排序规则，或者初始化PriorityBlockingQueue时，指定构造参数Comparator来对元素进行排序。但需要注意的是不能保证同优先级元素的顺序。PriorityBlockingQueue也是基于最小二叉堆实现，使用基于CAS实现的自旋锁来控制队列的动态扩容，保证了扩容操作不会阻塞take操作的执行。
+
+**常用的添加元素函数**
+
+1. add()：若超出了度列的长度会直接抛出异常：
+2. put()：若向队尾添加元素的时候发现队列已经满了会发生阻塞一直等待空间，以加入元素。
+3. offer()：如果发现队列已满无法添加的话，会直接返回false。
+
+**从队列中取出并移除头元素的方法**
+
+1. poll()：若队列为空，返回null。
+2. remove()：若队列为空，抛出NoSuchElementException异常。
+3. take()：若队列为空，发生阻塞，等待有元素。
+
+**返回队列头列表**
+
+1. element（）：返回队列头元素，如果为空则抛出异常NoSuchEleMentException
+2. peek（）：返回队列头元素，如果为空则返回null
+
+**注意**：使用take()函数，如果队列中没有数据，则线程wait释放CPU，而poll()则不会等待，直接返回null；同样，空间耗尽时offer()函数不会等待，直接返回false，而put()则会wait，因此如果你使用while(true)来获得队列元素，千万别用poll()，CPU会100%的。
+
+```java
+ private final static PriorityBlockingQueue<String> QUEUE = new PriorityBlockingQueue<>();
+
+    public void run() {
+        while (true) {
+            try {
+                //取出值
+                String uuid = QUEUE.take();
+                Boolean result=true;
+                if(result){
+                    //业务处理
+             	} else {
+                     QUEUE.add(uuid);
+                     Thread.sleep(10000L);
+                 }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

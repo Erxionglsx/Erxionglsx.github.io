@@ -113,7 +113,7 @@ $ ./nginx -s reload
 查询nginx进程：
 
 ```nginx
-$ ps aux|grep nginx
+ps aux|grep nginx
 ```
 
 ## 1.Nginx特性
@@ -174,25 +174,275 @@ $ ps aux|grep nginx
 
 ## 3.Nginx配置文件组成
 
-1.Nginx配置文件有三部分组成
+Nginx配置文件主要有4部分，main(全局设置)、server（主机设置）、upstream（上游服务器设置，主要为反向代理，负载均衡相关配置）和location（url匹配特定位置的设置），每部分包含若干指令。
 
-**第一部分 全局块**
+* Main部分的设置影响其他所有部分的设置；
+* Server部分主要用于指定虚拟机主机域名，ip和端口；
+* Upstream的指令用于设置一系列的后端服务器，设置反向代理及后端服务器的负载均衡；
+* Location部分用于匹配网页位置（如，跟目录“/”,”/images”等）。
 
-从配置文件开始到events块之间的内容，主要会设置一些影响Nginx服务器整体运行的配置指令。
+它们之间的关系是，server继承main，location继承server，upstream既不会继承指令也不会被继承。
 
-比如worker_processes 1； worker_processes值越大，可以支持的并发处理也越多。
+**可以将 nginx.conf 配置文件分为三部分**
+第一部分：**全局块**
 
-**第二部分 events块**
+从配置文件开始到 events 块之间的内容，主要会设置一些影响 nginx 服务器整体运行的配置指令，主要包括配置运行 Nginx 服务器的用户（组）、允许生成的 worker process 数，进程 PID 存放路径、日志存放路径和类型以及配置文件的引入等。
+比如 worker_processes 1;处理并发数的配置
 
-events块设计的指令主要影响Nginx服务器与用户的网络连接
+第二部分：**events 块**
 
-比如 worker_connections 1024； 支持的最大连接数
+events 块涉及的指令主要影响 Nginx 服务器与用户的网络连接，常用的设置包括是否开启对多 work process下的网络连接进行序列化，是否允许同时接收多个网络连接，选取哪种事件驱动模型来处理连接请求，每个 word process 可以同时支持的最大连接数等。
+比如 worker_connections 1024; 支持的最大连接数为 1024
 
-**第三部分 http块**
+第三部分：**http 块**
+这算是 Nginx 服务器配置中最频繁的部分，代理、缓存和日志定义等绝大多数功能和第三方模块的配置都在这里。
+需要注意的是：http 块也可以包括 http 全局块、server 块。
+①、http 全局块
 
-Nginx服务器配置中最频繁的部分
+http 全局块配置的指令包括文件引入、MIME-TYPE 定义、日志自定义、连接超时时间、单链接请求数上限等。
 
-http块也可以包括http全局块、server块
+②、server 块
+
+这块和虚拟主机有密切关系，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的，该技术的产生是为了节省互联网服务器硬件成本。 每个 http 块可以包括多个 server 块，而每个 server 块就相当于一个虚拟主机。 而每个 server 块也分为全局 server 块，以及可以同时包含多个 locaton 块。
+1、全局 server 块
+最常见的配置是本虚拟机主机的监听配置和本虚拟主机的名称或 IP 配置。
+2、location 块
+一个 server 块可以配置多个 location 块。 这块的主要作用是基于 Nginx 服务器接收到的请求字符串（例如 server_name/uri-string），对虚拟主机名称（也可以是 IP 别名）之外的字符串（例如 前面的 /uri-string）进行匹配，对特定的请求进行处理。地址定向、数据缓存和应答控制等功能，还有许多第三方模块的配置也在这里进行。
+
+**alias与root的区别**
+
+```
+location /img/ {
+	alias /var/www/image/;
+}
+#若按照上述配置的话，则访问/img/目录里面的文件时，ningx会自动去/var/www/image/目录找文件，alias必须以/结尾
+location /img/ {
+	root /var/www/image;
+}
+#若按照这种配置的话，则访问/img/目录下的文件时，nginx会去/var/www/image/img/目录下找文件
+```
+
+**index**
+
+index 的作用就是当没有访问任何文件时，则默认访问 index.html
+
+```
+# 访问 http://127.0.0.1:8081/tkben 时就会访问 /usr/local/html/tkben 下的 index.html 文件
+location /tkben {
+    index index.html;
+    root /usr/local/html;
+}
+```
+
+如 `http://127.0.0.1:8081/tkben/test.html` 就会访问 `/usr/local/html/tkben` 下的 `test.html` 文件
+
+**proxy_pass配置规则**
+
+* 配置 proxy_pass 时，当在后面的 url 加上了 /，相当于是绝对路径，则 Nginx 不会把 location 中匹配的路径部分加入代理 uri。
+* 如果配置 proxy_pass 时，后面没有 /，Nginx 则会把匹配的路径部分加入代理 uri。
+
+```
+server {
+        listen       8081;
+        server_name  localhost;
+ 
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+        
+#情景1:proxy_pass后有/ ，表绝对路径，不把匹配部分加入最终代理路径（location 和proxy_pass结尾一致）
+        #访问地址：http://localhost:8081/model/asc.shtml
+        #最终代理：http://127.0.0.1:8082/model/asc.shtml
+		location /model/ {
+            proxy_pass   http://127.0.0.1:8082/model/;
+        }
+        
+#情景2:proxy_pass后有/ ，表绝对路径，不把匹配部分加入最终代理路径（location 和proxy_pass结尾不一致）
+        #访问地址：http://localhost:8081/model/asc.shtml
+        #最终代理：http://127.0.0.1:8082/asc.shtml
+		location /model/ {
+            proxy_pass   http://127.0.0.1:8082/;
+        }
+        
+#情景3：proxy_pass后没有 / ，Nginx会把匹配部分带到代理的url
+        #访问地址：http://localhost:8081/model/asc.shtml
+        #最终代理：http://127.0.0.1:8082/model/asc.shtml
+		location /model/ {
+            proxy_pass   http://127.0.0.1:8082;
+        }
+    }
+```
+
+**return**
+
+* 返回 状态码+ 字符串
+
+  ```
+  location /a {
+  	return 200 'Hi, I am a.';
+  }
+  ```
+
+* 重定向
+
+  ```
+  location /a {
+    return https://www.baidu.com;
+   }
+  ```
+
+**rewrite**
+
+当访问
+`http://127.0.0.1:8000/c`
+`http://127.0.0.1:8000/c/c.html`
+`http://127.0.0.1:8000/c/xxx/xxx/xxx`
+都会重定向访问 root/r/1.html
+
+```
+#访问地址：http://127.0.0.1:8000/c
+#访问地址：http://127.0.0.1:8000/c/c.html
+#访问地址：http://127.0.0.1:8000/c/xxx/xxx/xxx
+#最终代理：http://127.0.0.1:8000/mnt/nfs/r/1.html
+location /c {
+	alias /mnt/nfs;
+	rewrite ^(.*)$ /r/1.html;
+}
+
+#带有last指令
+location /c {
+    rewrite ^(.*)$ /r/1.html last;
+    # 不会触发这个，因为 last 会跳过下面的执行语句，但它会继续走进下一个 location 块
+    rewrite ^(.*)$ /r/2.html last; 
+}
+# 这里监听 /r/1.html 再做一次重定向
+location = /r/1.html {
+	rewrite ^(.*)$ /r/3.html last;
+}
+
+#带有break指令
+location /c {
+    rewrite ^(.*)$ /r/1.html break;
+    # 不会触发这个，因为 break 会跳过下面的执行语句，同时也会跳过下面的 location 块
+    rewrite ^(.*)$ /r/2.html last; 
+  }
+  # 由于 break 这里不会触发到
+  location = /r/1.html {
+    rewrite ^(.*)$ /r/3.html last;
+  }
+```
+
+> location配置：https://blog.csdn.net/wangzhongshun/article/details/126434539
+
+nginx.conf
+
+```
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+worker_rlimit_nofile 655350;
+
+events {
+    worker_connections  7168;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    upstream lcell-auth {
+        server 127.0.0.1:8081;
+    }
+
+    upstream lcell-api {
+        server 127.0.0.1:8082;
+    }
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+    
+    #我们在conf.d目录下，新建.conf文件，写入自己的nginx配置
+    include /etc/nginx/conf.d/*.conf;
+}
+```
+
+/etc/nginx/conf.d/80.conf
+
+```conf
+ server {
+        listen       80; //监听端口
+        server_name  localhost; //监听地址
+        
+        # location 匹配内容的相对路径，alias 表示 一个绝对路径,而且必须以"/"结尾
+        location /tkben {
+			index index.html;
+			alias /usr/local/html/tkben;
+		}
+		
+		location = /50x.html {
+              root   /usr/share/nginx/html;
+         }
+		
+		location /tfish {
+			index index.html;
+			alias /usr/local/html/tfish;
+		}
+		
+		location /public/ {
+           	 alias /mnt/nfs/lcellstorage/public/;
+           	 rewrite /public/images/header/.*0_(.*) /public/images/$1; //url重写
+        }
+		
+		location /images/ {
+			alias /mnt/nfs/lcellstorage/images/;
+		}
+       
+        location /v2/api {
+            client_max_body_size 1024m;
+            proxy_pass          http://lcell-api;
+            proxy_set_header    Host $host;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_connect_timeout 18000;
+            proxy_send_timeout 18000;
+            proxy_read_timeout 18000;
+        }
+
+        location /v2/uc {
+            client_max_body_size 10m;
+            proxy_pass          http://lcell-auth;
+            proxy_set_header    Host $host;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_connect_timeout 600;
+            proxy_send_timeout 600;
+            proxy_read_timeout 600;
+        }
+    }
+```
+
+skee.conf
+
+```conf
+server {
+        listen       80;
+        server_name  192.168.12.166;
+
+	    #重定向到其他网站
+        location = / {
+                return 301 http://www.baidu.cn/;
+                add_header Cache-Control no-cache;
+                add_header Pragma no-cache;
+                add_header Expires 0;
+        }
+    }
+```
 
 ## 4.反向代理实例Ⅰ
 
@@ -503,3 +753,4 @@ Nginx同redis类似都采用了io多路复用机制，每个worker都是一个�
 第二个: nginx有一个master,有四个woker,每个woker支持最大的连接数1024,支持的最大并发数是多少?
 答案：普通的静态访问最大并发数是: worker connections * worker processes /2，
 而如果是HTTP作为反向代理来说，最大并发数量应该是worker connections * worker processes/4
+

@@ -86,6 +86,8 @@ select s2.s_name,count(*) as num from score s1 INNER JOIN student s2 on s1.s_no 
 ```sql
 SELECT Company, OrderNumber FROM Orders ORDER BY OrderNumber --顺序显示，小->大
 SELECT Company, OrderNumber FROM Orders ORDER BY OrderNumber DESC --逆序显示，大->小
+-- MySQL中按照IN语句中的顺序排序,ORDER BY 后面使用关键字 FIELD ，紧接着的是需要排序的字段名称goods_id
+SELECT * FROM goods WHERE goods_id IN ( '603', '64', '566', '37', '421', '201', '1002', '339', '283', '494', '222', '617' ) ORDER BY FIELD( goods_id, '603', '64', '566', '37', '421', '201', '1002', '339', '283', '494', '222', '617' )
 ```
 
 <font color="lighblue">LIKE 操作符</font>用于在 WHERE 子句中搜索列中的指定模式。
@@ -150,16 +152,15 @@ SELECT LastName AS Family, FirstName AS Name FROM Persons
 <font color="lighblue">SQL join</font> 用于根据<font color="lighblue">两个或多个表</font>中的列之间的关系，从这些表中查询数据。
 
 - <font color="lighblue">JOIN</font>: 如果表中有至少一个匹配，则返回行，INNER JOIN 与 JOIN 是相同的。
+- <font color="lighblue">INNER JOIN</font>:只返回两个表中联结字段相等的行
 - <font color="lighblue">LEFT JOIN</font>: 即使右表中没有匹配，也从左表返回所有的行
 - <font color="lighblue">RIGHT JOIN</font>: 即使左表中没有匹配，也从右表返回所有的行
-- <font color="lighblue">FULL JOIN</font>: 只要其中一个表中存在匹配，就返回行
 
 ```sql
 select * from student s,score c where s.s_id = c.c_id;
 select * from student s INNER JOIN score c on s.s_id = c.s_no; -- 内连接
 select * from student s LEFT JOIN score c on s.s_id = c.s_no; -- 左连接
 select * from student s RIGHT JOIN score c on s.s_id = c.s_no; -- 右连接
-select * from student s FULL JOIN score c on s.s_id = c.s_no;
 ```
 
 <font color="lighblue">CREATE INDEX</font> 语句用于在表中<font color="lighblue">创建索引</font>。
@@ -304,7 +305,7 @@ select CITY_CODE from user where FIND_IN_SET('233',CITY_CODE);
 
 ```sql
 CASE WHEN sex = '1' THEN '男'
-         WHEN sex = '2' THEN '女'
+     WHEN sex = '2' THEN '女'
 ELSE '其他' END   
 ```
 
@@ -393,8 +394,6 @@ update J_Student set Sage=24 where Grade=78;
 drop view J_Student;
 ```
 
-![1600250814201](C:\Users\22874\AppData\Roaming\Typora\typora-user-images\1600250814201.png)
-
 #### 按12个月统计,没有的月份补齐
 
 ```sql
@@ -422,6 +421,102 @@ on a.date = b.date order by date;
 
 ![](https://note.youdao.com/yws/api/personal/file/53A206E219B74DECB554A9D8588FF6DC?method=download&shareKey=ca7da52e9589a4994bb5ef9bfc850ca3)
 
+#### concat函数
+
+> https://blog.csdn.net/weixin_45583894/article/details/123379603
+>
+
+**concat()函数**
+
+1、功能：将多个字符串连接成一个字符串。
+
+2、语法：concat(str1, str2,...)
+
+说明：返回结果为连接参数产生的字符串，如果有任何一个参数为null，则返回值为null。
+
+3、举例：select concat (id, name, score) as 别名 from 表名；
+
+**concat_ws()函数**
+
+1、功能：和concat()一样，但是可以指定分隔符（concat_ws就是concat with separator）
+
+2、语法：concat_ws(separator, str1, str2, ...)
+
+说明：第一个参数指定分隔符。需要注意的是分隔符不能为null，如果为null，则返回结果为null。
+
+3、举例：select concat ('#',id, name, score) as 别名 from 表名；
+
+**group_concat()函数**
+
+1、功能：将group by产生的同一个分组中的值连接起来，返回一个字符串结果。
+
+2、语法：group_concat( [distinct] 要连接的字段 [order by 排序字段 asc/desc ] [separator] )
+
+说明：通过使用distinct可以**排除重复值**；如果希望对结果中的值进行**排序**，可以使用order by子句；separator**分隔符**是一个字符串值，缺省为一个逗号。
+
+```sql
+SELECT 
+	name,
+	group_concat( score ORDER BY score DESC separator '#' ) AS score 
+FROM
+	tk_student 
+GROUP BY
+	name;
+```
+
+**substring_index函数**
+
+substring_index(字符串,分隔符,序号)，截取目标字符串
+
+* string：用于截取目标字符串的字符串。可为字段，表达式等。
+* sep：分隔符，string存在且用于分割的字符，比如“，”、“.”等。
+* num：序号，为非0整数。若为整数则表示从左到右数，若为负数则从右到左数。
+
+```sql
+-- 分组后取每组的最大两条值，若求这两条值的和，可导出后按","分列求和后粘贴为数值
+SELECT
+	student_id,
+	substring_index( GROUP_CONCAT( total_score ORDER BY total_score DESC ), ',', 2 ) as score
+FROM
+	score 
+GROUP BY
+	teacher_id;
+```
+
+**concat_ws()和group_concat()联合使用**
+
+题目：查询以name分组的所有组的id和score
+
+举例：select name,group_concat(concat_ws('-',id,score) order by id) as 别名 from 表名 group by name；
+
+####  TO_DAYS(date)函数
+
+> https://blog.csdn.net/sinat_37239798/article/details/115161583
+
+```SQL
+-- 利用to_days函数查询今天的数据
+select * from 表名 where to_days(时间字段名) = to_days(now());
+select * from seller where to_days(create_time) = to_days(now());
+```
+
+#### 更新查询结果
+
+```sql
+UPDATE lesson_claim_copy1 lcl inner join (
+	SELECT
+	lcl.lesson_id as lesson_id,
+	GROUP_CONCAT(experience.description separator ';') AS description
+FROM
+	lesson_claim_copy1 lcl
+	JOIN lesson_check checks ON lcl.lesson_id = checks.lesson_id
+	JOIN com_learning_experience experience ON checks.id = experience.object_id
+	JOIN learning_experience_teacher teacher ON experience.id = teacher.learing_experience_id 
+WHERE
+	lcl.teacher_id = teacher.teacher_id and experience.description is not null group by checks.lesson_id) as table1
+	on lcl.lesson_id = table1.lesson_id
+	SET lcl.description = table1.description;
+```
+
 #### SQL语句中1=1的作用
 
 **1=1的用处** 
@@ -445,10 +540,31 @@ where后面总要有语句，加上了1=1后就可以保证语法不会出错!
 UNION和UNION ALL的区别是,UNION会自动压缩多个结果集合中的重复结果，而UNION ALL则将所有的结果全部显示出来，不管是不是重复。
 **Union**：对两个结果集进行并集操作，不包括重复行，同时进行默认规则的排序；
 UNION在进行表链接后会筛选掉重复的记录，所以在表链接后会对所产生的结果集进行排序运算，删除重复的记录再返回结果。
-实际大部分应用中是不会产生重复的记录，最常见的是过程表与历史表UNION
 
 **Union All**：对两个结果集进行并集操作，包括重复行，不进行排序；
 如果返回的两个结果集中有重复的数据，那么返回的结果集就会包含重复的数据了。
+
+注意：字段名称可以不同，字段数量、数据类型、顺序必须相同。UNION 操作符用于合并两个或多个 SELECT 语句的结果集。
+
+```sql
+select *  from test  where id<4  
+union  
+select *  from student  where id>2 and id<6 
+```
+
+### (@i:=@i+1)的使用
+
+1.查询sql时，有时需要一个伪列rownum。在mysql中便可以使用(@i:=@i+1)生成自增的序列
+
+```SQL
+-- 从0开始，每次都增加1
+SELECT (@i:=@i+1) rownum,first_name,last_name FROM employee,(SELECT (@i:=0)) t
+```
+
+```SQL
+-- 如果想要加5，便改为(@i:=@i+5).如果想要从100开始，便将(@i:=0)改为(@i:=100)
+SELECT (@i:=@i+5) rownum,first_name,last_name FROM employee,(SELECT (@i:=100)) t
+```
 
 ### mysql有哪些数据类型
 
@@ -523,3 +639,16 @@ ENUM在内部存储时，其实存的是整数。
 2NF:唯一性 一个表只说明一个事物;
 
 3NF:每列都与主键有直接关系，不存在传递依赖;
+
+#### 查询死锁
+
+```sql
+-- 查看当前事务
+SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
+-- 查看当前锁定的事务
+SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCKS;
+-- 查看当前等锁的事务
+SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
+```
+
+[mysql innodb_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
