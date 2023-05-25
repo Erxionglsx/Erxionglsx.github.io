@@ -34,6 +34,18 @@ mongoDB,redis,hbase,memcache
 |  关系型数据库 SQLite、Oracle、mysql  | 1、关系型数据库，是指采用了关系模型来组织 数据的数据库； 2、关系型数据库的最大特点就是事务的一致性； 3、简单来说，关系模型指的就是二维表格模型， 而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。 | 1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解； 2、使用方便：通用的SQL语言使得操作关系型数据库非常方便； 3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率； 4、支持SQL，可用于复杂的查询。 | 1、为了维护一致性所付出的巨大代价就是其读写性能比较差； 2、固定的表结构； 3、高并发读写需求； 4、海量数据的高效率读写； |
 | 非关系型数据库 MongoDb、redis、HBase | 1、使用键值对存储数据； 2、分布式； 3、一般不支持ACID特性； 4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。 | 1、无需经过sql层的解析，读写性能很高； 2、基于键值对，数据没有耦合性，容易扩展； 3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。 | 1、不提供sql支持，学习和使用成本较高； 2、无事务处理，附加功能bi和报表等支持也不好； |
 
+### 数据库连接池
+
+如果一个项目中如果需要多个连接，如果一直获取连接，断开连接，这样比较浪费资源；如果创建一个池，用池来管理Connection，这样就可以重复使用Connection。有了池我们就不用自己来创建Connection，而是通过池来获取Connection对象。当使用完Connection后，调用Connection的close（）方法也不会真的关闭Connection，而是把Connection“归还”给池。池就可以再利用这个Connection对象了。这里我们常用的连接池有三种，分别是：DBCP连接池、C3P0连接池和Druid连接池；
+
+DBCP：Tomcat的数据源使用的就是DBCP，单线程，并发量低，性能不好，适用于小型系统。
+
+C3P0：开放的源代码的JDBC连接池，单线程，性能较差，适用于小型系统
+
+Druid(德鲁伊)：Druid能够提供强大的监控和扩展功能，是一个可用于大数据实时查询和分析的高容错、高性能的开源分布式系统，尤其是当发生代码部署、机器故障以及其他产品系统遇到宕机等情况时，Druid仍能够保持100%正常运行
+
+Hikari：HiKariCP是数据库连接池的一个后起之秀，号称性能最好，可以完美地PK掉其他连接池，是一个高性能的JDBC连接池，基于BoneCP做了不少的改进和优化。并且在**springboot2.0之后，采用的默认数据库连接池就是Hikari**
+
 ### SQL语句
 
 <font color="lighblue">创建表</font>
@@ -133,7 +145,7 @@ WHERE column_name IN (value1,value2,...)
 
 每个表可以有多个 UNIQUE 约束，但是每个表只能有一个 PRIMARY KEY 约束。
 
-操作符 <font color="lighblue">BETWEEN ... AND</font> 会选取介于两个值之间的<font color="lighblue">数据范围</font>。这些值可以是数值、文本或者日期。(不同的数据库对 BETWEEN...AND 操作符的处理方式是有差异的。)
+操作符 <font color="lighblue">BETWEEN ... AND</font> 会选取介于两个值之间的<font color="lighblue">数据范围</font>。这些值可以是数值、文本或者日期。(不同的数据库对 BETWEEN...AND 操作符的处理方式是有差异的。
 
 ```sql
 SELECT column_name(s)
@@ -652,3 +664,4 @@ SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
 ```
 
 [mysql innodb_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
+

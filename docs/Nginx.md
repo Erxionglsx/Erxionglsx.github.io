@@ -23,26 +23,26 @@ zlib
 ① 安装 nginx 需要先将官网下载的源码进行编译，编译依赖 gcc 环境，如果没有 gcc 环境，则需要安装：
 
 ```nginx
-$ yum install gcc-c++
+yum install gcc-c++
 ```
 
 ② PCRE(Perl Compatible Regular Expressions) 是一个Perl库，包括 perl 兼容的正则表达式库。nginx 的 http 模块使用 pcre 来解析正则表达式，所以需要在 linux 上安装 pcre 库，pcre-devel 是使用 pcre 开发的一个二次开发库。nginx也需要此库。命令：
 
 ```nginx
-$ yum install -y pcre pcre-devel
+yum install -y pcre pcre-devel
 ```
 
 ③ zlib 库提供了很多种压缩和解压缩的方式， nginx 使用 zlib 对 http 包的内容进行 gzip ，所以需要在 Centos 上安装 zlib 库。
 
 ```nginx
-$ yum install -y zlib zlib-devel
+yum install -y zlib zlib-devel
 ```
 
 ④ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及 SSL 协议，并提供丰富的应用程序供测试或其它目的使用。
 nginx 不仅支持 http 协议，还支持 https（即在ssl协议上传输http），所以需要在 Centos 安装 OpenSSL 库。
 
 ```nginx
-$ yum install -y openssl openssl-devel
+yum install -y openssl openssl-devel
 ```
 
 **3. 安装Nginx**
@@ -52,6 +52,8 @@ $ yum install -y openssl openssl-devel
 > a. 直接下载`.tar.gz`安装包，地址：https://nginx.org/en/download.html
 >
 > b. **使用wget命令下载（推荐）**。确保系统已经安装了wget，如果没有安装，执行 yum install wget 安装。
+>
+> c.使用yum下载：yum nginx
 
 ```nginx
 $ wget -c https://nginx.org/download/nginx-1.19.0.tar.gz
@@ -78,17 +80,19 @@ $ ./configure
 
 ```nginx
 $ ./configure \--prefix=/usr/local/nginx \--conf-path=/usr/local/nginx/conf/nginx.conf \--pid-path=/usr/local/nginx/conf/nginx.pid \--lock-path=/var/lock/nginx.lock \--error-log-path=/var/log/nginx/error.log \--http-log-path=/var/log/nginx/access.log \--with-http_gzip_static_module \--http-client-body-temp-path=/var/temp/nginx/client \--http-proxy-temp-path=/var/temp/nginx/proxy \--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \--http-scgi-temp-path=/var/temp/nginx/scgi
+
+./configure --prefix=/usr/local/nginx --with-stream \--pid-path=/var/run/nginx.pid
 ```
 
 > 注：将临时文件目录指定为/var/temp/nginx，需要在/var下创建temp及nginx目录
 
-④ 编辑安装
+④ 编译安装
 
 ```nginx
 $ make && make install
 ```
 
-查看版本号(`使用nginx操作命令前提条件:必须进入nginx的目录/usr/local/nginx/sbin`.)
+查看版本号(`使用nginx操作命令前提条件:必须进入nginx的目录/usr/local/nginx/sbin`)
 
 ```nginx
 $ ./nginx -v
@@ -98,6 +102,7 @@ $ ./nginx -v
 
 ```nginx
 $ whereis nginx
+$ find / -name nginx
 ```
 
 ⑤ 启动，停止nginx
@@ -114,6 +119,117 @@ $ ./nginx -s reload
 
 ```nginx
 ps aux|grep nginx
+```
+
+**使用systemctl管理编译安装的nginx**
+
+1.创建一个名为`nginx.service`的文件，并将其保存在`/etc/systemd/system/`目录下。在文件中添加以下内容：
+
+```javascript
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/usr/local/nginx/logs/nginx.pid
+ExecStartPre=/usr/local/nginx/sbin/nginx -t
+ExecStart=/usr/local/nginx/sbin/nginx
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+2.加载新的服务文件
+
+```
+systemctl daemon-reload
+```
+
+3.启动服务并设置开机自启
+
+```
+systemctl start nginx
+systemctl enable nginx
+```
+
+如果你需要查看nginx的状态或日志，可以使用以下命令
+
+```lua
+systemctl status nginx
+journalctl -xe -u nginx
+```
+
+#### yum安装
+
+```yml
+yum update #更新软件包列表
+yum search nginx  #查询是否有nginx
+yum install nginx #下载nginx
+systemctl start nginx #启动nginx
+systemctl status nginx #查看nginx启动状态
+systemctl stop nginx #关闭nginx
+journalctl -xeu nginx.service #查看报错日志
+```
+
+### 卸载nginx
+
+```yml
+#删除 Nginx安装目录及其下所有文件
+rm -rf usr/local/nginx
+rm -rf home/nginx
+#删除 Nginx 系统服务文件
+rm -f /lib/systemd/system/nginx.service
+rm -f /etc/init.d/nginx
+#删除 Nginx 用户和组
+sudo userdel nginx
+sudo groupdel nginx
+```
+
+### 编译安装使用systemctl管理
+
+在编译安装 Nginx 后，可以使用以下步骤将其设置为系统服务，并使用 systemctl 命令对其进行启动和管理
+
+1.创建一个文件 `/usr/lib/systemd/system/nginx.service`，并添加以下代码：
+
+```
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/usr/local/nginx/logs/nginx.pid
+ExecStartPre=/usr/local/nginx/sbin/nginx -t
+ExecStart=/usr/local/nginx/sbin/nginx
+ExecReload=/usr/local/nginx/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+ 2.创建 `/usr/local/nginx/logs` 目录，并设置其权限：
+
+```
+mkdir /usr/local/nginx/logs
+chmod 755 /usr/local/nginx/logs
+```
+
+3.重新加载 systemctl 配置文件，以使其能够读取 nginx.service：
+
+```
+systemctl daemon-reload
+```
+
+4.启用 Nginx 服务，使其在系统启动时自动启动
+
+```
+systemctl enable nginx
 ```
 
 ## 1.Nginx特性
@@ -146,30 +262,18 @@ ps aux|grep nginx
 
 ## 2.Nginx常用命令
 
-1.使用Nginx操作命令前提条件：必须进入Nginx的目录 /usr/local/nginx/sbin
-
-2.查看Nginx的版本号
-
 ```nginx
-./nginx -v
-```
-
-3.启动Nginx
-
-```nginx
-./nginx
-```
-
-4.关闭Nginx
-
-```nginx
-./nginx -s stop
-```
-
-5.重启Nginx
-
-```nginx
-./nginx -s reload
+systemctl start nginx #启动nginx服务
+systemctl status nginx #查看nginx状态
+systemctl reload nginx #重新加载配置 
+systemctl stop nginx #停止服务
+systemctl restart nginx #重启服务
+systemctl enable nginx #设置开机自启动
+systemctl disable nginx #停止开机自启动
+ps aux|grep nginx #查询nginx进程
+whereis nginx #查找安装路径
+find / -name nginx #查找nginx相关文件
+nginx -t #语法检查
 ```
 
 ## 3.Nginx配置文件组成
@@ -187,7 +291,6 @@ Nginx配置文件主要有4部分，main(全局设置)、server（主机设置�
 第一部分：**全局块**
 
 从配置文件开始到 events 块之间的内容，主要会设置一些影响 nginx 服务器整体运行的配置指令，主要包括配置运行 Nginx 服务器的用户（组）、允许生成的 worker process 数，进程 PID 存放路径、日志存放路径和类型以及配置文件的引入等。
-比如 worker_processes 1;处理并发数的配置
 
 第二部分：**events 块**
 
@@ -211,22 +314,23 @@ http 全局块配置的指令包括文件引入、MIME-TYPE 定义、日志自�
 
 **alias与root的区别**
 
-```
+```yml
+# alias 指令会使用 location 块中匹配到的 URI 替换 alias 指令中所配置的路径，从而构成服务器上真实的文件路径。若按照上述配置的话，则访问/img/目录里面的文件时，ningx会自动去/var/www/image/目录找文件
+#alias必须以/结尾
 location /img/ {
 	alias /var/www/image/;
 }
-#若按照上述配置的话，则访问/img/目录里面的文件时，ningx会自动去/var/www/image/目录找文件，alias必须以/结尾
+# root 指令会将 location 块中匹配到的 URI 直接拼接到 root 指令中所配置的路径之后，从而构成服务器上真实的文件路径。若按照这种配置的话，则访问/img/目录下的文件时，nginx会去/var/www/image/img/目录下找文件
 location /img/ {
 	root /var/www/image;
 }
-#若按照这种配置的话，则访问/img/目录下的文件时，nginx会去/var/www/image/img/目录下找文件
 ```
 
 **index**
 
 index 的作用就是当没有访问任何文件时，则默认访问 index.html
 
-```
+```yml
 # 访问 http://127.0.0.1:8081/tkben 时就会访问 /usr/local/html/tkben 下的 index.html 文件
 location /tkben {
     index index.html;
@@ -241,7 +345,7 @@ location /tkben {
 * 配置 proxy_pass 时，当在后面的 url 加上了 /，相当于是绝对路径，则 Nginx 不会把 location 中匹配的路径部分加入代理 uri。
 * 如果配置 proxy_pass 时，后面没有 /，Nginx 则会把匹配的路径部分加入代理 uri。
 
-```
+```yml
 server {
         listen       8081;
         server_name  localhost;
@@ -289,7 +393,7 @@ server {
   ```
   location /a {
     return https://www.baidu.com;
-   }
+  }
   ```
 
 **rewrite**
@@ -300,7 +404,7 @@ server {
 `http://127.0.0.1:8000/c/xxx/xxx/xxx`
 都会重定向访问 root/r/1.html
 
-```
+```yml
 #访问地址：http://127.0.0.1:8000/c
 #访问地址：http://127.0.0.1:8000/c/c.html
 #访问地址：http://127.0.0.1:8000/c/xxx/xxx/xxx
@@ -753,4 +857,3 @@ Nginx同redis类似都采用了io多路复用机制，每个worker都是一个�
 第二个: nginx有一个master,有四个woker,每个woker支持最大的连接数1024,支持的最大并发数是多少?
 答案：普通的静态访问最大并发数是: worker connections * worker processes /2，
 而如果是HTTP作为反向代理来说，最大并发数量应该是worker connections * worker processes/4
-
