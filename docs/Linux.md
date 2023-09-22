@@ -48,6 +48,18 @@ find -name 文件名或目录名   全局搜索文件或目录
 
 less file	查看文件，打印一页，可上下翻页
 
+### 移动文件
+
+mv newFiles/* audio/  移动一个文件夹下的所有内容到另一个文件夹下面
+
+mv /home/packageA  /home/packageB/  移动一个文件夹到另一个文件夹下面
+
+mv /home/packageA  /home/packageB  移动一个文件夹到另一个文件夹下面
+
+### 清除日志文件内容
+
+ll > /home/tomcat/tkben-api/logs/catalina.out
+
 **less交互命令**
 
 | 交互指令   | 功能                                 |
@@ -104,7 +116,9 @@ ln -s /bin/less /usr/local/bin/less
 
 > https://blog.csdn.net/lhwjgs123456789/article/details/127472189
 
-Linux下，mount挂载的作用，就是将一个设备（通常是存储设备）挂接到一个已存在的目录上。访问这个目录就是访问该存储设备。类似于U盘的功能
+Linux下，mount挂载的作用，就是将一个设备（通常是存储设备）挂接到一个已存在的目录上。访问这个目录就是访问该存储设备。类似于windows中U盘的功能，但U盘会自动挂载。
+
+许多的安装包都在/dev下，虽然所有的包都有但是还没有与Linux系统建立联系，如果想要知道这些安装包就需要挂载到文件mnt 或者 media 里面。
 
 挂载操作：https://blog.csdn.net/qq_51399192/article/details/124318863
 
@@ -134,6 +148,8 @@ umount /dev/sdb1    或者   umount /mnt/usbFAT32   都可以进行卸载
 df -lh  查看磁盘使用情况和挂载点
 
 df /home 查看home目录磁盘使用情况
+
+du -sh 查看的是当前目录的大小
 
 du -sh /*  查看的是当前目录下所有子文件与子目录的大小，将其一一列出
 
@@ -181,7 +197,20 @@ ping 192.110.168.11
 ping -c 3 baidu.com
 ```
 
-**wege命令**
+**route命令**
+
+打印Linux中的路由表，查看网关
+
+```java
+//查看网关
+route -n
+//修改网关
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+//重启网关
+systemctl restart network
+```
+
+**wegt命令**
 
 语法：wget [-b] url
 
@@ -235,6 +264,16 @@ Linux系统是一个超大号小区，可以支持65535个端口，这6万多个
 nmap 127.0.0.1
 ```
 
+**lsof命令** 
+
+查看端口连接情况 
+
+```
+lsof -i :8182
+```
+
+查看服务端口：vi conf/server.xml
+
 **netstat命令**，安装netstat：yum -y install net-tools
 
 查看该端口号的占用情况
@@ -270,6 +309,11 @@ netstat -nlp | grep 8102  查看网络端口
 free命令显示系统使用和空闲的内存情况，包括物理内存、交互区内存(swap)和内核缓冲区内存。
 
 可以采用free -m和free -g命令查看，分别表示MB和GB
+
+```
+-- 内存不足，释放空间
+lsof -n / |grep deleted|awk '{print $2}'|xargs kill -9
+```
 
 **top命令**
 
@@ -390,6 +434,73 @@ ClientAliveCountMax 3
 ```
 
 systemctl restart sshd
+
+### 防火墙
+
+查看防火墙状态
+
+```
+查看防火墙状态 systemctl status firewalld
+开启防火墙 systemctl start firewalld
+关闭防火墙 systemctl stop firewalld
+开启防火墙 service firewalld start
+若遇到无法开启
+先用：systemctl unmask firewalld.service
+然后：systemctl start firewalld.service
+```
+
+查看对外开放的端口状态
+
+```
+查询已开放的端口（已开放的端口号集合）：firewall-cmd --zone=public --list-ports
+查询已开放的端口 netstat -ntulp | grep 端口号：可以具体查看某一个端口号
+查询指定端口是否已开 firewall-cmd --query-port=666/tcp
+提示 yes，表示开启；no表示未开启。
+```
+
+对外开放端口
+
+```
+查看想开的端口是否已开：firewall-cmd --query-port=6379/tcp
+添加指定需要开放的端口：firewall-cmd --add-port=123/tcp --permanent
+重载入添加的端口：firewall-cmd --reload
+查询指定端口是否开启成功：firewall-cmd --query-port=123/tcp
+移除指定端口：firewall-cmd --permanent --remove-port=123/tcp
+```
+
+### yum
+
+```java
+//安装所有更新软件
+yum update
+//列出所有可安装的软件包
+yum list
+//列出所有已安装的软件包
+yum list installed
+//搜索是否有对应软件包
+yum search <keyword>
+eg:yum search squid
+//若有，则可以下载
+yum install <keyword>
+//清除YUM缓存
+yum clean packages
+```
+
+安装运行443端口
+
+```java
+//安装SSL
+yum install mod_ssl
+//启动
+systemctl restart httpd
+//防火墙开启443端口
+```
+
+
+
+
+
+
 
 
 

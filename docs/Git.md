@@ -4,7 +4,7 @@
 
 ------
 
-
+[TOC]
 
 ![](https://note.youdao.com/yws/api/personal/file/407E488E01E54AE9BD7FB229812E6190?method=download&shareKey=a7651e6fbc242415d2b066ffca48b743)
 
@@ -54,6 +54,21 @@
 
 修改邮箱：git config --global user.email "邮箱"
 
+#### 代理
+
+C:\Users\zhangwang
+
+D:\application\Git\etc
+
+git config --global http.proxy 127.0.0.1:7890#设置vpn代理
+git config --global https.proxy 127.0.0.1:7890#设置vpn代理
+
+git config --global http.proxy #查看git的http代理配置
+git config --global https.proxy #查看git的https代理配置
+git config --global -l #查看git的所有配置
+git config --global --unset http.proxy    #取消git的http代理配置
+git config --global --unset https.proxy    #取消git的https代理配置
+
 ### git reset回滚
 
 > https://blog.csdn.net/qq_16221009/article/details/125490631
@@ -62,10 +77,22 @@
 
 | 选项  | git reset产生影响 | 索引（暂存区） | 工作目录 | 原有文件内容的变更                           | 目录结构的变更（增加或者删除文件）                           |
 | ----- | ----------------- | -------------- | -------- | -------------------------------------------- | ------------------------------------------------------------ |
-| soft  | 是                | 否             | 否       | 修改内容还在，变成未add的状态                | 新增文件：还存在，变成未add的状态(目录结构中文件变成绿色，可以再次执行git commit )；删除文件：目录结构中还是没有，可以直接执行git commit |
+| soft  | 是                | 否             | 否       | 修改内容还在，变成add的状态                  | 新增文件：还存在，变成未add的状态(目录结构中文件变成绿色，可以再次执行git commit )；删除文件：目录结构中还是没有，可以直接执行git commit |
 | mixed | 是                | 是             | 是       | 修改内容还在，变成未add的状态                | 新增文件： 还存在，变成未add的状态(目录结构中文件变成红色，需要执行命令git add . 再执行git commit )；删除文件：目录结构中还是没有，可以直接执行git commit |
 | hard  | 是                | 是             | 是       | 修改内容丢失，修改的代码 不会变成未add的状态 | 新增文件丢失、删除的文件相当于没删                           |
 
+#### Abandon操作
+
+abandon后，git reset --soft HEAD^ 回退本地的commit提交
+
+之后重新更新代码，修改编译出错的代码后，重新提交
+
+```java
+//回退最近四次提交
+git reset HEAD~4
+//回退最近一次提交
+git reset --soft HEAD^
+```
 
 #### 已commit的代码回退
 
@@ -140,4 +167,29 @@ git reset --soft "90f1ce4d73c5dc63f46fa61984a6bb878f47374^"
 1. Smart checkout:当前分支未提交的代码会被带到你要切换的那个分支上去
 2. Force Checkout:当前分支未提交的代码不会带到你要切换的那个分支上去,还是保留在当前分支
 3. don`t checkout:就是不进行分支切换,还是留在当前分支
+
+### Git配置
+
+```git
+http.sslcainfo=D:/application/Git/mingw64/ssl/certs/ca-bundle.crt
+http.sslbackend=openssl
+diff.astextplain.textconv=astextplain
+filter.lfs.clean=git-lfs clean -- %f
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+core.autocrlf=true
+core.fscache=true
+core.symlinks=false
+pull.rebase=false
+credential.helper=manager-core
+credential.https://dev.azure.com.usehttppath=true
+init.defaultbranch=master
+```
+
+
+
+
+
+
 
