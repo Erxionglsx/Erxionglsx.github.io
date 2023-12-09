@@ -1,46 +1,46 @@
 ## Angular
 
-> https://www.bilibili.com/video/BV1bt411e71b?p=1
+> <https://www.bilibili.com/video/BV1bt411e71b?p=1>
 
-------
+***
 
 [TOC]
 
 #### AngularJS是什么？
 
-1. AngularJS是什么?
+1.  AngularJS是什么?
 
-   AngularJS 是一个 **JavaScript 框架**。它可通过 <script> 标签添加到 HTML 页面。
+    AngularJS 是一个 **JavaScript 框架**。它可通过 &lt;script&gt; 标签添加到 HTML 页面。
 
-   - Google开源的 前端JS 结构化 框架
-   - 动态展示页面数据, 并与用户进行交互
-   - AngularJS特性(优点)
-     - 双向数据绑定
-     - 声明式依赖注入
-     - 解耦应用逻辑, 数据模型和视图
-     - 完善的页面指令
-     - 定制表单验证
-     - Ajax封装
+    *   Google开源的 前端JS 结构化 框架
+    *   动态展示页面数据, 并与用户进行交互
+    *   AngularJS特性(优点)
+        *   双向数据绑定
+        *   声明式依赖注入
+        *   解耦应用逻辑, 数据模型和视图
+        *   完善的页面指令
+        *   定制表单验证
+        *   Ajax封装
 
 **需先安装Node.js，再安装Angular**
 
 #### 项目结构
 
-- package.json :项目的配置文件，定义名称、版本和各种依赖
-- node_modules：安装的第三方模块放在这里
-- src  项目的所有文件放在src里面
-  - /app：组件、服务、根模块
-    * app.module.ts：Angular根模块，告诉Angular如何组装应用
-      * declarations：配置当前项目运行的组件
-      * imports：配置当前模块运行依赖的其他模块
-      * providers：配置项目所需的服务
-  - /assets：静态资源文件
-  - /environments：为目标环境准备的文件
-  - browserslist：支持的浏览器
-  - index.html：运行的首页
-  - main.ts：项目的入口文件
-  - test.ts：测试的入口文件
-  - styles.scss：全局样式
+*   package.json :项目的配置文件，定义名称、版本和各种依赖
+*   node\_modules：安装的第三方模块放在这里
+*   src  项目的所有文件放在src里面
+    *   /app：组件、服务、根模块
+        *   app.module.ts：Angular根模块，告诉Angular如何组装应用
+            *   declarations：配置当前项目运行的组件
+            *   imports：配置当前模块运行依赖的其他模块
+            *   providers：配置项目所需的服务
+    *   /assets：静态资源文件
+    *   /environments：为目标环境准备的文件
+    *   browserslist：支持的浏览器
+    *   index.html：运行的首页
+    *   main.ts：项目的入口文件
+    *   test.ts：测试的入口文件
+    *   styles.scss：全局样式
 
 #### Angular项目的创建启动
 
@@ -116,9 +116,9 @@ news.component.html
 
 ##### 声明属性的几种方式
 
-* public：默认为public，可以在这个类里面使用，也可以在类外面使用
-* protected：只有在当前类和它的子类里面可以访问
-* private：只有在当前类才可以访问这个属性
+*   public：默认为public，可以在这个类里面使用，也可以在类外面使用
+*   protected：只有在当前类和它的子类里面可以访问
+*   private：只有在当前类才可以访问这个属性
 
 #### 绑定属性
 
@@ -248,7 +248,7 @@ export class NewsComponent implements OnInit {
 </ul>
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/91B7B0EF99614277A7A0F8A63F633964?method=download&shareKey=e2048cb2aaa8613ce9025564c9074bf5)
+![](https://note.youdao.com/yws/api/personal/file/91B7B0EF99614277A7A0F8A63F633964?method=download\&shareKey=e2048cb2aaa8613ce9025564c9074bf5)
 
 #### 引入图片
 
@@ -267,7 +267,7 @@ export class HomeComponent implements OnInit {
 <img [src]="picUrl">
 ```
 
-#### 数据循环：*ngFor 
+#### 数据循环：\*ngFor
 
 ```html
 <h1>循环数据显示数据的索引（key）</h1>
@@ -278,7 +278,7 @@ export class HomeComponent implements OnInit {
 </ul>
 ```
 
-#### 条件判断：*ngIf 
+#### 条件判断：\*ngIf
 
 ```html
 <ul>
@@ -290,7 +290,7 @@ export class HomeComponent implements OnInit {
 
 ```
 
-#### *ngSwitch
+#### \*ngSwitch
 
 ```html
 <span [ngSwitch]="orderstatus">
@@ -418,7 +418,7 @@ keyUp:<input type="text"(keyup)="keyUp($event)"/>
 <input type="text" [(ngModel)]="keywords'/>{{keywords}}
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/0F07AA98327545C29BB589AE2E4573F0?method=download&shareKey=e6dd5f020d91292e244628071bcd93ae)
+![](https://note.youdao.com/yws/api/personal/file/0F07AA98327545C29BB589AE2E4573F0?method=download\&shareKey=e6dd5f020d91292e244628071bcd93ae)
 
 #### 表单
 
@@ -498,16 +498,16 @@ export class FormComponent implements OnInit {
 
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/BBA8E258015F4C53988C786BF5B69169?method=download&shareKey=2d9582bcf80c204b018f25ccb5ce17ee)
+![](https://note.youdao.com/yws/api/personal/file/BBA8E258015F4C53988C786BF5B69169?method=download\&shareKey=2d9582bcf80c204b018f25ccb5ce17ee)
 
 ## 表单模型
 
 #### 常用表单基础类
 
-- <font color="lighblue">FormControl</font> 实例用于追踪单个表单控件的值和验证状态。
-- <font color="lighblue">FormGroup</font> 用于追踪一个表单控件组的值和状态。
-- <font color="lighblue">FormArray</font> 用于追踪表单控件数组的值和状态。
-- <font color="lighblue">ControlValueAccessor</font> 用于在 Angular 的FormControl实例和原生 DOM 元素之间创建一个桥梁。
+*   <font color="lighblue">FormControl</font> 实例用于追踪单个表单控件的值和验证状态。
+*   <font color="lighblue">FormGroup</font> 用于追踪一个表单控件组的值和状态。
+*   <font color="lighblue">FormArray</font> 用于追踪表单控件数组的值和状态。
+*   <font color="lighblue">ControlValueAccessor</font> 用于在 Angular 的FormControl实例和原生 DOM 元素之间创建一个桥梁。
 
 [@Component](https://angular.cn/api/core/Component)
 
@@ -538,26 +538,26 @@ class MyComponent implements OnInit {
 
 把一个类标记为 NgModule，并提供配置元数据。
 
-* providers：在当前模块的注入器中可用的一组可注入对象。
-* declarations：属于该模块的一组组件、指令和管道（统称可声明对象）。
-* imports：这里列出的 NgModule 所导出的可声明对象可用在当前模块内的模板中。
-* exports：此 NgModule 中声明的一组组件、指令和管道可以在导入了本模块的模块下任何组件的模板中使用。 导出的这些可声明对象就是该模块的公共 API。
-* providers：在当前模块的注入器中可用的一组可注入对象。
+*   providers：在当前模块的注入器中可用的一组可注入对象。
+*   declarations：属于该模块的一组组件、指令和管道（统称可声明对象）。
+*   imports：这里列出的 NgModule 所导出的可声明对象可用在当前模块内的模板中。
+*   exports：此 NgModule 中声明的一组组件、指令和管道可以在导入了本模块的模块下任何组件的模板中使用。 导出的这些可声明对象就是该模块的公共 API。
+*   providers：在当前模块的注入器中可用的一组可注入对象。
 
 ## 生命周期函数
 
 ​		当 Angular 实例化组件类并渲染组件视图及其子视图时，组件实例的生命周期就开始了。生命周期一直伴随着变更检测，Angular 会检查数据绑定属性何时发生变化，并按需更新视图和组件实例。当 Angular 销毁组件实例并从 DOM 中移除它渲染的模板时，生命周期就结束了。当 Angular 在执行过程中创建、更新和销毁实例时，指令就有了类似的生命周期。
 
-| 钩子方法                                        | 用途                                                         | 时机                                                         |
-| ----------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `ngOnChanges()`                                 | 当Angular(重新)设置数据绑定输入属性时响应。该方法接受当前和上一属性值的 SimpleChanges对象当被绑定的输入属性的值发生变化时调用，首次调用一定会发生在 ngOnInit()之前。 | 在 `ngOnInit()` 之前以及所绑定的一个或多个输入属性的值发生变化时都会调用。注意，如果你的组件没有输入，或者你使用它时没有提供任何输入，那么框架就不会调用 `ngOnChanges()`。 |
-| <font color="lighblue">ngOnInit()</font>        | 在 Angular第一次显示数据绑定和设置指令/组件的输入属性之后，初始化指令/组件。<br/> | 在第一轮 `ngOnChanges()` 完成之后调用，只调用**一次**。<br/>使用ngOnInit()有两个原因:<br/>1、在构造函数之后马上执行复杂的初始化逻辑<br/>2、在 Angular设置完输入属性之后，对该组件进行准备。 |
-| `ngDoCheck()`                                   | 检测，并在发生 Angular 无法或不愿意自己检测的变化时作出反应。 | 紧跟在每次执行变更检测时的 `ngOnChanges()` 和 首次执行变更检测时的 `ngOnInit()` 后调用。 |
-| `ngAfterContentInit()`                          | 当 Angular 把外部内容投影进组件视图或指令所在的视图之后调用。 | 第一次 `ngDoCheck()` 之后调用，只调用一次。                  |
-| `ngAfterContentChecked()`                       | 每当 Angular 检查完被投影到组件或指令中的内容之后调用。      | `ngAfterContentInit()` 和每次 `ngDoCheck()` 之后调用         |
-| <font color="lighblue">ngAfterViewInit()</font> | 当 Angular 初始化完组件视图及其子视图或包含该指令的视图之后调用。 | 第一次 `ngAfterContentChecked()` 之后调用，只调用一次。      |
-| `ngAfterViewChecked()`                          | 每当 Angular 做完组件视图和子视图或包含该指令的视图的变更检测之后调用。 | `ngAfterViewInit()` 和每次 `ngAfterContentChecked()` 之后调用。 |
-| <font color="lighblue">ngOnDestroy()</font>     | 每当 Angular 每次销毁指令/组件之前调用并清扫。 在这儿反订阅可观察对象和分离事件处理器，以防内存泄漏。 | 在 Angular 销毁指令或组件之前立即调用。                      |
+| 钩子方法                                            | 用途                                                                                                  | 时机                                                                                                                            |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `ngOnChanges()`                                 | 当Angular(重新)设置数据绑定输入属性时响应。该方法接受当前和上一属性值的 SimpleChanges对象当被绑定的输入属性的值发生变化时调用，首次调用一定会发生在 ngOnInit()之前。 | 在 `ngOnInit()` 之前以及所绑定的一个或多个输入属性的值发生变化时都会调用。注意，如果你的组件没有输入，或者你使用它时没有提供任何输入，那么框架就不会调用 `ngOnChanges()`。                          |
+| <font color="lighblue">ngOnInit()</font>        | 在 Angular第一次显示数据绑定和设置指令/组件的输入属性之后，初始化指令/组件。<br />                                                   | 在第一轮 `ngOnChanges()` 完成之后调用，只调用**一次**。<br />使用ngOnInit()有两个原因:<br />1、在构造函数之后马上执行复杂的初始化逻辑<br />2、在 Angular设置完输入属性之后，对该组件进行准备。 |
+| `ngDoCheck()`                                   | 检测，并在发生 Angular 无法或不愿意自己检测的变化时作出反应。                                                                 | 紧跟在每次执行变更检测时的 `ngOnChanges()` 和 首次执行变更检测时的 `ngOnInit()` 后调用。                                                                  |
+| `ngAfterContentInit()`                          | 当 Angular 把外部内容投影进组件视图或指令所在的视图之后调用。                                                                 | 第一次 `ngDoCheck()` 之后调用，只调用一次。                                                                                                 |
+| `ngAfterContentChecked()`                       | 每当 Angular 检查完被投影到组件或指令中的内容之后调用。                                                                    | `ngAfterContentInit()` 和每次 `ngDoCheck()` 之后调用                                                                                 |
+| <font color="lighblue">ngAfterViewInit()</font> | 当 Angular 初始化完组件视图及其子视图或包含该指令的视图之后调用。                                                               | 第一次 `ngAfterContentChecked()` 之后调用，只调用一次。                                                                                     |
+| `ngAfterViewChecked()`                          | 每当 Angular 做完组件视图和子视图或包含该指令的视图的变更检测之后调用。                                                            | `ngAfterViewInit()` 和每次 `ngAfterContentChecked()` 之后调用。                                                                       |
+| <font color="lighblue">ngOnDestroy()</font>     | 每当 Angular 每次销毁指令/组件之前调用并清扫。 在这儿反订阅可观察对象和分离事件处理器，以防内存泄漏。                                            | 在 Angular 销毁指令或组件之前立即调用。                                                                                                      |
 
 constructor：构造函数中除了使用简单的值对局部变量进行初始化之外，什么都不应该做。**(非生命周期函数)**
 
@@ -565,4 +565,4 @@ constructor：构造函数中除了使用简单的值对局部变量进行初始
 
 新建JavaScript Debug，使用debug模式启动前端
 
-![](https://note.youdao.com/yws/api/personal/file/3C96D02FC4044995B4771CDE4A99AA9C?method=download&shareKey=f11dbc3744d0da2ee18e74c446fbb38e)
+![](https://note.youdao.com/yws/api/personal/file/3C96D02FC4044995B4771CDE4A99AA9C?method=download\&shareKey=f11dbc3744d0da2ee18e74c446fbb38e)

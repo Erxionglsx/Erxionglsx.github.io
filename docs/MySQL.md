@@ -203,6 +203,9 @@ TRUNCATE TABLE 表名称; --除去表内的数据，但并不删除表本身
 ```sql
 ALTER TABLE table_name ADD column_name datatype;--添加列
 ALTER TABLE table_name DROP COLUMN column_name;--删除列
+
+alter table user_info add `district_id` int(11) DEFAULT 'kehh1001' comment '学区ID'; --DEFAULT 默认值
+alter table user_info add `district_name` varchar(64) comment '学区名称';
 ```
 
 在 SQL 中，视图是基于 SQL 语句的结果集的可视化的表。
@@ -309,7 +312,7 @@ UPDATE `tata_users` set store_id = REPLACE(store_id,'179e58f58d9543','155666666'
 ```sql
 --CITY_CODE:2145,233,6888
 --CITY_CODE:2345,23343,684233
-select CITY_CODE from user where FIND_IN_SET('233',CITY_CODE); 
+select CITY_CODE from user where FIND_IN_SET('233',CITY_CODE);
 --查询结果:CITY_CODE:2145,233,6888
 ```
 
@@ -664,4 +667,116 @@ SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
 ```
 
 [mysql innodb_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
+
+## 服务器上的MySQL
+
+1、查看MySQL版本
+
+mysql -V
+
+2、检查MySQL服务是否启动
+
+systemctl status mysqld
+
+3、登陆MySQL
+
+mysql -u root -p
+
+4、查看所有数据库
+
+show databases;
+
+5、进入某个数据库
+
+use database_name;
+
+6、查看数据库中所有表
+
+show tables;
+
+7、查看表结构
+
+desc table_name;
+
+8、查看表中数据
+
+select * from table_name;
+
+9、查看MySQL实时进程
+
+show processlist;
+
+10、查看当前连接数
+
+show status like “%Threads_connected%”;
+
+11、查看MySQL运行状态
+
+mysqladmin -u root -p status
+
+12、查看MySQL运行时间
+
+mysqladmin -u root -p status | grep Uptime
+
+13、创建数据库
+
+create database student;
+
+14、删除数据库
+
+drop database student;
+
+### 从数据库备份数据
+
+```mysql
+mysqldump -uroot -p --databases common_auth > /mnt/common_auth.sql
+```
+
+### 备份数据到数据库
+
+使用 CREATE USER 创建一个用户，用户名是 test1，密码是 123456，主机名是 localhost。SQL 语句和执行过程如下：
+
+```mysql
+-- 该用户只能从本地主机连接到数据库
+CREATE USER 'test1'@'localhost' IDENTIFIED BY '123456';
+-- 该用户可以从任何主机连接到数据库
+CREATE USER 'test1'@'%' IDENTIFIED BY '123456';
+```
+
+可以使用SELECT命令查询mysql.user表来获取用户信息。以下是一个示例查询，显示用户名和主机：
+
+```mysql
+SELECT User, Host FROM mysql.user;
+```
+
+检查用户 'test1' 是否具有访问 'xuexiyuan' 数据库的权限。你可以登录MySQL作为root用户，然后给 'test1' 用户赋予相应的权限。
+
+```mysql
+GRANT ALL PRIVILEGES ON xuexiyuan.* TO 'test1'@'localhost';
+```
+
+如果你只想给'xuexiyuan'@'localhost'用户在所有数据库的所有表上执行SELECT, INSERT, UPDATE, DELETE操作的权限，你可以使用如下命令：
+
+```mysql
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'test1'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'test1'@'%';
+```
+
+退出数据库，执行备份命令
+
+```mysql
+mysql -u root -p123456 < /mnt/learning_v2.sql
+-- 后输入密码
+mysql -u root -p < /mnt/learning_v2.sql
+-- 指定数据库名
+mysql -u root -p easy_user < /mnt/resource.sql
+```
+
+
+
+
+
+
+
+
 

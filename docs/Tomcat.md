@@ -111,6 +111,20 @@ Server元素在最顶层，代表整个Tomcat容器，因此它必须是server.x
 
 Server的主要任务，就是提供一个接口让客户端能够访问到这个Service集合，同时维护它所包含的所有的Service的声明周期，包括如何初始化、如何结束服务、如何找到客户端要访问的Service。
 
+在同一个服务器上部署多个Tomcat实例时，每个实例都需要使用不同的端口和关闭命令。在Tomcat的配置文件`server.xml`中，可以通过修改`<Server>`元素的`port`和`shutdown`属性来设置这些值。
+
+```xml
+<!-- 第一个Tomcat实例的配置 -->
+<Server port="8005" shutdown="SHUTDOWN1">
+  ...
+</Server>
+
+<!-- 第二个Tomcat实例的配置 -->
+<Server port="8006" shutdown="SHUTDOWN2">
+  ...
+</Server>
+```
+
 2.**Service**
 
 Service的作用，是在Connector和Engine外面包了一层，把它们组装在一起，对外提供服务。一个Service可以包含多个Connector，但是只能包含一个Engine；其中Connector的作用是从客户端接收请求，Engine的作用是处理接收进来的请求。
