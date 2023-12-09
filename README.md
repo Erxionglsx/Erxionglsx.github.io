@@ -21,7 +21,7 @@
 
 ### 笔记发布网站
 
-[GitHub](https://github.com/Erxionglsx/Erxionglsx.github.io)      [Gitee](https://gitee.com/two_males/ErXiong-demo)      [ErXiong-demo（GitHub）](https://erxionglsx.github.io/#/)        [ErXiong-demo（Gitee）](https://two_males.gitee.io/erxiong-demo/#/)
+[GitHub](https://github.com/Erxionglsx/Erxionglsx.github.io)      [Gitee](https://gitee.com/two_males/ErXiong-demo)   
 
 ## 内容
 
@@ -30,6 +30,7 @@
   - [Java进阶](./docs/Java进阶.md)
   - [Servlet](./docs/Servlet.md)
   - [Quartz定时](./docs/Quartz定时.md)
+  - [函数式编程](./docs/函数式编程.md)
 - 数据库
   - [MySQL](./docs/MySQL.md)
   - [Redis](./docs/Redis数据库.md)

@@ -4,6 +4,7 @@
   - [Java进阶](./docs/Java进阶.md)
   - [Servlet](./docs/Servlet.md)
   - [Quartz定时](./docs/Quartz定时.md)
+  - [函数式编程](./docs/函数式编程.md)
   
   数据库
   - [MySQL](./docs/MySQL.md)
