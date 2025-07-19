@@ -612,9 +612,9 @@ value是一个map结构，存在key value key无序的
     
     <!--引入redis依赖-->
     <dependency>
-    <groupId>redis.clients</groupId>
-    <artifactId>jedis</artifactId>
-    <version>2.9.0</version>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>2.9.0</version>
     </dependency>
    ```
 
@@ -1144,6 +1144,80 @@ public class RedisCache implements Cache {
 
 
 https://www.bilibili.com/video/BV1jD4y1Q7tU?p=23&spm_id_from=pageDriver
+
+### 安装redis
+
+```yaml
+# 解压安装包redis-5.0.5到/opt
+# 复制redis.conf到/etc下
+cp /opt/redis-5.0.5/redis.conf /etc/
+# 打开 Redis 配置文件
+vi /etc/redis.conf
+
+# 查找并修改 dir 配置（按 /dir 搜索）
+# 将 dir ./ 改为明确的目录，如 /var/lib/redis（已创建并设置权限的目录）
+dir /var/lib/redis
+# 确保目录存在且权限正确
+mkdir -p /var/lib/redis
+chown -R redis:redis /var/lib/redis  # 所有者为 Redis 运行用户
+chmod -R 755 /var/lib/redis          # 读写执行权限
+# 重启服务使配置生效
+systemctl restart redis
+
+# 检查服务状态
+systemctl status redis
+```
+
+新建redis.service文件
+
+```service
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+User=redis
+Group=redis
+ExecStart=/usr/local/bin/redis-server /etc/redis.conf
+ExecStop=/usr/local/bin/redis-cli shutdown
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```yaml
+# 确认 Redis 可执行文件路径
+which redis-server
+
+# 若输出为空，检查是否安装
+ls -l /usr/local/bin/redis-server  # 源码安装默认路径
+
+# 检查用户是否存在
+id redis
+
+# 如果不存在，创建 redis 用户（不创建家目录）
+useradd -r -s /bin/false redis
+
+# 重载 systemd 配置
+systemctl daemon-reload
+
+# 尝试启动 Redis
+systemctl start redis
+
+# 检查状态
+systemctl status redis
+```
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -24,6 +24,12 @@
 
 ![](https://note.youdao.com/yws/api/personal/file/96D31325628845CD94CADA404C42CA48?method=download&shareKey=001217721e7fb76552216d264e3a44a2)
 
+ **查看Linux系统版本**
+
+```
+cat /etc/os-release
+```
+
 ### 权限控制
 
 ![](https://note.youdao.com/yws/api/personal/file/WEB6496abf118705ce4bd2347169de6fe07?method=download&shareKey=48d553d292d2613625596f922fab01e3)
@@ -33,6 +39,50 @@
 * r表示读权限
 * w表示写权限
 * x表示执行权限
+
+**八进制数字表示权限**
+
+|            | r    | w    | x    |
+| ---------- | ---- | ---- | ---- |
+| 二进制代表 | 100  | 010  | 001  |
+| 十进制代表 | 4    | 2    | 1    |
+
+例：
+
+rw-的值为4+2=6
+
+rwxr-xr-x的值为755
+
+#### 更改用户权限
+
+```java
+//修改文件夹权限，7 可读可写可操作，6 可读可写，5可读可操作
+chmod 755 /tomcat
+chomd 777 /resource
+//递归地更改目录及其所有子目录和文件的权限
+chomd -R 777 /resource
+chmod -R 777 /mnt/nfs/lcellstorage
+```
+
+#### 更改文件或目录的用户和用户组
+
+```java
+//更改文件的所有者
+chown mysql /mysql
+//更改文件的所有者和用户组
+chown mysql:mysql /mysql
+//递归地更改目录及其所有子文件和子目录的所有者
+chown -R mysql /mysql
+```
+
+**查看账号信息**
+
+```java
+//用户帐户的基本信息
+cat /etc/passwd
+//用户组的基本信息
+cat /etc/group
+```
 
 ### 查看文件
 
@@ -69,6 +119,24 @@ mv /home/packageA  /home/packageB/  移动一个文件夹到另一个文件夹�
 
 mv /home/packageA  /home/packageB  移动一个文件夹到另一个文件夹下面
 
+### SCP复制数据
+
+```sql
+本地文件复制到远程服务器
+-- 格式：scp 本地文件路径 用户名@远程IP:远程路径
+scp /local/path/file.txt user@192.168.1.1:/remote/path/
+-- 示例：将本地 /data/documents/report.pdf 复制到远程服务器 /var/www/files/ 目录：
+scp /data/documents/report.pdf admin@10.0.0.5:/var/www/files/
+
+远程文件复制到本地
+-- 格式：scp 用户名@远程IP:远程文件路径 本地路径
+scp user@192.168.1.1:/remote/path/file.txt /local/path/
+
+远程目录文件复制到本地
+-- 示例：从远程服务器下载 /mnt/vdata/nfs/etc/ 到本地 /mnt/nfs/lcellstorage/ 目录：
+scp -r  user@172.24.226.93:/mnt/vdata/nfs/etc/ /mnt/nfs/lcellstorage/
+```
+
 ### 查找文件
 
 find 目录路径 [选项参数] [搜索条件]
@@ -80,7 +148,15 @@ find /home -name "*.txt"
 find . -name "*.txt"
 -- 全局查找名称为nginx的文件
 find / -name nginx #查找nginx相关目录和文件
+-- 查询当前文件夹下路径最长的20条路径
+find . -type f -o -type d | awk '{print length, $0}' | sort -nr | head -20 | cut -d" " -f2-
 ```
+
+### 压缩解压
+
+zip -r lcell-web.zip lcell-web/  压缩文件夹
+
+unzip input_filename.zip   解压文件夹
 
 ### 查看日志
 
@@ -102,6 +178,8 @@ tail -5000  catalina.out | grep -A 10 '门店编码为'  查看最近5000条数�
 
 查看springboot是否启动成功： tail -5000  catalina.out | grep 'startup' 
 
+查询’Could not fetch‘在日志中最早出现时间：grep 'Could not fetch' catalina.out | awk '{print $1 " " $2; exit}'
+
 ### 清除日志文件内容
 
 ll > /home/tomcat/tkben-api/logs/catalina.out
@@ -120,8 +198,9 @@ ll > /home/tomcat/tkben-api/logs/catalina.out
 * 参数2，要链接去的目的地
 
 ```java
-ln -s /bin/less /usr/local/bin/less 
+ln -s /bin/less /gaojj/tomcat/bin/less 
 // ln -s <目标文件或目录> <软连接名>
+//不需要提前创建less文件夹
 ```
 
 ### 挂载
@@ -155,7 +234,11 @@ mount 192.168.12.23:/mnt/vdata/nfs/etc /mnt/nfs/lcellstorage
 例如：
 已经挂载的 /dev/sdb1              29G   16G   13G  55% /mnt/usbFAT32
 umount /dev/sdb1    或者   umount /mnt/usbFAT32   都可以进行卸载
+umount -f /dev/sdb1    或者   umount -f /mnt/usbFAT32   强制卸载
+umount /mnt/nfs/lcellstorage
 ```
+
+mount挂载失败，检查网关是否正确 ip a
 
 #### /etc/fstab文件
 
@@ -167,6 +250,19 @@ Linux系统都是各磁盘或者分区是通过挂载的方式访问的，临时
 
 我们可以使用命令mount -a命令检查配置文件是否有错误
 
+#### 挂载硬盘
+
+```java
+//使用fdisk -l命令查看当前系统的所有存储设备信息，确认硬盘已正确连接到系统并被识别
+fdisk -l
+//创建挂载点
+mkdir /mnt/mydisk
+//挂载硬盘
+mount /dev/sda1 /mnt/mydisk
+//查看挂载情况
+df -h
+```
+
 ### 查看磁盘
 
 df -lh  查看磁盘使用情况和挂载点
@@ -177,9 +273,13 @@ df /home 查看home目录磁盘使用情况
 
 du -sh 查看的是当前目录的大小
 
+du -sh * 查看Linux文件夹下每个文件和文件夹的大小
+
 du -sh /*  查看的是当前目录下所有子文件与子目录的大小，将其一 一列出
 
-ls -lh  查看当前文件夹大小
+du -sh */  只查看当前目录下文件夹的大小
+
+ls -lh  查看当前文件夹每个文件大小
 
 ps -ef | grep java  搜索进程中有'java'字段的进程数据
 
@@ -211,7 +311,7 @@ rz 文件：从本地上传文件到Linux
 
 ![](https://note.youdao.com/yws/api/personal/file/WEB22dab93bf1e03b5dcf84ff36b567b13d?method=download&shareKey=54653f863b19d8fb966547ef57bca89a)
 
-### 网络请求
+## 网络
 
 **ping命令**
 
@@ -223,7 +323,7 @@ ping 192.110.168.11
 ping -c 3 baidu.com
 ```
 
-**route命令**
+### 网关
 
 打印Linux中的路由表，查看网关
 
@@ -234,6 +334,31 @@ route -n
 vi /etc/sysconfig/network-scripts/ifcfg-eth0
 //重启网关
 systemctl restart network
+//查看日志
+/var/log/messages
+```
+
+### 新增网关
+
+```java
+//在/etc/sysconfig/network-scripts下新建文件ifcfg-eth0:0
+//要确保新的网关ip没有被占用
+//文件内容
+OXY_METHOD="none"  
+BROWSER_ONLY="no"  
+BOOTPROTO="static"  
+DEFROUTE="no"  # 通常设置为 no，除非这是默认路由  
+NAME="eth0:0"  
+DEVICE="eth0:0"  
+ONBOOT="yes"  
+IPADDR="192.168.5.28"  
+PREFIX="24"
+//重启网关
+systemctl restart network
+//查看是否生效
+ip a
+//若未生效则查看日志
+cat /var/log/messages
 ```
 
 **wegt命令**
@@ -274,6 +399,10 @@ free命令显示系统使用和空闲的内存情况，包括物理内存、交�
 lsof -n / |grep deleted|awk '{print $2}'|xargs kill -9
 ```
 
+**查看内存占用命令**
+
+ps -e -o pid,comm,%mem --sort=-%mem | head -n 10
+
 **top命令**
 
 top 命令查看系统的实时负载， 包括进程、CPU负载、内存使用等等
@@ -310,6 +439,8 @@ history | grep ls  查询输入过的以ls开头的命令
 
 语法：ctrl+r  输入内容去匹配历史命令，回车键可以直接执行，键盘左右键，可以得到此命令(不执行)
 
+历史命令文件地址：~/.bash_history
+
 **光标移动快捷键(命令)**
 
 * ctrl+a，跳到命令开头
@@ -327,6 +458,28 @@ history | grep ls  查询输入过的以ls开头的命令
 * 可以通过快捷键：ctrl+d，退出账户的登录
 * 或者退出默写特定程序的专属页面
 
+### service文件
+
+systemd的一个重要概念就是单元(systemd units)。
+
+(1) systemd units所在的不同目录代表不同的units：
+
+/usr/lib/systemd/system/: 该目录存放由RPM包安装时产生的unit文件；
+
+/run/systemd/system/: 存放在运行时创建的unit文件，这里的unit文件可以覆盖安装时产生的unit文件；
+
+/etc/systemd/system/: 存放由"systemctl enable"创建的unit文件以及由个人手动创建的unit文件；
+
+(2) systemd unit的不同类型：
+
+| **Unit Type**  | **File Extension** | **Description**    |
+| -------------- | ------------------ | ------------------ |
+| Service unit   | .service           | 系统服务           |
+| Target unit    | .target            | systemd units组    |
+| Automount unit | .automount         | 文件系统自动挂载点 |
+| Device unit    | .device            | 设备文件           |
+| Mount unit     | .mount             | 文件系统挂载点     |
+
 ### systemctl命令
 
 语法：systemctl start | stop | status | restart | reload | enable | disable 服务名
@@ -339,7 +492,11 @@ history | grep ls  查询输入过的以ls开头的命令
 * enable  开启开机自启
 * disable  关闭开机自启
 
-service文件地址：etc/systemd/system
+#### service文件地址
+
+etc/systemd/system
+
+查看启动日志：journalctl -u <service-name>
 
 系统内置服务：
 
@@ -408,6 +565,13 @@ ClientAliveCountMax 3
 
 systemctl restart sshd
 
+### 环境变量
+
+```java
+//查看系统的环境变量
+env
+```
+
 ### 防火墙
 
 #### 查看防火墙状态
@@ -424,6 +588,14 @@ service firewalld start
 //若遇到无法开启
 先用：systemctl unmask firewalld.service
 然后：systemctl start firewalld.service
+//列出防火墙的详细信息
+firewall-cmd --list-all-zones
+//移除custom的ip段限制
+firewall-cmd --permanent --zone=custom --remove-source=10.0.0.0/8
+//清除custom端口限制
+firewall-cmd --permanent --zone=custom --remove-port=8081/tcp
+//清除 custom 区域中所有先前设置的富规则
+firewall-cmd --zone=custom --remove-all-rich-rules
 ```
 
 #### 查看对外开放的端口状态
@@ -441,6 +613,8 @@ firewall-cmd --query-port=666/tcp
 #### 对外开放端口
 
 ```java
+//查询已开放端口
+firewall-cmd --zone=public --list-ports
 //查看想开的端口是否已开
 firewall-cmd --query-port=6379/tcp
 //添加指定需要开放的端口
@@ -457,7 +631,7 @@ firewall-cmd --permanent --remove-port=123/tcp
 
 ```java
 //使用firewall-cmd命令来限制特定IP地址对系统的访问
-firewall-cmd --permanent --add-rich-rule='rulefamily="ipv4" sourceaddress="192.16.150.10" reject'
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="183.238.22.166" reject'
 //使用firewall-cmd命令来限制特定IP地址对系统端口的访问
 firewall-cmd --permanent --add-rich-rule='rulefamily="ipv4" sourceaddress="192.16.150.10" port protocol="tcp" port="8035" reject"
 //重新加载防火墙规则
@@ -470,6 +644,53 @@ firewall-cmd --permanent --add-rich-rule='rulefamily="ipv4" sourceaddress="192.1
 firewall-cmd --permanent --add-rich-rule='rulefamily="ipv4" sourceaddress="192.16.150.10" port protocol="tcp" port="8035" accept'
 //重新加载防火墙规则
 firewall-cmd --reload
+```
+
+### iptable防火墙
+
+```java
+//查看已开放端口
+iptables -L -n --line-numbers
+//添加开放端口
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+iptables -I INPUT -p tcp --dport 3306 -j ACCEPT
+//永久添加端口
+vi /etc/sysconfig/iptables
+```
+
+### 服务器代理
+
+全局代理：/etc/profile
+
+在 `/etc/profile` 文件中设置 `http_proxy` 和 `https_proxy` 环境变量是为了让系统上的所有用户都能够通过配置的代理服务器来访问 HTTP 和 HTTPS 资源。这些环境变量通常被各种命令行工具和应用程序用来确定是否需要以及如何通过一个代理服务器来发送网络请求。
+
+需要注意的是，在 `/etc/profile` 文件中设置这些环境变量会影响系统上的所有用户。这通常是一个全局设置，适用于所有登录到系统的用户。如果你只想为特定用户设置这些环境变量，你可以将这些 `export` 命令添加到该用户的 `~/.bashrc`、`~/.bash_profile` 或其他相应的 shell 初始化文件中。
+
+```
+export http_proxy=http://aicfe:aicfe@172.16.185.244:3128
+export https_proxy=http://aicfe:aicfe@172.16.185.244:3128
+```
+
+项目代理：tkben-api/bin/setenv.sh
+
+```sh
+# Add apr lib to java.library.path
+JAVA_OPTS="$JAVA_OPTS -Djava.library.path=/usr/local/apr/lib  -Dhttp.maxConnections=5000"
+
+# proxy
+JAVA_OPTS="$JAVA_OPTS -Dhttp.proxyHost=172.16.185.244 -Dhttp.proxyPort=3128 -Dhttps.proxyHost=172.16.185.244 -Dhttps.proxyPort=3128 -Dhttp.nonProxyHosts='localhost|127.0.0.1|172.*.*.*' -Dlog4j2.formatMsgNoLookups=true"
+
+#CATALINA_OPTS="$CATALINA_OPTS -server -Xms512m -Xmx4192m -XX:+UseConcMarkSweepGC -XX:-PrintGC -XX:-PrintGCDetails -XX:-PrintGCTimeStamps -Xloggc:../logs/gc.log"
+
+CATALINA_OPTS="$CATALINA_OPTS -Xms256m -Xmx1024m  -XX:+UseConcMarkSweepGC -XX:ParallelGCThreads=8 -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:-PrintGC -XX:-PrintGCDetails -XX:-PrintGCTimeStamps -Xloggc:../logs/gc.log"
+```
+
+```
+-Dhttp.proxyHost=172.16.185.244: 设置HTTP代理的主机地址为172.16.185.244。
+-Dhttp.proxyPort=3128: 设置HTTP代理的端口号为3128。
+-Dhttps.proxyHost=172.16.185.244: 设置HTTPS代理的主机地址为172.16.185.244。
+-Dhttps.proxyPort=3128: 设置HTTPS代理的端口号为3128。
+-Dhttp.nonProxyHosts='localhost|127.0.0.1|172.*.*.*': 这是一个用逗号分隔的列表，定义了哪些主机名或IP地址不应使用代理。在这个例子中，localhost、127.0.0.1以及以172开头的所有IP地址都不会通过代理。
 ```
 
 ### yum
@@ -488,6 +709,8 @@ eg:yum search squid
 yum install <keyword>
 //清除YUM缓存
 yum clean packages
+//重新生成缓存
+yum makecache
 ```
 
 安装运行443端口
@@ -498,6 +721,24 @@ yum install mod_ssl
 //启动
 systemctl restart httpd
 //防火墙开启443端口
+```
+
+### 镜像
+
+**YUM 仓库镜像配置**：查看 `/etc/yum.repos.d/` 目录下的 `.repo` 文件
+
+```
+[yumlocal]
+name=yumlocal
+baseurl=http://192.168.2.3/media
+gpgcheck=0
+enabled=1
+
+[yumQH]
+name=yumlocal
+baseurl=http://192.168.2.3/ius
+gpgcheck=0
+enabled=0
 ```
 
 ### 端口
@@ -621,9 +862,29 @@ mysql -h172.18.136.19 -uliufang -pGaojj2012. --default-character-set utf8 learni
 
 rpm -qa |grep mysql
 
-返回空值说明没有安装mysq
+返回空值说明没有安装mysql
 
+### SELinux
 
+```java
+//查询SELinux的状态
+getenforce
+```
 
+- `Enforcing`：SELinux处于启用状态，并正在强制执行其安全策略。
+- `Permissive`：SELinux处于宽容模式，这意味着它不会阻止任何操作，但会记录那些违反策略的操作。
+- `Disabled`：SELinux被禁用，不会提供任何额外的访问控制。
 
+```java
+//通过修改配置文件永久禁用SELinux
+vi /etc/selinux/config
+//SELINUX=disabled
+```
+
+### 关机
+
+```java
+//立即关机
+shutdown -h now
+```
 

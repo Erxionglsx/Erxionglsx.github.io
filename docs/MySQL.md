@@ -1,6 +1,6 @@
 # 数据库
 
-------
+***
 
 [TOC]
 
@@ -16,7 +16,7 @@ alert,create,table,drop,create,database,drop,database
 
 **关系型数据库：**
 
-mysql,sql-server,oracle,db2,sybase,informix,access 
+mysql,sql-server,oracle,db2,sybase,informix,access
 
 **非关系型数据库：**
 
@@ -24,15 +24,15 @@ mongoDB,redis,hbase,memcache
 
 **区别：**
 
-* 存储的数据类型不同
-* 数据表的结构不同
-* 数据容量不同
-* 数据访问效率不同
+*   存储的数据类型不同
+*   数据表的结构不同
+*   数据容量不同
+*   数据访问效率不同
 
-|              数据库类型              |                             特性                             |                             优点                             |                             缺点                             |
-| :----------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|  关系型数据库 SQLite、Oracle、mysql  | 1、关系型数据库，是指采用了关系模型来组织 数据的数据库； 2、关系型数据库的最大特点就是事务的一致性； 3、简单来说，关系模型指的就是二维表格模型， 而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。 | 1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解； 2、使用方便：通用的SQL语言使得操作关系型数据库非常方便； 3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率； 4、支持SQL，可用于复杂的查询。 | 1、为了维护一致性所付出的巨大代价就是其读写性能比较差； 2、固定的表结构； 3、高并发读写需求； 4、海量数据的高效率读写； |
-| 非关系型数据库 MongoDb、redis、HBase | 1、使用键值对存储数据； 2、分布式； 3、一般不支持ACID特性； 4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。 | 1、无需经过sql层的解析，读写性能很高； 2、基于键值对，数据没有耦合性，容易扩展； 3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。 | 1、不提供sql支持，学习和使用成本较高； 2、无事务处理，附加功能bi和报表等支持也不好； |
+|            数据库类型            |                                                       特性                                                      |                                                                             优点                                                                             |                                缺点                               |
+| :-------------------------: | :-----------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------: |
+|  关系型数据库 SQLite、Oracle、mysql | 1、关系型数据库，是指采用了关系模型来组织 数据的数据库； 2、关系型数据库的最大特点就是事务的一致性； 3、简单来说，关系模型指的就是二维表格模型， 而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。 | 1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解； 2、使用方便：通用的SQL语言使得操作关系型数据库非常方便； 3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率； 4、支持SQL，可用于复杂的查询。 | 1、为了维护一致性所付出的巨大代价就是其读写性能比较差； 2、固定的表结构； 3、高并发读写需求； 4、海量数据的高效率读写； |
+| 非关系型数据库 MongoDb、redis、HBase |                   1、使用键值对存储数据； 2、分布式； 3、一般不支持ACID特性； 4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。                   |                    1、无需经过sql层的解析，读写性能很高； 2、基于键值对，数据没有耦合性，容易扩展； 3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。                   |          1、不提供sql支持，学习和使用成本较高； 2、无事务处理，附加功能bi和报表等支持也不好；         |
 
 ### 数据库连接池
 
@@ -50,10 +50,10 @@ Hikari：HiKariCP是数据库连接池的一个后起之秀，号称性能最好
 
 <font color="lighblue">创建表</font>
 
-* PRIMARY KEY 约束唯一标识数据库表中的每条记录。
-* 主键必须包含唯一的值。
-* 主键列不能包含 NULL 值。
-* 每个表都应该有一个主键，并且每个表只能有一个主键。
+*   PRIMARY KEY 约束唯一标识数据库表中的每条记录。
+*   主键必须包含唯一的值。
+*   主键列不能包含 NULL 值。
+*   每个表都应该有一个主键，并且每个表只能有一个主键。
 
 ```sql
 create table student
@@ -102,16 +102,25 @@ SELECT Company, OrderNumber FROM Orders ORDER BY OrderNumber DESC --逆序显示
 SELECT * FROM goods WHERE goods_id IN ( '603', '64', '566', '37', '421', '201', '1002', '339', '283', '494', '222', '617' ) ORDER BY FIELD( goods_id, '603', '64', '566', '37', '421', '201', '1002', '339', '283', '494', '222', '617' )
 ```
 
+<font color="lighblue">LIMIT</font> 语句用于限制查询结果返回的<font color="lighblue">记录数量</font>。
+
+```sql
+-- 返回查询结果的前n条记录
+SELECT * FROM users LIMIT 5;
+-- 返回从第2条记录开始的5条记录。
+SELECT * FROM users LIMIT 2, 5;
+```
+
 <font color="lighblue">LIKE 操作符</font>用于在 WHERE 子句中搜索列中的指定模式。
 
 SQL通配符必须与LIKE运算符一起使用：
 
-|           通配符           |            描述            |
-| :------------------------: | :------------------------: |
-|             %              |     替代一个或多个字符     |
-|             _              |       仅替代一个字符       |
-|         [charlist]         |   字符列中的任何单一字符   |
-| [^charlist]或者[!charlist] | 不在字符列中的任何单一字符 |
+|             通配符            |       描述      |
+| :------------------------: | :-----------: |
+|              %             |   替代一个或多个字符   |
+|             \_             |    仅替代一个字符    |
+|         \[charlist]        |  字符列中的任何单一字符  |
+| \[^charlist]或者\[!charlist] | 不在字符列中的任何单一字符 |
 
 ```sql
 -- "Persons" 表中选取居住在以 "N" 开始的城市里的人
@@ -139,9 +148,9 @@ WHERE column_name IN (value1,value2,...)
 
 <font color="lighblue">SQL UNIQUE 约束</font>
 
-* UNIQUE 约束唯一标识数据库表中的每条记录。
-* UNIQUE 和 PRIMARY KEY 约束均为列或列集合提供了唯一性的保证。
-* PRIMARY KEY 拥有自动定义的 UNIQUE 约束。
+*   UNIQUE 约束唯一标识数据库表中的每条记录。
+*   UNIQUE 和 PRIMARY KEY 约束均为列或列集合提供了唯一性的保证。
+*   PRIMARY KEY 拥有自动定义的 UNIQUE 约束。
 
 每个表可以有多个 UNIQUE 约束，但是每个表只能有一个 PRIMARY KEY 约束。
 
@@ -163,10 +172,10 @@ SELECT LastName AS Family, FirstName AS Name FROM Persons
 
 <font color="lighblue">SQL join</font> 用于根据<font color="lighblue">两个或多个表</font>中的列之间的关系，从这些表中查询数据。
 
-- <font color="lighblue">JOIN</font>: 如果表中有至少一个匹配，则返回行，INNER JOIN 与 JOIN 是相同的。
-- <font color="lighblue">INNER JOIN</font>:只返回两个表中联结字段相等的行
-- <font color="lighblue">LEFT JOIN</font>: 即使右表中没有匹配，也从左表返回所有的行
-- <font color="lighblue">RIGHT JOIN</font>: 即使左表中没有匹配，也从右表返回所有的行
+*   <font color="lighblue">JOIN</font>: 如果表中有至少一个匹配，则返回行，INNER JOIN 与 JOIN 是相同的。
+*   <font color="lighblue">INNER JOIN</font>:只返回两个表中联结字段相等的行
+*   <font color="lighblue">LEFT JOIN</font>: 即使右表中没有匹配，也从左表返回所有的行
+*   <font color="lighblue">RIGHT JOIN</font>: 即使左表中没有匹配，也从右表返回所有的行
 
 ```sql
 select * from student s,score c where s.s_id = c.c_id;
@@ -219,10 +228,10 @@ WHERE condition
 
 MySQL 使用下列数据类型在数据库中存储日期或日期/时间值：
 
-- DATE - 格式 YYYY-MM-DD
-- DATETIME - 格式: YYYY-MM-DD HH:MM:SS
-- TIMESTAMP - 格式: YYYY-MM-DD HH:MM:SS
-- YEAR - 格式 YYYY 或 YY
+*   DATE - 格式 YYYY-MM-DD
+*   DATETIME - 格式: YYYY-MM-DD HH\:MM\:SS
+*   TIMESTAMP - 格式: YYYY-MM-DD HH\:MM\:SS
+*   YEAR - 格式 YYYY 或 YY
 
 ### SQL函数
 
@@ -300,14 +309,14 @@ SELECT LEN(column_name) FROM table_name;
 SELECT LEN(City) as LengthOfCity FROM Persons;--取得 "City" 列中值的长度
 ```
 
-<font color="lighblue">Replace()</font>函数替换某个字段中某段字符串。
+<font color="lighblue">Replace()</font>函数替换某个字段中某段字符串，也可用于逗号分隔数据替换的情况。
 
 ```sql
 --在字符串 store_id 中所有出现的字符串 179e58f58d9543 均被 155666666替换，然后返回这个字符串：
 UPDATE `tata_users` set store_id = REPLACE(store_id,'179e58f58d9543','155666666');
 ```
 
-<font color="lighblue">find_in_set()</font>函数查询以逗号分割的字符串中的某一字符串。
+<font color="lighblue">find\_in\_set()</font>函数查询以逗号分割的字符串中的某一字符串。
 
 ```sql
 --CITY_CODE:2145,233,6888
@@ -434,12 +443,11 @@ on a.date = b.date order by date;
 -- IFNULL() 函数用于判断第一个表达式是否为 NULL，如果为 NULL 则返回第二个参数的值，如果不为 NULL 则返回第一个参数的值。
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/53A206E219B74DECB554A9D8588FF6DC?method=download&shareKey=ca7da52e9589a4994bb5ef9bfc850ca3)
+![](https://note.youdao.com/yws/api/personal/file/53A206E219B74DECB554A9D8588FF6DC?method=download\&shareKey=ca7da52e9589a4994bb5ef9bfc850ca3)
 
 #### concat函数
 
-> https://blog.csdn.net/weixin_45583894/article/details/123379603
->
+> <https://blog.csdn.net/weixin_45583894/article/details/123379603>
 
 **concat()函数**
 
@@ -451,21 +459,21 @@ on a.date = b.date order by date;
 
 3、举例：select concat (id, name, score) as 别名 from 表名；
 
-**concat_ws()函数**
+**concat\_ws()函数**
 
-1、功能：和concat()一样，但是可以指定分隔符（concat_ws就是concat with separator）
+1、功能：和concat()一样，但是可以指定分隔符（concat\_ws就是concat with separator）
 
-2、语法：concat_ws(separator, str1, str2, ...)
+2、语法：concat\_ws(separator, str1, str2, ...)
 
 说明：第一个参数指定分隔符。需要注意的是分隔符不能为null，如果为null，则返回结果为null。
 
 3、举例：select concat ('#',id, name, score) as 别名 from 表名；
 
-**group_concat()函数**
+**group\_concat()函数**
 
 1、功能：将group by产生的同一个分组中的值连接起来，返回一个字符串结果。
 
-2、语法：group_concat( [distinct] 要连接的字段 [order by 排序字段 asc/desc ] [separator] )
+2、语法：group\_concat( \[distinct] 要连接的字段 \[order by 排序字段 asc/desc ] \[separator] )
 
 说明：通过使用distinct可以**排除重复值**；如果希望对结果中的值进行**排序**，可以使用order by子句；separator**分隔符**是一个字符串值，缺省为一个逗号。
 
@@ -479,13 +487,13 @@ GROUP BY
 	name;
 ```
 
-**substring_index函数**
+**substring\_index函数**
 
-substring_index(字符串,分隔符,序号)，截取目标字符串
+substring\_index(字符串,分隔符,序号)，截取目标字符串
 
-* string：用于截取目标字符串的字符串。可为字段，表达式等。
-* sep：分隔符，string存在且用于分割的字符，比如“，”、“.”等。
-* num：序号，为非0整数。若为整数则表示从左到右数，若为负数则从右到左数。
+*   string：用于截取目标字符串的字符串。可为字段，表达式等。
+*   sep：分隔符，string存在且用于分割的字符，比如“，”、“.”等。
+*   num：序号，为非0整数。若为整数则表示从左到右数，若为负数则从右到左数。
 
 ```sql
 -- 分组后取每组的最大两条值，若求这两条值的和，可导出后按","分列求和后粘贴为数值
@@ -498,15 +506,15 @@ GROUP BY
 	teacher_id;
 ```
 
-**concat_ws()和group_concat()联合使用**
+**concat\_ws()和group\_concat()联合使用**
 
 题目：查询以name分组的所有组的id和score
 
-举例：select name,group_concat(concat_ws('-',id,score) order by id) as 别名 from 表名 group by name；
+举例：select name,group\_concat(concat\_ws('-',id,score) order by id) as 别名 from 表名 group by name；
 
-####  TO_DAYS(date)函数
+#### TO\_DAYS(date)函数
 
-> https://blog.csdn.net/sinat_37239798/article/details/115161583
+> <https://blog.csdn.net/sinat_37239798/article/details/115161583>
 
 ```SQL
 -- 利用to_days函数查询今天的数据
@@ -534,7 +542,7 @@ WHERE
 
 #### SQL语句中1=1的作用
 
-**1=1的用处** 
+**1=1的用处**
 
 where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and”而导致语法错误。
 
@@ -542,7 +550,7 @@ where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and
 
 where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and”而导致语法错误。
 
-因为table中根本就没有名称为1的字段，所以该SQL等效于select * from table，
+因为table中根本就没有名称为1的字段，所以该SQL等效于select \* from table，
 
 这个SQL语句很明显是全表扫描，需要大量的IO操作，数据量越大越慢，建议查询时增加必输项，即where 1=1后面追加一些常用的必选条件，并且将这些必选条件建立适当的索引，效率会大大提高。
 
@@ -583,63 +591,63 @@ SELECT (@i:=@i+5) rownum,first_name,last_name FROM employee,(SELECT (@i:=100)) t
 
 ### mysql有哪些数据类型
 
-1、整数类型，包括TINYINT、SMALLINT、MEDIUMINT、INT、 BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。 
+1、整数类型，包括TINYINT、SMALLINT、MEDIUMINT、INT、 BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。
 
-2、实数类型，包括FLOAT、DOUBLE、DECIMAL。 
+2、实数类型，包括FLOAT、DOUBLE、DECIMAL。
 
-DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。 
+DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。
 
-而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL可以理解成是用字符串进行处理。 
+而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL可以理解成是用字符串进行处理。
 
-3、字符串类型，包括VARCHAR、CHAR、TEXT、BLOB 
+3、字符串类型，包括VARCHAR、CHAR、TEXT、BLOB
 
-VARCHAR用于存储可变长字符串，它比定长类型更节省空间。 
+VARCHAR用于存储可变长字符串，它比定长类型更节省空间。
 
-VARCHAR使用额外1或2个字节存储字符串长度。列长度小于255字节时，使用1字节表示，否则使用2字节表示。 
+VARCHAR使用额外1或2个字节存储字符串长度。列长度小于255字节时，使用1字节表示，否则使用2字节表示。
 
-VARCHAR存储的内容超出设置的长度时，内容会被截断。 
+VARCHAR存储的内容超出设置的长度时，内容会被截断。
 
-CHAR是定长的，根据定义的字符串长度分配足够的空间。 
+CHAR是定长的，根据定义的字符串长度分配足够的空间。
 
-CHAR会根据需要使用空格进行填充方便比较。 
+CHAR会根据需要使用空格进行填充方便比较。
 
-CHAR适合存储很短的字符串，或者所有值都接近同一个长度。 
+CHAR适合存储很短的字符串，或者所有值都接近同一个长度。
 
-CHAR存储的内容超出设置的长度时，内容同样会被截断。 
+CHAR存储的内容超出设置的长度时，内容同样会被截断。
 
-**使用策略：** 
+**使用策略：**
 
 对于经常变更的数据来说，CHAR比VARCHAR更好，因为CHAR不容易产生碎片。
 
-对于非常短的列，CHAR比VARCHAR在存储空间上更有效率。 
+对于非常短的列，CHAR比VARCHAR在存储空间上更有效率。
 
-使用时要注意只分配需要的空间，更长的列排序时会消耗更多内存。尽量避免使用TEXT/BLOB类型，查询时会使用临时表，导致严重的性能开销。 
+使用时要注意只分配需要的空间，更长的列排序时会消耗更多内存。尽量避免使用TEXT/BLOB类型，查询时会使用临时表，导致严重的性能开销。
 
-4、枚举类型（ENUM），把不重复的数据存储为一个预定义的集合。 
+4、枚举类型（ENUM），把不重复的数据存储为一个预定义的集合。
 
-ENUM存储非常紧凑，会把列表值压缩到一个或两个字节。 
+ENUM存储非常紧凑，会把列表值压缩到一个或两个字节。
 
-ENUM在内部存储时，其实存的是整数。 
+ENUM在内部存储时，其实存的是整数。
 
-尽量避免使用数字作为ENUM枚举的常量，因为容易混乱。 
+尽量避免使用数字作为ENUM枚举的常量，因为容易混乱。
 
 5、日期和时间类型，尽量使用timestamp，空间效率高于datetime用整数保存时间戳通常不方便处理。
 
 **注意**：
 
-- 避免使用select *
-- count(1)或count(列) 代替 count(*)
-- 创建表时尽量用 char 代替 varchar
-- 表的字段顺序固定长度的字段优先
-- 组合索引代替多个单列索引（经常使用多个条件查询时）
-- 尽量使用短索引
-- 使用连接（JOIN）来代替子查询(Sub-Queries)
-- 连表时注意条件类型需一致
-- 索引散列值（重复少）不适合建索引，例：性别不适合
+*   避免使用select \*
+*   count(1)或count(列) 代替 count(\*)
+*   创建表时尽量用 char 代替 varchar
+*   表的字段顺序固定长度的字段优先
+*   组合索引代替多个单列索引（经常使用多个条件查询时）
+*   尽量使用短索引
+*   使用连接（JOIN）来代替子查询(Sub-Queries)
+*   连表时注意条件类型需一致
+*   索引散列值（重复少）不适合建索引，例：性别不适合
 
 ### 三范式
 
-> https://www.cnblogs.com/xiaozengzeng/p/10720226.html
+> <https://www.cnblogs.com/xiaozengzeng/p/10720226.html>
 
 1NF:字段不可分;
 
@@ -664,9 +672,104 @@ SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
 SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCKS;
 -- 查看当前等锁的事务
 SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
+-- 查询Mysql连接数
+SHOW PROCESSLIST;
+-- 查询Mysql连接数，显示完整sql
+SHOW FULL PROCESSLIST;
+-- 关掉某个连接
+KILL 3;
 ```
 
-[mysql innodb_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
+[mysql innodb\_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
+
+#### 慢查询日志文件
+
+/mysql/slow-sql.log
+
+## 迁移数据库
+
+```java
+//查看存储设备信息
+fdisk -l
+//格式化分区为 XFS 格式
+mkfs.xfs /dev/sdb
+//挂载硬盘
+mount /dev/sdb /dbdata
+//可设置开机自动挂载
+/etc/fstab加一行/dev/vdb /dbdata xfs defaults 0 0
+//迁移数据库到新硬盘,可忽略
+mv /var/lib/mysql /dbdata
+//创建软链接
+ln -s /dbdata/mysql /var/lib/mysql
+//更新MySQL配置文件/etc/my.cnf
+[mysqld]  
+datadir=/dbdata/mysql
+//设置权限和所有权
+chown -R mysql:mysql /dbdata/mysql
+chown -R mysql:mysql /var/lib/mysql
+//重启服务
+systemctl restart mariadb
+//防火墙开放3306端口
+//遇到mariadb版本问题，一定要升级mariadb，sql改不完的
+```
+
+#### 修改数据库存储路径
+
+```java
+//修改数据库数据存储到/home/mysql
+mkdir /home/mysql
+chown -R mysql:mysql /home/mysql
+chmod -R 755 /home/mysql
+//迁移现有数据
+rsync -avzP /var/lib/mysql/ /home/mysql/
+//修改配置文件
+vi /etc/my.cnf
+//重新启动
+systemctl start mariadb
+//修改后启动报错，提示权限问题
+systemctl edit mariadb.service
+//在打开的编辑器中输入
+[Service]
+ProtectHome=no
+//重新加载 systemd 配置
+systemctl daemon-reload
+//查看路径修改是否成
+mysql -u root -p
+-- 输入密码后，在MariaDB命令行中执行以下命令
+SHOW VARIABLES LIKE 'datadir';
+```
+
+/etc/my.cnf文件
+
+```conf
+[mysqld]
+# datadir=/var/lib/mysql
+# socket=/var/lib/mysql/mysql.sock
+datadir=/home/mysql
+socket=/home/mysql/mysql.sock
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+# Settings user and group are ignored when systemd is used.
+# If you need to run mysqld under a different user or group,
+# customize your systemd unit file for mariadb according to the
+# instructions in http://fedoraproject.org/wiki/Systemd
+
+[mysqld_safe]
+log-error=/var/log/mariadb/mariadb.log
+pid-file=/var/run/mariadb/mariadb.pid
+
+#
+# include all files from the config directory
+#
+!includedir /etc/my.cnf.d
+innodb_file_format = Barracuda
+innodb_file_per_table = 1
+innodb_large_prefix = 1
+
+[client]
+socket=/home/mysql/mysql.sock
+```
 
 ## 服务器上的MySQL
 
@@ -688,7 +791,7 @@ show databases;
 
 5、进入某个数据库
 
-use database_name;
+use database\_name;
 
 6、查看数据库中所有表
 
@@ -696,11 +799,11 @@ show tables;
 
 7、查看表结构
 
-desc table_name;
+desc table\_name;
 
 8、查看表中数据
 
-select * from table_name;
+select \* from table\_name;
 
 9、查看MySQL实时进程
 
@@ -708,7 +811,7 @@ show processlist;
 
 10、查看当前连接数
 
-show status like “%Threads_connected%”;
+show status like “%Threads\_connected%”;
 
 11、查看MySQL运行状态
 
@@ -726,22 +829,41 @@ create database student;
 
 drop database student;
 
+15、重启数据库
+
+systemctl status mariadb
+
+systemctl restart mariadb
+
+16、查看表的锁定状态
+
+SHOW OPEN TABLES WHERE In\_use > 0;
+
+17、查看当前的锁定状态
+
+SHOW FULL PROCESSLIST;
+
+18、杀掉当前锁定该表的进程
+
+KILL \<process\_id>;
+
 ### 从数据库备份数据
 
-```mysql
-mysqldump -uroot -p --databases common_auth > /mnt/common_auth.sql
+```java
+mysqldump -uroot -p --databases learningcell_v2 > /mnt/learningcell_v2.sql
+
+mysqldump -uroot -p --databases learningcell_auth --single-transaction > /mnt/learningcell_auth20250708.sql
+//--single-transaction：针对 InnoDB 表使用的选项，确保在备份过程中获取一致性快照，不会阻塞其他数据库操作（如写入）
+```
+
+```sql
+-- 复制表数据到另一张表 
+INSERT INTO   ko_section_detail_bak(`id`,`type`,`title`,`content`,`locked`,`create_time`,`start_time`,`enabled`,`reason`,`creator_id`,`old_section_id`,`original_id`,`attachment`,`step_type`) 
+SELECT `id`,`type`,`title`,`content`,`locked`,`create_time`,`start_time`,`enabled`,`reason`,`creator_id`,`old_section_id`,`original_id`,`attachment`,`step_type` 
+FROM ko_section_detail ORDER BY id LIMIT 230000,10000;
 ```
 
 ### 备份数据到数据库
-
-使用 CREATE USER 创建一个用户，用户名是 test1，密码是 123456，主机名是 localhost。SQL 语句和执行过程如下：
-
-```mysql
--- 该用户只能从本地主机连接到数据库
-CREATE USER 'test1'@'localhost' IDENTIFIED BY '123456';
--- 该用户可以从任何主机连接到数据库
-CREATE USER 'test1'@'%' IDENTIFIED BY '123456';
-```
 
 可以使用SELECT命令查询mysql.user表来获取用户信息。以下是一个示例查询，显示用户名和主机：
 
@@ -749,17 +871,59 @@ CREATE USER 'test1'@'%' IDENTIFIED BY '123456';
 SELECT User, Host FROM mysql.user;
 ```
 
+创建数据库
+
+```mysql
+CREATE DATABASE learningcell_tk;
+```
+
+使用 CREATE USER 创建一个用户，用户名是 test1，密码是 123456，主机名是 localhost。SQL 语句和执行过程如下：
+
+```mysql
+-- 该用户只能从本地主机连接到数据库
+CREATE USER 'lcell_api'@'localhost' IDENTIFIED BY '123456';
+-- 该用户可以从任何主机连接到数据库
+CREATE USER 'lcell_api'@'%' IDENTIFIED BY '123456';
+-- 该用户可以仅允许从 server0 主机连接到数据库
+CREATE USER 'lcell_api'@'server0' IDENTIFIED BY '123456';
+-- 修改用户连接权限
+GRANT ALL PRIVILEGES ON your_database.* TO 'lcell_api'@'%' IDENTIFIED BY 'your_password';
+```
+
 检查用户 'test1' 是否具有访问 'xuexiyuan' 数据库的权限。你可以登录MySQL作为root用户，然后给 'test1' 用户赋予相应的权限。
 
 ```mysql
-GRANT ALL PRIVILEGES ON xuexiyuan.* TO 'test1'@'localhost';
+GRANT ALL PRIVILEGES ON learningcell_tk.* TO 'lcell_api'@'%';
 ```
 
-如果你只想给'xuexiyuan'@'localhost'用户在所有数据库的所有表上执行SELECT, INSERT, UPDATE, DELETE操作的权限，你可以使用如下命令：
+如果你只想给'xuexiyuan'@'localhost'用户在所有数据库的**所有表**上执行SELECT, INSERT, UPDATE, DELETE操作的权限，你可以使用如下命令：
 
 ```mysql
-GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'test1'@'localhost';
-GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'test1'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'lcell_api'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'lcell_api'@'%';
+```
+
+添加建**表权限**
+
+```mysql
+GRANT CREATE ON learningcell_v2.* TO 'lcell_api'@'%';
+GRANT CREATE ON learningcell_auth.* TO 'lcell_api'@'%';
+-- 添加所有库的建表权限
+GRANT CREATE ON *.* TO 'lcell_api'@'%';
+-- 添加表修改权限
+GRANT ALTER ON *.* TO 'lcell_api'@'%';
+-- 删除表的权限
+GRANT DROP ON *.* TO 'lcell_api'@'%';
+-- 添加视图权限
+GRANT CREATE VIEW ON *.* TO 'lcell_api'@'%';
+-- 刷新
+FLUSH PRIVILEGES;
+```
+
+查看用户的权限
+
+```mysql
+SHOW GRANTS FOR 'lcell_api'@'%';
 ```
 
 退出数据库，执行备份命令
@@ -769,14 +933,31 @@ mysql -u root -p123456 < /mnt/learning_v2.sql
 -- 后输入密码
 mysql -u root -p < /mnt/learning_v2.sql
 -- 指定数据库名
-mysql -u root -p easy_user < /mnt/resource.sql
+mysql -uroot -p learningcell_tk < /home/learningcell_tk20250708.sql
+-- --batch --quick 组合导入大文件,内存占用更低，速度更快
+mysql --batch --quick -u root -p learningcell_auth < /home/learningcell_auth20250708.sql
 ```
 
+通过文件命令，后台运行导入备份数据
 
+```yaml
+# 创建文件
+touch /tmp/mysql_import.exp
 
+# 写入内容
+cat > /tmp/mysql_import.exp <<EOF
+#!/usr/bin/expect
+set password "2wsxE"
+spawn mysql --batch --quick -u root -p learningcell_tk
+expect "Enter password:"
+send "\$password\r"
+expect eof
+EOF
 
+# 首先添加可执行权限
+chmod +x /tmp/mysql_import.exp
 
-
-
-
+# 然后执行脚本
+/tmp/mysql_import.exp
+```
 
