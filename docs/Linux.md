@@ -58,9 +58,9 @@ rwxr-xr-x的值为755
 ```java
 //修改文件夹权限，7 可读可写可操作，6 可读可写，5可读可操作
 chmod 755 /tomcat
-chomd 777 /resource
+chmod 777 /resource
 //递归地更改目录及其所有子目录和文件的权限
-chomd -R 777 /resource
+chmod -R 777 /resource
 chmod -R 777 /mnt/nfs/lcellstorage
 ```
 
@@ -386,11 +386,22 @@ curl baidu.com
 curl -O http://archive.apache.org/dist/hadoop-3.3.1.tar.gz
 ```
 
+### 查看 CPU 核心数
+
+```yaml
+lscpu
+#CPU(s):   8    # 逻辑CPU总数（即核心数）
+```
+
 ### 查看内存占用
 
 **free命令**
 
 free命令显示系统使用和空闲的内存情况，包括物理内存、交互区内存(swap)和内核缓冲区内存。
+
+```
+free -h
+```
 
 可以采用free -m和free -g命令查看，分别表示MB和GB
 
@@ -656,6 +667,13 @@ iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 3306 -j ACCEPT
 //永久添加端口
 vi /etc/sysconfig/iptables
+
+//文件地址
+vi /etc/sysconfig/iptables
+//添加ip端口访问
+-A INPUT -p tcp -m state --state NEW -m tcp -s 172.22.186.164 -m multiport --dports 80,8080 -j ACCEPT
+//重启命令
+systemctl restart iptables
 ```
 
 ### 服务器代理

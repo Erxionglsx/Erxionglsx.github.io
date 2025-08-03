@@ -1,6 +1,6 @@
 # Java进阶
 
-***
+------
 
 [TOC]
 
@@ -16,28 +16,28 @@
 
 ##### 2.继承Thread类实现多线程
 
-![](https://note.youdao.com/yws/api/personal/file/A811D60FFBA34A208D0B25AF25C1EF43?method=download\&shareKey=d615d21ad4e94e52f52da7ef1a8cee41)
+![](https://note.youdao.com/yws/api/personal/file/A811D60FFBA34A208D0B25AF25C1EF43?method=download&shareKey=d615d21ad4e94e52f52da7ef1a8cee41)
 
-*   Java里面提供有一个java.lang.Thread的程序类，那么一个类只要继承了此类就表示这个类为线程的主体了，同时还需要覆写Thread类中提供的一个<font color="lighblue">run()方法</font>，而这个方法就属于线程的主方法。
+   * Java里面提供有一个java.lang.Thread的程序类，那么一个类只要继承了此类就表示这个类为线程的主体了，同时还需要覆写Thread类中提供的一个<font color="lighblue">run()方法</font>，而这个方法就属于线程的主方法。
 
-    ```java
-    class MyThread extends Thread{
-    	private String title;
-    	public MyThread(String title) {
-    		this.title = title;
-    	}
-      	@Override
-      	public void run() {
-      		for (int i = 0; i < 10; i++) {
-      			System.out.println(this.title + "运行：i="+i);
-    		}
-      	}
-    }
-    ```
+     ```java
+     class MyThread extends Thread{
+     	private String title;
+     	public MyThread(String title) {
+     		this.title = title;
+     	}
+       	@Override
+       	public void run() {
+       		for (int i = 0; i < 10; i++) {
+       			System.out.println(this.title + "运行：i="+i);
+     		}
+       	}
+     }
+     ```
 
-多线程要执行的功能都应该在run()方法中进行定义。
+ 多线程要执行的功能都应该在run()方法中进行定义。
 
-*   **启用run方法不能被直接调用，必须使用start()方法来启动多线程。**
+* **启用run方法不能被直接调用，必须使用start()方法来启动多线程。**
 
 ```java
 public class ThreadDemo {
@@ -56,37 +56,38 @@ public class ThreadDemo {
 
 ##### 3.Runnable接口实现多线程
 
-*   此时由于不再继承Thread父类了，那么对于此时的MyThread类也就不再支持有start()这个继承的方法了。
 
-    *   构造方法：public Thread(Runnable target);
+* 此时由于不再继承Thread父类了，那么对于此时的MyThread类也就不再支持有start()这个继承的方法了。
 
-*   由于只是实现了Runnable接口对象，所以此时线程主体类上就不再有单继承局限了。
+  * 构造方法：public Thread(Runnable target);
 
-    ```java
-    class myThread implements Runnable{
-    	private String title;
-    	public  myThread(String title) {
-    		this.title = title;
+* 由于只是实现了Runnable接口对象，所以此时线程主体类上就不再有单继承局限了。
+
+  ```java
+  class myThread implements Runnable{
+  	private String title;
+  	public  myThread(String title) {
+  		this.title = title;
+  	}
+    	@Override
+    	public void run() {
+    		for (int i = 0; i < 10; i++) {
+    			System.out.println(this.title + "运行：i="+i);
+  		}
     	}
-      	@Override
-      	public void run() {
-      		for (int i = 0; i < 10; i++) {
-      			System.out.println(this.title + "运行：i="+i);
-    		}
-      	}
-    }
-
-    public class RunnableDemo {
-    	public static void main(String[] args) {
-    		  Thread threadA = new Thread(new myThread("线程对象A"));
-    		  Thread threadB = new Thread(new myThread("线程对象B"));
-    		  Thread threadC = new Thread(new myThread("线程对象C"));
-    		  threadA.start();//启动多线程
-    		  threadB.start();//启动多线程
-    		  threadC.start();//启动多线程
-    	}
-    }
-    ```
+  }
+  
+  public class RunnableDemo {
+  	public static void main(String[] args) {
+  		  Thread threadA = new Thread(new myThread("线程对象A"));
+  		  Thread threadB = new Thread(new myThread("线程对象B"));
+  		  Thread threadC = new Thread(new myThread("线程对象C"));
+  		  threadA.start();//启动多线程
+  		  threadB.start();//启动多线程
+  		  threadC.start();//启动多线程
+  	}
+  }
+  ```
 
 ##### 4.利用Lambda实现多线程定义
 
@@ -106,19 +107,19 @@ public class ThreadDemo {
 
 ##### 5.Thread和Runnable关系
 
-![](https://note.youdao.com/yws/api/personal/file/1C47A63D756C40FEBA7CF6D91A29FFEA?method=download\&shareKey=8f95975cb982a96f04aeee7c1e8feb2d)
+![](https://note.youdao.com/yws/api/personal/file/1C47A63D756C40FEBA7CF6D91A29FFEA?method=download&shareKey=8f95975cb982a96f04aeee7c1e8feb2d)
 
-*   代码结构本身来讲肯定使用Runnable是最方便的，因为其可以避免单继承的局限，同时也可以更好的进行功能的扩充。
-*   多线程的设计之中，使用了<font color="lighblue">代理设计模式</font>的结构，用户自定义的线程主体只是负责项目核心功能的实现，而所有的辅助实现全部交由Thread类来处理。
-*   在进行Thread启动多线程的时候调用的是start()方法，而后找到的是run()方法，但通过Thread类的构造方法传递了一个Runnable接口对象的时候，那么该接口对象将被Thread类中的<font color="lighblue">target属性</font>所保存，在start()方法执行的时候会调用Thread类中的run()方法，而这个run()方法去调用Runabble接口子类被覆写过的run()方法。
-*   多线程开发的本质实质上是在于多个线程可以进行同一资源的抢占，那么Thread主要描述的是线程，而资源的描述是通过Runnable实现的。
+* 代码结构本身来讲肯定使用Runnable是最方便的，因为其可以避免单继承的局限，同时也可以更好的进行功能的扩充。
+* 多线程的设计之中，使用了<font color="lighblue">代理设计模式</font>的结构，用户自定义的线程主体只是负责项目核心功能的实现，而所有的辅助实现全部交由Thread类来处理。
+* 在进行Thread启动多线程的时候调用的是start()方法，而后找到的是run()方法，但通过Thread类的构造方法传递了一个Runnable接口对象的时候，那么该接口对象将被Thread类中的<font color="lighblue">target属性</font>所保存，在start()方法执行的时候会调用Thread类中的run()方法，而这个run()方法去调用Runabble接口子类被覆写过的run()方法。
+* 多线程开发的本质实质上是在于多个线程可以进行同一资源的抢占，那么Thread主要描述的是线程，而资源的描述是通过Runnable实现的。
 
-![](https://note.youdao.com/yws/api/personal/file/36C9CE72E82547739E63E053871E2CE4?method=download\&shareKey=2f409d7369f12ba5c091e734ece9acd7)
+![](https://note.youdao.com/yws/api/personal/file/36C9CE72E82547739E63E053871E2CE4?method=download&shareKey=2f409d7369f12ba5c091e734ece9acd7)
 
 ##### 6.Callable实现多线程
 
-*   由于Runnable接口有一个缺陷，当线程执行完毕后无法获取一个返回值，所以从JDK1.5之后就提出了一个新的线程实现接口：java.util.concurrent.Callable接口。
-*   Callable定义的时候可以设置一个泛型，此泛型的类型就是返回数据的类型，这样的好处是可以避免项目下转型所带来的安全隐患。
+* 由于Runnable接口有一个缺陷，当线程执行完毕后无法获取一个返回值，所以从JDK1.5之后就提出了一个新的线程实现接口：java.util.concurrent.Callable接口。
+* Callable定义的时候可以设置一个泛型，此泛型的类型就是返回数据的类型，这样的好处是可以避免项目下转型所带来的安全隐患。
 
 ```java
 class myThread implements Callable<String>{
@@ -142,22 +143,22 @@ public class RunnableDemo {
 
 **请解释Runnable与Callable的区别？**
 
-*   Runnable是在JDK1.0的时候提出的多线程的实现接口，而Callable是在JDK1.5之后提出的；
-*   java.kang.Runnable接口之中只提供有一个run()方法，并且没有返回值；
-*   java.util.concurrent.Callable接口提供有call()方法，可以有返回值；
+* Runnable是在JDK1.0的时候提出的多线程的实现接口，而Callable是在JDK1.5之后提出的；
+* java.kang.Runnable接口之中只提供有一个run()方法，并且没有返回值；
+* java.util.concurrent.Callable接口提供有call()方法，可以有返回值；
 
 ### 2.Java线程具有五中基本状态
 
 ![](https://img-blog.csdnimg.cn/20190407112603812.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dtNTkyMA==,size_16,color_FFFFFF,t_70)
 
-*   <font color="lighblue">新建状态（New）</font>：当线程对象对创建后，即进入了新建状态，如：Thread t = new MyThread();
-*   <font color="lighblue">就绪状态（Runnable）</font>：当调用线程对象的start()方法（t.start();），线程即进入就绪状态。处于就绪状态的线程，只是说明此线程已经做好了准备，随时等待CPU调度执行，并不是说执行了t.start()此线程立即就会执行；
-*   <font color="lighblue">运行状态（Running）</font>：当CPU开始调度处于就绪状态的线程时，此时线程才得以真正执行，即进入到运行状态。注：就 绪状态是进入到运行状态的唯一入口，也就是说，线程要想进入运行状态执行，首先必须处于就绪状态中；
-*   <font color="lighblue">阻塞状态（Blocked）</font>：处于运行状态中的线程由于某种原因，暂时放弃对CPU的使用权，停止执行，此时进入阻塞状态，直到其进入到就绪状态，才 有机会再次被CPU调用以进入到运行状态。根据阻塞产生的原因不同，阻塞状态又可以分为三种：
-    *   1.等待阻塞：运行状态中的线程执行wait()方法，使本线程进入到等待阻塞状态；
-    *   2.同步阻塞 – 线程在获取synchronized同步锁失败(因为锁被其它线程所占用)，它会进入同步阻塞状态；
-    *   3.超时阻塞 – 通过调用线程的sleep()或join()或发出了I/O请求时，线程会进入到阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。
-*   <font color="lighblue">死亡状态（Dead）</font>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
+- <font color="lighblue">新建状态（New）</font>：当线程对象对创建后，即进入了新建状态，如：Thread t = new MyThread();
+- <font color="lighblue">就绪状态（Runnable）</font>：当调用线程对象的start()方法（t.start();），线程即进入就绪状态。处于就绪状态的线程，只是说明此线程已经做好了准备，随时等待CPU调度执行，并不是说执行了t.start()此线程立即就会执行；
+- <font color="lighblue">运行状态（Running）</font>：当CPU开始调度处于就绪状态的线程时，此时线程才得以真正执行，即进入到运行状态。注：就 绪状态是进入到运行状态的唯一入口，也就是说，线程要想进入运行状态执行，首先必须处于就绪状态中；
+- <font color="lighblue">阻塞状态（Blocked）</font>：处于运行状态中的线程由于某种原因，暂时放弃对CPU的使用权，停止执行，此时进入阻塞状态，直到其进入到就绪状态，才 有机会再次被CPU调用以进入到运行状态。根据阻塞产生的原因不同，阻塞状态又可以分为三种：
+  - 1.等待阻塞：运行状态中的线程执行wait()方法，使本线程进入到等待阻塞状态；
+  - 2.同步阻塞 – 线程在获取synchronized同步锁失败(因为锁被其它线程所占用)，它会进入同步阻塞状态；
+  - 3.超时阻塞 – 通过调用线程的sleep()或join()或发出了I/O请求时，线程会进入到阻塞状态。当sleep()状态超时、join()等待线程终止或者超时、或者I/O处理完毕时，线程重新转入就绪状态。
+- <font color="lighblue">死亡状态（Dead）</font>：线程执行完了或者因异常退出了run()方法，该线程结束生命周期。
 
 ### 3.线程常用操作方法
 
@@ -165,9 +166,9 @@ public class RunnableDemo {
 
 多线程的运行状态不确定，为了获取到一些需要使用的操作，所以线程的名字很重要，在Thread类之中就提供有线程名称。
 
-*   <font color="lighblue">构造方法</font>：public Thread(Runnable target,String name);
-*   <font color="lighblue">设置名字</font>：public final void setName(String name);
-*   <font color="lighblue">取得名字</font>：public final String getName();
+* <font color="lighblue">构造方法</font>：public Thread(Runnable target,String name);
+* <font color="lighblue">设置名字</font>：public final void setName(String name);
+* <font color="lighblue">取得名字</font>：public final String getName();
 
 ```java
 class MyThread implements Runnable{
@@ -214,8 +215,8 @@ public static void main(String[] args) {
 
 如果希望某一个线程可以暂缓执行，那么就可以使用<font color="lighblue">休眠</font>的处理，在Thread类之中定义：
 
-*   休眠：public static void sleep(long millis) throws InterruptedException;
-*   休眠：public static void sleep(long millis,int nanos) throws InterruptedException;
+* 休眠：public static void sleep(long millis) throws InterruptedException;
+* 休眠：public static void sleep(long millis,int nanos) throws InterruptedException;
 
 在进行休眠的时候可能会产生<font color="lighblue">中断异常"InterruptedException"</font>,中断异常属于Exception的子类，所有该子类必须进行处理。
 
@@ -241,8 +242,8 @@ public static void main(String[] args) {
 
 线程的休眠是可以被打断的，而这种打断是由其他线程完成的，在Thread类里面提供有这种中断执行的处理方法：
 
-*   <font color="lighblue">判断线程是否被中断</font>：public boolean isInterrupted();
-*   <font color="lighblue">中断线程执行</font>：public void interrupt();
+* <font color="lighblue">判断线程是否被中断</font>：public boolean isInterrupted();
+* <font color="lighblue">中断线程执行</font>：public void interrupt();
 
 ```java
 public static void main(String[] args) throws InterruptedException {
@@ -270,43 +271,43 @@ public static void main(String[] args) throws InterruptedException {
 
 所谓的**线程的强制执行**指的是当满足于某些条件之后，某一个线程对象将可以一直独占资源，一直到该线程的程序执行结束。
 
-*   强制执行：Thread.join()
+* 强制执行：Thread.join()
 
-    ```java
-    public static void main(String[] args) throws InterruptedException {
-    		Thread mainThread = Thread.currentThread();//获得主线程
-    		Thread thread  = new Thread(()-> {
-    			for (int x = 0; x < 50; x++) {
-    				if (x==3) { //霸道的线程来临
-    					try {
-    						mainThread.join(); //霸道线程要先执行
-    					} catch (InterruptedException e) {
-    						e.printStackTrace();
-    					}
-    				}
-    				try {
-    					Thread.sleep(100);
-    				} catch (InterruptedException e) {
-    					e.printStackTrace();
-    				}
-    				System.out.println(Thread.currentThread().getName()+"执行x="+x);
-    			}
-    		},"玩耍的线程");
-    		thread.start();
-    		for (int x = 0; x < 50; x++) {
-    			Thread.sleep(100);
-    			System.out.println("【霸道的main线程】number="+x);
-    		}
-    }
-    ```
+  ```java
+  public static void main(String[] args) throws InterruptedException {
+  		Thread mainThread = Thread.currentThread();//获得主线程
+  		Thread thread  = new Thread(()-> {
+  			for (int x = 0; x < 50; x++) {
+  				if (x==3) { //霸道的线程来临
+  					try {
+  						mainThread.join(); //霸道线程要先执行
+  					} catch (InterruptedException e) {
+  						e.printStackTrace();
+  					}
+  				}
+  				try {
+  					Thread.sleep(100);
+  				} catch (InterruptedException e) {
+  					e.printStackTrace();
+  				}
+  				System.out.println(Thread.currentThread().getName()+"执行x="+x);
+  			}
+  		},"玩耍的线程");
+  		thread.start();
+  		for (int x = 0; x < 50; x++) {
+  			Thread.sleep(100);
+  			System.out.println("【霸道的main线程】number="+x);
+  		}
+  }
+  ```
 
-    在进行线程强制执行的时候一定要获取强制执行线程对象之后才可以执行join()的调用。
+  在进行线程强制执行的时候一定要获取强制执行线程对象之后才可以执行join()的调用。
 
 ##### 5.线程的礼让
 
 线程的礼让指的是先将资源让出去让别的线程先执行。
 
-*   礼让：public static void yield()
+* 礼让：public static void yield()
 
 ```java
 public static void main(String[] args) throws InterruptedException {
@@ -338,14 +339,14 @@ public static void main(String[] args) throws InterruptedException {
 
 从理论上来说，线程的优先级越高越<font color="lighblue">有可能先执行</font>(越有可能先抢占到资源)。
 
-*   设置优先级：public final void setPriority(int newPriority);
-*   获取优先级：public final int getPriority()。
+* 设置优先级：public final void setPriority(int newPriority);
+* 获取优先级：public final int getPriority()。
 
 在进行优先级定义的时候都是通过int型的数字来完成的，而对于此数字的选择在Thread类里就定义有三个常量
 
-*   最高优先级：public static final int MAX\_PRIORITY;
-*   中等优先级：public static final int NORM\_PRIORITY;
-*   最低优先级：public static final int MIN\_PRIORITY;
+* 最高优先级：public static final int MAX_PRIORITY;
+* 中等优先级：public static final int NORM_PRIORITY;
+* 最低优先级：public static final int MIN_PRIORITY;
 
 ```java
 public static void main(String[] args) {
@@ -436,19 +437,19 @@ public class ThreadDemo{
 
 **1、互斥条件**
 
-即一段时间内某资源仅为一个线程所占有，此时若其他线程请求该资源，则请求线程都需要等待。
+  即一段时间内某资源仅为一个线程所占有，此时若其他线程请求该资源，则请求线程都需要等待。
 
 **2、不可剥夺条件**
 
-即线程所获得的资源在未使用完毕之前，不能被其他线程强行夺走，只能由获得该资源的线程自己主动释放。
+  即线程所获得的资源在未使用完毕之前，不能被其他线程强行夺走，只能由获得该资源的线程自己主动释放。
 
 **3、请求与保持条件**（吃着碗里的望着锅里的）
 
-即线程已经至少保持了一个资源，但又提出了新的资源请求，而该资源已经被其他线程占有，此时请求线程被阻塞，但对自己已获得的资源保持不放。
+  即线程已经至少保持了一个资源，但又提出了新的资源请求，而该资源已经被其他线程占有，此时请求线程被阻塞，但对自己已获得的资源保持不放。
 
 **4、循环等待条件**
 
-存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
+  存在一种线程资源的循环等待链，链中每一个已获得的资源同时被链中下一个线程所请求。
 
 ### 5.线程深入
 
@@ -479,16 +480,16 @@ public class ThreadDemo{
 
 **停止线程的方式：**
 
-*   使用退出标志，使线程正常退出，也就是当 run() 方法完成后线程中止。
-*   使用 stop() 方法强行终止线程，但是不推荐使用这个方法，该方法已被**弃用**。
-*   使用 interrupt 方法中断线程。
+* 使用退出标志，使线程正常退出，也就是当 run() 方法完成后线程中止。
+* 使用 stop() 方法强行终止线程，但是不推荐使用这个方法，该方法已被**弃用**。
+* 使用 interrupt 方法中断线程。
 
 ##### 2.守护线程
 
 主线程的程序或者其它的线程还在执行的时候，那么守护线程将一直存在，并且运行在后台状态。
 
-*   <font color="lighblue">设置为守护线程</font>：public final void setDaemon(boolean on);
-*   <font color="lighblue">判断是否为守护线程</font>：public final boolean isDaemon();
+* <font color="lighblue">设置为守护线程</font>：public final void setDaemon(boolean on);
+* <font color="lighblue">判断是否为守护线程</font>：public final boolean isDaemon();
 
 ```java
 public static void main(String[] args) throws Exception{
@@ -604,7 +605,7 @@ class Computer{
 }
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/6452C039B84B48E4AC3906BE9FF29C2B?method=download\&shareKey=4c3f7dc82e138bb512637a6b2827dab9)
+![](https://note.youdao.com/yws/api/personal/file/6452C039B84B48E4AC3906BE9FF29C2B?method=download&shareKey=4c3f7dc82e138bb512637a6b2827dab9)
 
 ### 6.线程安全
 
@@ -614,9 +615,9 @@ class Computer{
 
 线程安全问题都是由全局变量及静态变量引起的。
 
-*   1.<font color="lighblue">原子性</font>：提供互斥访问，同一时刻只能有一个线程对数据进行操作，（atomic,synchronized）；
-*   2.<font color="lighblue">可见性</font>：一个线程对主内存的修改可以及时地被其他线程看到，（synchronized,volatile）；
-*   3.<font color="lighblue">有序性</font>：一个线程观察其他线程中的指令执行顺序，由于指令重排序，该观察结果一般杂乱无序，（happens-before原则）。
+* 1.<font color="lighblue">原子性</font>：提供互斥访问，同一时刻只能有一个线程对数据进行操作，（atomic,synchronized）；
+* 2.<font color="lighblue">可见性</font>：一个线程对主内存的修改可以及时地被其他线程看到，（synchronized,volatile）；
+* 3.<font color="lighblue">有序性</font>：一个线程观察其他线程中的指令执行顺序，由于指令重排序，该观察结果一般杂乱无序，（happens-before原则）。
 
 为保证线程安全，可以添加synchroized关键字，上Lock锁，加volatile关键字。
 
@@ -636,9 +637,9 @@ JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在�
 
 ##### synchronized用处
 
-*   synchronized保证了线程的<font color="lighblue">原子性</font>。(被保护的代码块是一次被执行的，没有任何线程会同时访问)
-*   synchronized还保证了<font color="lighblue">可见性</font>。(当执行完synchronized之后，修改后的变量对其他的线程是可见的)
-*   synchronized还保证了<font color="lighblue">有序性</font>。
+- synchronized保证了线程的<font color="lighblue">原子性</font>。(被保护的代码块是一次被执行的，没有任何线程会同时访问)
+- synchronized还保证了<font color="lighblue">可见性</font>。(当执行完synchronized之后，修改后的变量对其他的线程是可见的)
+- synchronized还保证了<font color="lighblue">有序性</font>。
 
 Java中的synchronized，通过使用内置锁，来实现对变量的同步操作，进而实现了**对变量操作的原子性和其他线程对变量的可见性**，从而确保了并发情况下的线程安全。
 
@@ -656,40 +657,48 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 
 #### synchronized关键字和volatile关键字比较
 
-*   **volatile关键字**是线程同步的**轻量级实现**，所以**volatile性能肯定比synchronized关键字要好**。但是**volatile关键字只能用于变量而synchronized关键字可以修饰方法以及代码块**。synchronized关键字在JavaSE1.6之后进行了主要包括为了减少获得锁和释放锁带来的性能消耗而引入的偏向锁和轻量级锁以及其它各种优化之后执行效率有了显著提升，**实际开发中使用synchronized关键字还是更多一些**。
-*   **多线程访问volatile关键字不会发生阻塞，而synchronized关键字可能会发生阻塞**
-*   **volatile关键字能保证数据的可见性，但不能保证数据的原子性。synchronized关键字两者都能保证。**
-*   **volatile关键字用于解决变量在多个线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性。**
+- **volatile关键字**是线程同步的**轻量级实现**，所以**volatile性能肯定比synchronized关键字要好**。但是**volatile关键字只能用于变量而synchronized关键字可以修饰方法以及代码块**。synchronized关键字在JavaSE1.6之后进行了主要包括为了减少获得锁和释放锁带来的性能消耗而引入的偏向锁和轻量级锁以及其它各种优化之后执行效率有了显著提升，**实际开发中使用synchronized关键字还是更多一些**。
+- **多线程访问volatile关键字不会发生阻塞，而synchronized关键字可能会发生阻塞**
+- **volatile关键字能保证数据的可见性，但不能保证数据的原子性。synchronized关键字两者都能保证。**
+- **volatile关键字用于解决变量在多个线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性。**
 
 ### 9.Lock锁
 
-*   Lock方式来获取锁**支持中断、超时不获取、是非阻塞的**
-*   **提高了语义化**，哪里加锁，哪里解锁都得写出来
-*   **Lock显式锁可以给我们带来很好的灵活性，但同时我们必须手动释放锁**
-*   支持Condition条件对象
-*   **允许多个读线程同时访问共享资源**
+- Lock方式来获取锁**支持中断、超时不获取、是非阻塞的**
+- **提高了语义化**，哪里加锁，哪里解锁都得写出来
+- **Lock显式锁可以给我们带来很好的灵活性，但同时我们必须手动释放锁**
+- 支持Condition条件对象
+- **允许多个读线程同时访问共享资源**
 
 Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized锁用起来又特别简单。**Lock锁还得顾忌到它的特性，要手动释放锁才行**(如果忘了释放，这就是一个隐患)。Lock同样保证了<font color="lighblue">原子性、可见性和有序性</font>。
 
-所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁\~
+所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁~
 
 ### 10.wait和sleep方法的区别
 
-*   来自不同的类
-    *   wait():来自 Object 类；
-    *   sleep():来自 Thread 类；
+* 来自不同的类
+  * wait():来自 Object 类； 
+  * sleep():来自 Thread 类； 
 
-*   关于锁的释放
-    *   wait():在等待的过程中会释放锁；
-    *   sleep():在等待的过程中不会释放锁
+* 关于锁的释放
+  * wait():在等待的过程中会释放锁； 
+  * sleep():在等待的过程中不会释放锁 
 
-*   使用的范围
-    *   wait():必须在同步代码块中使用；
-    *   sleep():可以在任何地方使用；
+* 使用的范围
+  * wait():必须在同步代码块中使用； 
+  * sleep():可以在任何地方使用； 
 
-*   是否需要捕获异常
-    *   wait():不需要捕获异常；
-    *   sleep():需要捕获异常；
+* 是否需要捕获异常
+  * wait():不需要捕获异常； 
+  * sleep():需要捕获异常； 
+  
+* 唤醒方式
+  *	wait(): notify() / notifyAll()； 
+  *	sleep():时间到或被中断
+
+* 调用位置
+  *	wait():必须在`synchronized`中；
+  *	sleep():任意位置；
 
 **sleep：让出CPU资源，不释放锁资源。**
 
@@ -721,19 +730,26 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 #### 5.线程池的工作流程
 
-![](https://note.youdao.com/yws/api/personal/file/E37E86934C90414696F230CE9D750A7B?method=download\&shareKey=906dedaf3b87101ecdd2bab8347cdcf9)
+![](https://note.youdao.com/yws/api/personal/file/E37E86934C90414696F230CE9D750A7B?method=download&shareKey=906dedaf3b87101ecdd2bab8347cdcf9)
 
-1.  线程在有任务的时候会创建核心的线程数corePoolSize。
-2.  当线程满了（有任务但是线程被使用完）不会立即扩容，而是放到阻塞队列中，当阻塞队列满了之后才会继续创建线程。
-3.  如果队列满了，线程数达到最大线程数则会执行拒绝策略。
-4.  当线程数大于核心线程数时，超过KeepAliveTime(闲置时间)，线程会被回收，最终会保持corePoolSize个线程。
+1. 线程在有任务的时候会创建核心的线程数corePoolSize。
+2. 当线程满了（有任务但是线程被使用完）不会立即扩容，而是放到阻塞队列中，当阻塞队列满了之后才会继续创建线程。
+3. 如果队列满了，线程数达到最大线程数则会执行拒绝策略。
+4. 当线程数大于核心线程数时，超过KeepAliveTime(闲置时间)，线程会被回收，最终会保持corePoolSize个线程。
+
+#### 工作原理（任务执行流程）
+
+1.当提交一个任务时，若当前线程数 < 核心线程数，直接创建新线程执行任务；
+2.若当前线程数 ≥ 核心线程数，将任务放入队列等待；
+3.若队列已满，且当前线程数 < 最大线程数，创建临时线程执行任务；
+4.若队列已满且线程数达到最大值，触发拒绝策略。
 
 #### 6.四种常见的线程池
 
-*   <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max\_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
-*   <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
-*   <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
-*   <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
+* <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
+* <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
+* <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
+* <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
 
 #### 7.核心线程池内部实现了解吗
 
@@ -751,26 +767,47 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 函数的参数含义如下：
 
-*   corePoolSize：指定了线程池中的线程数量
-*   maximumPoolSize：指定了线程池中的最大线程数量
-*   keepAliveTime：当线程池线程数量超过 corePoolSize 时，多余的空闲线程的存活时间。即，超过了 corePoolSize 的空闲线程，在多长时间内，会被销毁。
-*   unit: keepAliveTime 的单位。
-*   workQueue：任务队列，被提交但尚未被执行的任务。
-*   threadFactory：线程工厂，用于创建线程，一般用默认的即可。
-*   handler：拒绝策略。当任务太多来不及处理，如何拒绝任务。
+- corePoolSize：指定了线程池中的线程数量
+- maximumPoolSize：指定了线程池中的最大线程数量
+- keepAliveTime：当线程池线程数量超过 corePoolSize 时，多余的空闲线程的存活时间。即，超过了 corePoolSize 的空闲线程，在多长时间内，会被销毁。
+- unit: keepAliveTime 的单位。
+- workQueue：任务队列，被提交但尚未被执行的任务。
+- threadFactory：线程工厂，用于创建线程，一般用默认的即可。
+- handler：拒绝策略。当任务太多来不及处理，如何拒绝任务。
+
+##### 核心参数设计原则
+
+CPU 密集型任务：任务主要消耗 CPU 资源（如数据计算、视频编码），CPU 利用率高。
+
+IO 密集型任务：任务大部分时间在等待 IO 操作（如网络请求、数据库读写、文件 IO），CPU 利用率低。
+
+1. 核心线程数（corePoolSize）
+核心线程是线程池长期维持的线程数量，即使空闲也不会销毁。
+CPU 密集型：建议设置为 CPU 核心数 ± 1
+（例如 4 核 CPU 设置为 3-5，避免线程切换开销抵消并行优势）
+IO 密集型：建议设置为 CPU 核心数 × 2
+（因为线程大部分时间在等待 IO，多线程可提高利用率）
+2. 最大线程数（maximumPoolSize）
+最大线程数是线程池可扩展到的最大线程数量（超过核心线程的部分为 “非核心线程”，空闲时会被销毁）。
+CPU 密集型：通常与核心线程数相同（corePoolSize = maximumPoolSize），因为增加更多线程会导致 CPU 切换开销增大，反而降低效率。
+IO 密集型：可设置为 CPU 核心数 × 5~10（根据 IO 等待时间调整，等待时间越长，可设置越大）。
+3. 参考公式
+设 CPU 核心数为 N：
+CPU 密集型：corePoolSize = N，maximumPoolSize = N
+IO 密集型：corePoolSize = 2N，maximumPoolSize = 10N（需结合实际压测调整）
 
 #### 8.拒绝策略
 
 **RejectedExectutionHandler参数字段用于配置绝策略，常用拒绝策略如下**
 
-*   AbortPolicy(系统默认) ：丢弃任务并抛出RejectedExecutionException 异常，让你感知到任务被拒绝了，我们可以根据业务逻辑选择重试或者放弃提交等策略。
-*   DiscardPolicy：也是丢弃任务，但是不抛出异常，相对而言存在一定的风险，因为我们提交的时候根本不知道这个任务会被丢弃，可能造成数据丢失。
-*   DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务(重复此过程)，通常是存活时间最长的任务，它也存在一定的数据丢失风险。
-*   CallerRunsPolicy：既不抛弃任务也不抛出异常，而是将某些任务回退到调用者，让调用者去执行它。
+- AbortPolicy(系统默认) ：丢弃任务并抛出RejectedExecutionException 异常，让你感知到任务被拒绝了，我们可以根据业务逻辑选择重试或者放弃提交等策略。
+- DiscardPolicy：也是丢弃任务，但是不抛出异常，相对而言存在一定的风险，因为我们提交的时候根本不知道这个任务会被丢弃，可能造成数据丢失。 
+- DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务(重复此过程)，通常是存活时间最长的任务，它也存在一定的数据丢失风险。
+- CallerRunsPolicy：既不抛弃任务也不抛出异常，而是将某些任务回退到调用者，让调用者去执行它。
 
 #### 9.ThreadPoolTaskExecutor线程池
 
-> <https://zhuanlan.zhihu.com/p/346086161>
+> https://zhuanlan.zhihu.com/p/346086161
 
 ThreadPoolTaskExecutor配置
 
@@ -870,41 +907,41 @@ public class ScheduleTask {
 }
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/6CDDF77986E844C3ADC0E1B3923D9FA0?method=download\&shareKey=f433080ad78bf876c50e82e99c8f2336)
+![](https://note.youdao.com/yws/api/personal/file/6CDDF77986E844C3ADC0E1B3923D9FA0?method=download&shareKey=f433080ad78bf876c50e82e99c8f2336)
 
 ### 1.日期格式化
 
 为了可以格式化日期，在java.text包中提供有<font color="lighblue">SimpleDateFormat程序类</font>，该类是DateFormat的子类，在该类中提供有如下的方法：
 
-*   【DateFormat继承】<font color="lighblue">将日期格式化</font>：public final String format(Date date);
+* 【DateFormat继承】<font color="lighblue">将日期格式化</font>：public final String format(Date date);
 
-*   【DateFormat继承】<font color="lighblue">将字符串转为日期</font>：public Date parse(String source) throws ParseException;
+* 【DateFormat继承】<font color="lighblue">将字符串转为日期</font>：public Date parse(String source) throws ParseException;
 
-*   构造方法：public SimpleDateFormat(String pattern);
+* 构造方法：public SimpleDateFormat(String pattern);
 
-    *   **日期格式：年(yyyy)、月(MM)、日(dd)、时(HH)、分(mm)、秒(ss)、毫秒(SSS)**
+  * **日期格式：年(yyyy)、月(MM)、日(dd)、时(HH)、分(mm)、秒(ss)、毫秒(SSS)**
 
-        ```java
-        public static void main(String[] args) {
-               Date date = new Date();
-               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-               String str = sdf.format(date);
-               System.out.println(str);
-        //     结果：2020-08-06 09:49:48.029
-        }
-        ```
-
-    *   处理可以将日期格式化为字符串之后，也可以实现字符串与日期之间转换处理。
-
-        ```java
-        public static void main(String[] args) throws ParseException  {
-        	   String birthday = "1999-10-22 11:22:11.111"; 
-               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-               Date date = sdf.parse(birthday);
-               System.out.println(date);
-        //       Fri Oct 22 11:22:11 CST 1999
-        }
-        ```
+    ```java
+    public static void main(String[] args) {
+           Date date = new Date();
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+           String str = sdf.format(date);
+           System.out.println(str);
+    //     结果：2020-08-06 09:49:48.029
+    }
+    ```
+    
+  * 处理可以将日期格式化为字符串之后，也可以实现字符串与日期之间转换处理。
+  
+    ```java
+    public static void main(String[] args) throws ParseException  {
+    	   String birthday = "1999-10-22 11:22:11.111"; 
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+           Date date = sdf.parse(birthday);
+           System.out.println(date);
+    //       Fri Oct 22 11:22:11 CST 1999
+    }
+    ```
 
 ### 2.Comparable比较器
 
@@ -919,7 +956,7 @@ public interface Comparable<T>{
 }
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/BB17B39E104E47949EB3C857100A4EEC?method=download\&shareKey=57e77498fa84f7778278313b35b6a44d)
+![](https://note.youdao.com/yws/api/personal/file/BB17B39E104E47949EB3C857100A4EEC?method=download&shareKey=57e77498fa84f7778278313b35b6a44d)
 
 排序里面只需要一个<font color="lighblue">compareTo()方法</font>进行排序规则的定义，而后整个Java系统里面就可以为其实现排序处理了。
 
@@ -1010,8 +1047,8 @@ class Person {
 
 **面试题：请解释Comparable与Comparator的区别？**
 
-*   java.lang.Comparable是在类定义的时候实现的父接口，主要用于定义排序规则，里面只有一个compareTo()的方法。
-*   java.util.Comparator是挽救的比较器操作，需要设置单独的比较器规则类实现排序，里面有compare()方法。
+* java.lang.Comparable是在类定义的时候实现的父接口，主要用于定义排序规则，里面只有一个compareTo()的方法。
+* java.util.Comparator是挽救的比较器操作，需要设置单独的比较器规则类实现排序，里面有compare()方法。
 
 ## 3.字节流和字符流
 
@@ -1019,8 +1056,8 @@ class Person {
 
 对于服务器或者是客户端而言实质上传递的就是一种数据流的处理形式，而所谓的数据流指的就是字节数据。而对于流的处理形式在java.io包里面提供有两类支持：
 
-*   字节处理流：OutputStream(输出字节流)、InputStream(输入字节流)
-*   字符处理流：Writer(输出字符流)、Reader(输入字符流)
+* 字节处理流：OutputStream(输出字节流)、InputStream(输入字节流)
+* 字符处理流：Writer(输出字符流)、Reader(输入字符流)
 
 ### 1.字节输出流：OutputStream
 
@@ -1032,11 +1069,11 @@ public abstract class OutputStream extends Object implements Closeable,Flushable
 
 **OutputStream类定义的是一个公共的输出操作标准，而在这个标准里面一共定义有：**
 
-|   No.  |                                方法名称                                |   类型   |      特性      |
-| :----: | :----------------------------------------------------------------: | :----: | :----------: |
-|   01   |         public abstract void write(int b)throws IOException        |   普通   |   输出单个字节数据   |
-|   02   |           public void write(byte\[] b)throws IOException           |   普通   |   输出一组字节数据   |
-| **03** | **public void write(byte\[] b,int off,int len)throws IOException** | **普通** | **输出部分字节数据** |
+|  No.   |                           方法名称                           |   类型   |         特性         |
+| :----: | :----------------------------------------------------------: | :------: | :------------------: |
+|   01   |     public abstract void write(int b)throws IOException      |   普通   |   输出单个字节数据   |
+|   02   |        public void write(byte[] b)throws IOException         |   普通   |   输出一组字节数据   |
+| **03** | **public void write(byte[] b,int off,int len)throws IOException** | **普通** | **输出部分字节数据** |
 
 ### 2.字节输入流：InputStream
 
@@ -1048,11 +1085,11 @@ public abstract class InputStream extends Object implements Closeable
 
 **在InputStream类里面定义有如下几个核心方法：**
 
-|   No.  |                               方法名称                              |   类型   |             特性            |
-| :----: | :-------------------------------------------------------------: | :----: | :-----------------------: |
-|   01   |          public abstract int read() throws IOException          |   普通   | 读取单个字节数据，如果现在已经读取到底了，返回-1 |
-| **02** |        **public int read(byte\[] b)  throws IOException**       | **普通** |        **读取一组字节数据**       |
-|   03   | public int read(byte\[] b, int off, int len) throws IOException |   普通   |     读取一组字节数据(只占数组的部分)     |
+|  No.   |                           方法名称                           |   类型   |                       特性                       |
+| :----: | :----------------------------------------------------------: | :------: | :----------------------------------------------: |
+|   01   |        public abstract int read() throws IOException         |   普通   | 读取单个字节数据，如果现在已经读取到底了，返回-1 |
+| **02** |      **public int read(byte[] b)  throws IOException**       | **普通** |               **读取一组字节数据**               |
+|   03   | public int read(byte[] b, int off, int len) throws IOException |   普通   |         读取一组字节数据(只占数组的部分)         |
 
 ```java
 public class JavaAPIDemo {
@@ -1069,14 +1106,14 @@ public class JavaAPIDemo {
 
 ### 3.字符输出流：Writer
 
-*   输出字符数组：public void write(char\[] cbuf) throws IOException；
-*   输出字符串：public void write(String str) throws \[IOException]；
+* 输出字符数组：public void write(char[] cbuf) throws IOException；
+* 输出字符串：public void write(String str) throws [IOException]；
 
 ### 4.字符输入流：Reader
 
 字符流读取的时候只能够按照数组的形式来实现处理操作。
 
-*   接受数据：public int read(char\[] cbuf) throws IOException;
+* 接受数据：public int read(char[] cbuf) throws IOException;
 
 ### 5.字符流和字节流的区别
 
@@ -1088,57 +1125,57 @@ public class JavaAPIDemo {
 
 ### 6.常用的节点流
 
-*   1.文件 ：**FileInputStream 、 FileOutputStrean 、FileReader 、FileWriter** 文件进行处理的节点流
-*   2.数组 ：**ByteArrayInputStream、 ByteArrayOutputStream、 CharArrayReader 、CharArrayWriter** 对数组进行处理的节点流
+* 1.文件 ：**FileInputStream 、 FileOutputStrean 、FileReader 、FileWriter** 文件进行处理的节点流
+* 2.数组 ：**ByteArrayInputStream、 ByteArrayOutputStream、 CharArrayReader 、CharArrayWriter** 对数组进行处理的节点流
 
 ### 7.常用的处理流
 
-*   1.缓冲流：**BufferedInputStrean 、BufferedOutputStream、 BufferedReader、 BufferedWriter** 增加缓冲功能，避免频繁读写硬盘。
-*   2.转换流：**InputStreamReader 、OutputStreamReader**实现字节流和字符流之间的转换。
+* 1.缓冲流：**BufferedInputStrean 、BufferedOutputStream、 BufferedReader、 BufferedWriter** 增加缓冲功能，避免频繁读写硬盘。
+* 2.转换流：**InputStreamReader 、OutputStreamReader**实现字节流和字符流之间的转换。
 
-***
+------
 
 ## 4.集合
 
 > [可参考CSDN收藏](https://blog.csdn.net/feiyanaffection/article/details/81394745)
 
-![](https://note.youdao.com/yws/api/personal/file/1DAEDB91D81843268E64815C13A33E9A?method=download\&shareKey=1e4056915c12d2ea885e8ec76722e191)
+![](https://note.youdao.com/yws/api/personal/file/1DAEDB91D81843268E64815C13A33E9A?method=download&shareKey=1e4056915c12d2ea885e8ec76722e191)
 
-![](https://note.youdao.com/yws/api/personal/file/8FE2515E8565455A8C1692B539E01349?method=download\&shareKey=de84cb3bd75b0585aac196bb701a915e)
+![](https://note.youdao.com/yws/api/personal/file/8FE2515E8565455A8C1692B539E01349?method=download&shareKey=de84cb3bd75b0585aac196bb701a915e)
 
 ### Collection接口
 
-**Collection** 接口的接口 对象的集合（单列集合）\
-├——-**List** 接口：有序，可重复\
-│—————-├ **LinkedList** 接口实现类， <font color="lighblue">链表</font>， 插入删除， 没有同步， 线程不安全\
-│—————-├ **ArrayList** 接口实现类， <font color="lighblue">数组</font>， 随机访问， 没有同步， 线程不安全\
-│—————-└ **Vector** 接口实现类 <font color="lighblue">数组</font>， 同步， 线程安全\
-│ ———————-└ **Stack** 是Vector类的实现类\
-└——-**Set** 接口： 无序，不可重复\
-├—————-└**HashSet** <font color="lighblue">数组+链表+红黑树</font>，使用hash表（数组）存储元素\
-│————————└ **LinkedHashSet**  <font color="lighblue">链表+哈希表</font>，链表维护元素的插入次序，哈希表保证元素唯一\
-└ —————-**TreeSet** 底层实现为<font color="lighblue">红黑树</font>，元素排好序
+**Collection** 接口的接口 对象的集合（单列集合）  
+├——-**List** 接口：有序，可重复  
+│—————-├ **LinkedList** 接口实现类， <font color="lighblue">链表</font>， 插入删除， 没有同步， 线程不安全  
+│—————-├ **ArrayList** 接口实现类， <font color="lighblue">数组</font>， 随机访问， 没有同步， 线程不安全  
+│—————-└ **Vector** 接口实现类 <font color="lighblue">数组</font>， 同步， 线程安全  
+│ ———————-└ **Stack** 是Vector类的实现类  
+└——-**Set** 接口： 无序，不可重复  
+├—————-└**HashSet** <font color="lighblue">数组+链表+红黑树</font>，使用hash表（数组）存储元素   
+│————————└ **LinkedHashSet**  <font color="lighblue">链表+哈希表</font>，链表维护元素的插入次序，哈希表保证元素唯一  
+└ —————-**TreeSet** 底层实现为<font color="lighblue">红黑树</font>，元素排好序 
 
-**Map** 接口 键值对的集合 （双列集合）\
-├———**Hashtable** <font color="lighblue">数组+链表+红黑树</font>，接口实现类， 同步， 线程安全\
-├———**HashMap** <font color="lighblue">数组+链表+红黑树</font>，接口实现类 ，没有同步， 线程不安全\
-│—————–├ **LinkedHashMap** <font color="lighblue">双向链表和哈希表</font>实现\
-│—————–└ **WeakHashMap**\
-├ ——–**TreeMap**  <font color="lighblue">红黑树</font>(自平衡排序二叉树)对所有的key进行排序\
+**Map** 接口 键值对的集合 （双列集合）  
+├———**Hashtable** <font color="lighblue">数组+链表+红黑树</font>，接口实现类， 同步， 线程安全  
+├———**HashMap** <font color="lighblue">数组+链表+红黑树</font>，接口实现类 ，没有同步， 线程不安全  
+│—————–├ **LinkedHashMap** <font color="lighblue">双向链表和哈希表</font>实现  
+│—————–└ **WeakHashMap**  
+├ ——–**TreeMap**  <font color="lighblue">红黑树</font>(自平衡排序二叉树)对所有的key进行排序  
 └———**IdentifyHashMap**
 
 [java.util.Collection](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Collection.html)是单值集合操作的最大的父接口，在该接口之中定义有所有的单值数据的处理操作，定义有如下的核心操作方法。
 
-|   No.  |                                                                                                                  方法名称                                                                                                                 | 类型     |            说明           |
-| :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ------ | :---------------------: |
-| **01** |                                                                                                      **public boolean add(E e)**                                                                                                      | **普通** |       **向集合保存数据**       |
-|   02   | public boolean addAll([Collection](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Collection.html)\<? extends [E](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Collection.html)> c) | 普通     |          追加一组数据         |
-|   03   |                                                                                                          public void clear()                                                                                                          | 普通     |   清空集合，让根节点为空，同时执行GC处理  |
-|   04   |                                                        public boolean contains([Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html) o)                                                        | 普通     | 查询数据是否存在，需要equals()方法支持 |
-|   05   |                                                         public boolean remove([Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html) o)                                                         | 普通     |   数据删除，需要equals()方法支持   |
-|   06   |                                                                                                           public int size()                                                                                                           | 普通     |          获取数据长度         |
-|   07   |                                                            public [Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html)\[] toArray()                                                           | 普通     |       将集合变为对象数组返回       |
-| **08** |                                                    **public [Iterator](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Iterator.html)&lt;E&gt; iterator()**                                                    | **普通** |  **将集合变为Iterator接口返回**  |
+|  No.   |                           方法名称                           | 类型     |                  说明                  |
+| :----: | :----------------------------------------------------------: | -------- | :------------------------------------: |
+| **01** |                 **public boolean add(E e)**                  | **普通** |           **向集合保存数据**           |
+|   02   | public boolean addAll([Collection](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Collection.html)<? extends [E](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Collection.html)> c) | 普通     |              追加一组数据              |
+|   03   |                     public void clear()                      | 普通     | 清空集合，让根节点为空，同时执行GC处理 |
+|   04   | public boolean contains([Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html) o) | 普通     | 查询数据是否存在，需要equals()方法支持 |
+|   05   | public boolean remove([Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html) o) | 普通     |     数据删除，需要equals()方法支持     |
+|   06   |                      public int size()                       | 普通     |              获取数据长度              |
+|   07   | public [Object](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html)[] toArray() | 普通     |         将集合变为对象数组返回         |
+| **08** | **public [Iterator](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Iterator.html)<E> iterator()** | **普通** |     **将集合变为Iterator接口返回**     |
 
 在进行集合操作的时候有两个方法最为常用：【增加】add()、【输出】iterator()，在JDK1.5版本之后提供有了Iterable父接口。
 
@@ -1152,11 +1189,11 @@ public interface List<E> extends Collection<E>
 
 List接口对Collection接口进行了方法扩充：
 
-|   No.  |                     方法名称                    |   类型   |         说明         |
-| :----: | :-----------------------------------------: | :----: | :----------------: |
-| **01** |         **public E get(int index)**         | **普通** |   **获取指定索引上的数据**   |
-|   02   |      public E set(int index,E element)      |   普通   |      修改指定索引数据      |
-|   03   | public ListIterator&lt;E&gt; listIterator() |   普通   | 返回ListIterator接口对象 |
+|  No.   |               方法名称                |   类型   |           说明           |
+| :----: | :-----------------------------------: | :------: | :----------------------: |
+| **01** |      **public E get(int index)**      | **普通** | **获取指定索引上的数据** |
+|   02   |   public E set(int index,E element)   |   普通   |     修改指定索引数据     |
+|   03   | public ListIterator<E> listIterator() |   普通   | 返回ListIterator接口对象 |
 
 **（1）ArrayList**：底层数据结构是数组，查询快，增删慢，线程不安全，效率高，可以存储重复元素
 
@@ -1172,7 +1209,7 @@ List接口对Collection接口进行了方法扩充：
 public class ArrayList<E>  extends AbstractList<E> implements List<E>,RandomAccess, Cloneable, Serializable
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/231BA7BF96AD47AF82509C5D2AD94912?method=download\&shareKey=fb8169a67afecf636763f9f74ca6f319)
+![](https://note.youdao.com/yws/api/personal/file/231BA7BF96AD47AF82509C5D2AD94912?method=download&shareKey=fb8169a67afecf636763f9f74ca6f319)
 
 ArrayList的CRUD：
 
@@ -1236,14 +1273,14 @@ public void testList(){
 
 通过此程序可以发现**List存储的特征**：
 
-*   保存的顺序就是其存储顺序；
-*   List集合里面允许存在有重复数据。
+* 保存的顺序就是其存储顺序；
+* List集合里面允许存在有重复数据。
 
 上面这个例子默认使用了toString输出，在JDK1.8之后在父接口中定义有一个forEach()方法，定义如下：
 
-*   输出支持：default void forEach(Consumer\<? super T>action)；
+* 输出支持：default void forEach(Consumer<? super T>action)；
 
-利用\*\*forEach()\*\*方法输出(不是标准输出)
+利用**forEach()**方法输出(不是标准输出)
 
 ```java
 public class JavaAPDemo {
@@ -1265,12 +1302,12 @@ public class JavaAPDemo {
 }
 ```
 
-| **JDK1.9之前** | **ArrayList默认的构造实际上就会默认开辟大小为10的数组。**                |
-| ------------ | --------------------------------------------------- |
+| **JDK1.9之前** | **ArrayList默认的构造实际上就会默认开辟大小为10的数组。**    |
+| -------------- | ------------------------------------------------------------ |
 | **JDK1.9之后** | **ArrayList默认的构造只会使用默认的空数组，使用的时候才会开辟数组，默认数组大小为10.** |
 
 | ArrayList构造(无参)：     | public ArrayList()                        |
-| -------------------- | ----------------------------------------- |
+| ------------------------- | ----------------------------------------- |
 | **ArrayList构造(有参)：** | **public ArrayList(int initialCapacity)** |
 
 Arraylist默认容量10，按1.5倍扩容。扩容的计算方式是向右位移一位，只有在当前值为偶数时，才除以2，奇数时是抹去最后一位，也就是减1，然后除以2。
@@ -1291,9 +1328,9 @@ LinkedList构造方法里并没有提供有像ArrayList那样的初始化大小�
 
 **ArrayList和LinkedList有什么区别？**
 
-*   ArrayList是数组实现的集合操作，而LinkedList是链表实现的集合操作；
-*   在使用List集合中的get()方法根据索引获取数据时，ArrayList的时间复杂度为“O(1)”、而LinkedList的时间复杂度为"O(n)"。
-*   ArrayList在使用的时候默认的初始化对象数组的大小长度为10，JDK8之后如果空间不足则会采用位运算，**右移**一位，其实就是除以2这个操作，长度变为15，之后依次类推，然后将数据copy到新数组中。如果保存大数据量的时候有可能造成垃圾的产生以及性能的下降，这个时候就可以使用LinkedList。
+* ArrayList是数组实现的集合操作，而LinkedList是链表实现的集合操作；
+* 在使用List集合中的get()方法根据索引获取数据时，ArrayList的时间复杂度为“O(1)”、而LinkedList的时间复杂度为"O(n)"。
+* ArrayList在使用的时候默认的初始化对象数组的大小长度为10，JDK8之后如果空间不足则会采用位运算，**右移**一位，其实就是除以2这个操作，长度变为15，之后依次类推，然后将数据copy到新数组中。如果保存大数据量的时候有可能造成垃圾的产生以及性能的下降，这个时候就可以使用LinkedList。
 
 ##### Vector子类
 
@@ -1321,8 +1358,8 @@ public interface Set<E> extends Collection<E>
 
 **HashSet**底层数据结构采用<font color="lighblue">哈希表</font>实现，元素**无序且唯一**，线程不安全，效率高，可以存储null元素。
 
-*   元素的唯一性是靠所存储元素类型是否重写hashCode()和equals()方法来保证的。
-*   HashSet采用哈希算法，底层用数组存储数据。默认初始化容量16，加载因子0.75。
+* 元素的唯一性是靠所存储元素类型是否重写hashCode()和equals()方法来保证的。
+* HashSet采用哈希算法，底层用数组存储数据。默认初始化容量16，加载因子0.75。
 
 ```java
 public class HashSet<E>
@@ -1356,10 +1393,10 @@ implements NavigableSet<E>, Cloneable, Serializable
 
 **重复元素的消除：**
 
-在Java中重复元素的判断处理利用的就是\*\*hashCode()与equals()\*\*两个方法共同作用完成的，而只有在排序要求的情况下(TreeSet)才会利用Comparable接口来实现。
+在Java中重复元素的判断处理利用的就是**hashCode()与equals()**两个方法共同作用完成的，而只有在排序要求的情况下(TreeSet)才会利用Comparable接口来实现。
 
-*   对象编码：public int hashCode();
-*   对象比较：public boolean equals(Object obj);
+* 对象编码：public int hashCode();
+* 对象比较：public boolean equals(Object obj);
 
 在进行重复元素判断的时候首选利用hashCode()进行编码的匹配，如果该编码不存在则表示数据不存在，没有重复；如果该编码存在了，则进一步进行对象比较处理，如果发现重复了，此数据是不会被保存的。
 
@@ -1373,15 +1410,15 @@ implements NavigableSet<E>, Cloneable, Serializable
 
 ##### Iterator输出
 
-*   获取Iterator输出对象：public Iterator&lt;T&gt; iterator();
+* 获取Iterator输出对象：public Iterator<T> iterator();
 
 **在Iterator接口里面定义有如下的方法：**
 
-|  No |             方法名称             |  类型 |    描述   |
-| :-: | :--------------------------: | :-: | :-----: |
-|  01 |   public boolean hasNext()   |  普通 | 判断是否有数据 |
-|  02 |        public E next()       |  普通 |  取出当前数据 |
-|  03 | public default void remove() |  普通 |    删除   |
+|  No  |           方法名称           | 类型 |      描述      |
+| :--: | :--------------------------: | :--: | :------------: |
+|  01  |   public boolean hasNext()   | 普通 | 判断是否有数据 |
+|  02  |       public E next()        | 普通 |  取出当前数据  |
+|  03  | public default void remove() | 普通 |      删除      |
 
 ```java
 public class TestIter {
@@ -1405,16 +1442,15 @@ public class TestIter {
 
 **面试题**：**请解释Collection.remove()与Iterator.remove()的区别？**
 
-*   在进行迭代输出的时候如果使用了Collection.remove()则会造成并发更新异常，导致程序删除出错，而此时只能够利用Iterator.remove()方法实现正常的删除处理。
+* 在进行迭代输出的时候如果使用了Collection.remove()则会造成并发更新异常，导致程序删除出错，而此时只能够利用Iterator.remove()方法实现正常的删除处理。
 
 ##### ListIterator输出
 
 使用Iterator进行迭代输出操作有一个特点：只允许由前向后实现输出，而如果进行<font color="lighblue">双向迭代</font>处理，那么就必须依靠Iterator的子接口ListIterator实现。
 
 在ListIterator接口里面定义有如下的操作方法：
-
-*   判断是否有前一个元素：public boolean hasPrevious()；
-*   获取当前元素：public E previous()
+* 判断是否有前一个元素：public boolean hasPrevious()；
+* 获取当前元素：public E previous()
 
 ```java
 public class ListTests {
@@ -1458,10 +1494,10 @@ Enumeration只为Vector一个类服务。
 
 在开发中，**Collection集合**保存数据的目的是为了**输出**，**Map集合**保存数据的目的是为**进行key的查找**。
 
-| Map集合类        | key      | value    |
-| ------------- | -------- | -------- |
-| HashMap       | 允许为null  | 允许为null  |
-| TreeMap       | 不允许为null | 允许为null  |
+| Map集合类     | key          | value        |
+| ------------- | ------------ | ------------ |
+| HashMap       | 允许为null   | 允许为null   |
+| TreeMap       | 不允许为null | 允许为null   |
 | ConcurrentMap | 不允许为null | 不允许为null |
 | HashTable     | 不允许为null | 不允许为null |
 
@@ -1473,14 +1509,14 @@ public interface Map<K,V>
 
 Map核心操作方法：
 
-|   No.  |                     方法名称                    |   类型   |                    |
-| :----: | :-----------------------------------------: | :----: | ------------------ |
-| **01** |       **public V put(K key, V value)**      | **普通** | **向集合之中保存数据**      |
-| **02** |         **public V get(Object key)**        | **普通** | **根据key查询数据**      |
-| **03** | **public Set\<Map.Entry\<K,V>> entrySet()** | **普通** | **将Map集合转为Set集合**  |
-|   04   |    public boolean containsKey(Object key)   |   普通   | 查询指定的key是否存在       |
-|   05   |         public Set&lt;K&gt; keySet()        |   普通   | 将Map集合中的key转为Set集合 |
-|   06   |         public V remove(Object key)         |   普通   | 根据key删除的指定的数据      |
+|  No.   |                 方法名称                  |   类型   |                             |
+| :----: | :---------------------------------------: | :------: | --------------------------- |
+| **01** |     **public V put(K key, V value)**      | **普通** | **向集合之中保存数据**      |
+| **02** |       **public V get(Object key)**        | **普通** | **根据key查询数据**         |
+| **03** | **public Set<Map.Entry<K,V>> entrySet()** | **普通** | **将Map集合转为Set集合**    |
+|   04   |  public boolean containsKey(Object key)   |   普通   | 查询指定的key是否存在       |
+|   05   |          public Set<K> keySet()           |   普通   | 将Map集合中的key转为Set集合 |
+|   06   |        public V remove(Object key)        |   普通   | 根据key删除的指定的数据     |
 
 ##### HashMap子类
 
@@ -1496,32 +1532,32 @@ implements Map<K,V>, Cloneable, Serializable
 
 **面试题：在进行HashMap的put()操作的时候，如何实现容量的扩充？**
 
-*   在HashMap类里面提供有一个“DEFAULT\_INITIAL\_CAPACITY”常量，作为初始化的容量配置，作为<font color="lighblue">初始化大小为16个元素</font>。
-*   当我们保存的容量超过了一个阈值(DEFAULT\_LOAD\_FACTOP=<font color="lighblue">0.75f</font>)，相当于容量\*阈值=12，保存12个元素的时候容量会扩充。
-*   在进行扩充的时候HashMap采用的是<font color="lighblue">成倍扩充</font>模式。
+* 在HashMap类里面提供有一个“DEFAULT_INITIAL_CAPACITY”常量，作为初始化的容量配置，作为<font color="lighblue">初始化大小为16个元素</font>。
+* 当我们保存的容量超过了一个阈值(DEFAULT_LOAD_FACTOP=<font color="lighblue">0.75f</font>)，相当于容量*阈值=12，保存12个元素的时候容量会扩充。
+* 在进行扩充的时候HashMap采用的是<font color="lighblue">成倍扩充</font>模式。
 
 **HashMap是使用了哪些方法来有效解决哈希冲突？**
 
-1.  使用 <font color="lighblue" style="font-weight:bold;">链地址法</font>（使用散列表）来链接拥有相同hash值的数据；
+1. 使用 <font color="lighblue" style="font-weight:bold;">链地址法</font>（使用散列表）来链接拥有相同hash值的数据；
 
-2.  使用 <font color="lighblue" style="font-weight:bold;">2次扰动函数</font>（hash函数）来降低哈希冲突的概率，使得数据分布更平均；
+2. 使用 <font color="lighblue" style="font-weight:bold;">2次扰动函数</font>（hash函数）来降低哈希冲突的概率，使得数据分布更平均；
 
-3.  <font color="lighblue" style="font-weight:bold;">引入红黑树</font>进一步降低遍历的时间复杂度，使得遍历更快，提高查找效率；
+3. <font color="lighblue" style="font-weight:bold;">引入红黑树</font>进一步降低遍历的时间复杂度，使得遍历更快，提高查找效率；
 
 链地址法的基本思想是：每个哈希表节点都有一个next指针，多个哈希表节点可以用next指针构成一个单向链表，被分配到同一个索引上的多个节点可以用这个单向链表连接起来。
 
 **HashMap在JDK1.7和JDK1.8中有哪些不同**
 
-![](https://note.youdao.com/yws/api/personal/file/6983209F21AD4039AA0FF43657A78188?method=download\&shareKey=e631c6e5c753cd885ace1534c13173b6)
+![](https://note.youdao.com/yws/api/personal/file/6983209F21AD4039AA0FF43657A78188?method=download&shareKey=e631c6e5c753cd885ace1534c13173b6)
 
-| 不同           | JDK 1.7                                            | JDK 1.8                                                                   |
-| :----------- | :------------------------------------------------- | :------------------------------------------------------------------------ |
-| 存储结构         | 数组 + 链表                                            | 数组 + 链表 + 红黑树                                                             |
-| 初始化方式        | 单独函数：`inflateTable()`                              | 直接集成到了扩容函数`resize()`中                                                     |
-| hash值计算方式    | 扰动处理 = 9次扰动 = 4次位运算 + 5次异或运算                       | 扰动处理 = 2次扰动 = 1次位运算 + 1次异或运算                                              |
-| 存放数据的规则      | 无冲突时，存放数组；冲突时，存放链表                                 | 无冲突时，存放数组；冲突 & 链表长度 <= 8：存放单链表；冲突 & 链表长度 > 8：树化并存放红黑树，当红黑树节点小于等于6时又会退化为链表 |
-| 插入数据方式       | 头插法（先讲原位置的数据移到后1位，再插入数据到该位置）                       | 尾插法（直接插入到链表尾部/红黑树）                                                        |
-| 扩容后存储位置的计算方式 | 全部按照原来方法进行计算（即hashCode ->> 扰动函数 ->> (h\&length-1)） | 按照扩容后的规律计算（即扩容后的位置=原位置 or 原位置 + 旧容量）                                      |
+| 不同                     | JDK 1.7                                                      | JDK 1.8                                                      |
+| :----------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| 存储结构                 | 数组 + 链表                                                  | 数组 + 链表 + 红黑树                                         |
+| 初始化方式               | 单独函数：`inflateTable()`                                   | 直接集成到了扩容函数`resize()`中                             |
+| hash值计算方式           | 扰动处理 = 9次扰动 = 4次位运算 + 5次异或运算                 | 扰动处理 = 2次扰动 = 1次位运算 + 1次异或运算                 |
+| 存放数据的规则           | 无冲突时，存放数组；冲突时，存放链表                         | 无冲突时，存放数组；冲突 & 链表长度 <= 8：存放单链表；冲突 & 链表长度 > 8：树化并存放红黑树，当红黑树节点小于等于6时又会退化为链表 |
+| 插入数据方式             | 头插法（先讲原位置的数据移到后1位，再插入数据到该位置）      | 尾插法（直接插入到链表尾部/红黑树）                          |
+| 扩容后存储位置的计算方式 | 全部按照原来方法进行计算（即hashCode ->> 扰动函数 ->> (h&length-1)） | 按照扩容后的规律计算（即扩容后的位置=原位置 or 原位置 + 旧容量） |
 
 **为什么JDK1.8要用尾插法？**
 
@@ -1562,37 +1598,37 @@ implements Map<K,V>, Cloneable, Serializable
 
 **请解释HashMap与Hashtable的区别**
 
-*   HashMap中的方法都属于异步操作(非线程安全)，HashMap允许保存有null数据；
-*   Hashtable中的方法都属于同步方法(线程安全)，Hashtable不允许保存null，否则会出现NullPointException。
+* HashMap中的方法都属于异步操作(非线程安全)，HashMap允许保存有null数据；
+* Hashtable中的方法都属于同步方法(线程安全)，Hashtable不允许保存null，否则会出现NullPointException。
 
 **HashTable 和 ConcurrentHashMap 区别**
 
-*   HashTable 使用的是 Synchronized 关键字修饰，ConcurrentHashMap 是JDK1.7 使用了锁分段技术来保证线程安全的。JDK1.8ConcurrentHashMap 取消了 Segment 分段锁，采用 CAS 和 synchronized 来保证并发安全。数据结构跟 HashMap1.8 的结构类似，数组+链表/红黑二叉树。
-*   synchronized 只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升 N 倍。
-*   一般现在不建议用 HashTable，即使在多线程环境下，现在也有同步的 ConcurrentHashMap 替代。
+* HashTable 使用的是 Synchronized 关键字修饰，ConcurrentHashMap 是JDK1.7 使用了锁分段技术来保证线程安全的。JDK1.8ConcurrentHashMap 取消了 Segment 分段锁，采用 CAS 和 synchronized 来保证并发安全。数据结构跟 HashMap1.8 的结构类似，数组+链表/红黑二叉树。 
+* synchronized 只锁定当前链表或红黑二叉树的首节点，这样只要hash不冲突，就不会产生并发，效率又提升 N 倍。
+* 一般现在不建议用 HashTable，即使在多线程环境下，现在也有同步的 ConcurrentHashMap 替代。
 
 ##### Map.Entry接口
 
 所有的key和value的数据都被封装在Map.Entry接口中，定义如下：
 
-static class Node\<K,V> implements Map.Entry\<K,V>{}
+static class Node<K,V> implements Map.Entry<K,V>{}
 
 在这个内部接口总提供有两个重要的操作方法：
 
-*   获取key：public K getKey();
-*   获取value：public V getValue();
+* 获取key：public K getKey();
+* 获取value：public V getValue();
 
 **Map.Entry的主要作用就是作为一个Key和Value的包装类型使用。**
 
 ##### 使用Iterator输出Map集合
 
-![](https://note.youdao.com/yws/api/personal/file/1A72605F3AAE4706BC9A3C64CAE14BE0?method=download\&shareKey=6727e5f03d90680af834666e61672c60)
+![](https://note.youdao.com/yws/api/personal/file/1A72605F3AAE4706BC9A3C64CAE14BE0?method=download&shareKey=6727e5f03d90680af834666e61672c60)
 
 **使用Iterator实现Map集合的输出步骤：**
 
-*   利用Map接口中提供的entrySet()方法将Map集合转为Set集合；
-*   利用Set接口中的iterator()方法将Set集合转为Iterator接口实例；
-*   利用Iterator进行迭代输出获取每一组Map.Entry对象，随后通过getKey()与getValue()获取数据
+* 利用Map接口中提供的entrySet()方法将Map集合转为Set集合；
+* 利用Set接口中的iterator()方法将Set集合转为Iterator接口实例；
+* 利用Iterator进行迭代输出获取每一组Map.Entry对象，随后通过getKey()与getValue()获取数据
 
 ```java
 Map<Double,String> map = new HashMap();
@@ -1610,15 +1646,17 @@ Map<Double,String> map = new HashMap();
 
 `.class`文件很明显是**不能直接运行**的，是交**由JVM来解析运行**
 
-*   JVM是运行在操作系统之上的，每个操作系统的指令是不同的，而**JDK是区分操作系统的**，只要你的本地系统装了JDK，这个JDK就是能够和当前系统兼容的。
-*   而class字节码运行在JVM之上，所以**不用关心class字节码是在哪个操作系统编译的**，只要符合JVM规范，那么，这个字节码文件就是可运行的。
-*   所以Java就做到了跨平台--->一次编译，到处运行！
+- JVM是运行在操作系统之上的，每个操作系统的指令是不同的，而**JDK是区分操作系统的**，只要你的本地系统装了JDK，这个JDK就是能够和当前系统兼容的。
+- JDK 中包含了 JVM。当你安装 JDK 时，会同时获得 JVM 以及其他开发所需的工具（如编译器、调试器等）。
+- JDK 是 Java 开发的完整工具包，而 JVM 是其中负责运行 Java 程序的核心组件。没有 JVM，Java 程序无法运行；而没有 JDK，就无法开发和编译 Java 程序。
+- 而class字节码运行在JVM之上，所以**不用关心class字节码是在哪个操作系统编译的**，只要符合JVM规范，那么，这个字节码文件就是可运行的。
+- 所以Java就做到了跨平台--->一次编译，到处运行！
 
 ### 2.Server模式和Client模式
 
-*   JVM Server模式与client模式启动，最主要的差别在于：-Server模式启动时，速度较慢，但是一旦运行起来后，性能将会有很大的提升。
-*   JVM工作在Server模式可以大大提高性能，但应用的启动会比client模式慢大概10%。当该参数不指定时，虚拟机启动检测主机是否为服务器，如果是，则以Server模式启动，否则以client模式启动。
-*   当JVM用于启动GUI界面的交互应用时适合于使用client模式，当JVM用于运行服务器后台程序时建议用Server模式。
+- JVM Server模式与client模式启动，最主要的差别在于：-Server模式启动时，速度较慢，但是一旦运行起来后，性能将会有很大的提升。
+- JVM工作在Server模式可以大大提高性能，但应用的启动会比client模式慢大概10%。当该参数不指定时，虚拟机启动检测主机是否为服务器，如果是，则以Server模式启动，否则以client模式启动。
+- 当JVM用于启动GUI界面的交互应用时适合于使用client模式，当JVM用于运行服务器后台程序时建议用Server模式。
 
 ### 3.类的加载
 
@@ -1630,11 +1668,11 @@ class文件是通过**类的加载器**装载到jvm中的
 
 **工作过程：**
 
-*   1、当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。
-*   2、当ExtClassLoader加载一个class时，它首先也不会自己去尝试加载这个类，而是把类加载请求委派给BootStrapClassLoader去完成。
-*   3、如果BootStrapClassLoader加载失败（例如在\$JAVA\_HOME/jre/lib里未查找到该class），会使用ExtClassLoader来尝试加载；
-*   4、若ExtClassLoader也加载失败，则会使用AppClassLoader来加载
-*   5、如果AppClassLoader也加载失败，则会报出异常ClassNotFoundException
+- 1、当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。
+- 2、当ExtClassLoader加载一个class时，它首先也不会自己去尝试加载这个类，而是把类加载请求委派给BootStrapClassLoader去完成。
+- 3、如果BootStrapClassLoader加载失败（例如在$JAVA_HOME/jre/lib里未查找到该class），会使用ExtClassLoader来尝试加载；
+- 4、若ExtClassLoader也加载失败，则会使用AppClassLoader来加载
+- 5、如果AppClassLoader也加载失败，则会报出异常ClassNotFoundException
 
 其实这就是所谓的**双亲委派模型**。简单来说：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把**请求委托给父加载器去完成，依次向上**。
 
@@ -1648,28 +1686,28 @@ class文件是通过**类的加载器**装载到jvm中的
 
 ### 5.JVM的内存结构
 
-*   <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。 [![img](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)
-*   <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将  `.class` 文件搬过来就是先丢到这一块上。
-*   <font color="lighblue">堆</font>：**存放对象实例**，比如对象实例，数组···等，它和方法区都同属于 **线程共享区域** 。也就是说它们都是 **线程不安全** 的，主要用于存放新创建的对象，几乎所有的对象实例都在这里分配内存。
-*   <font color="lighblue">栈</font>： 这是我们的代码运行空间。我们编写的每一个方法都会放到 **栈** 里面运行。
-*   <font color="lighblue">虚拟机栈</font>：虚拟机栈描述的是**Java方法执行的内存结构**：每个方法被执行的时候都会同时创建一个**栈帧**（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息
-*   <font color="lighblue">本地方法栈</font>：本地方法栈则是为虚拟机使用到的**Native方法服务**。
-*   <font color="lighblue">程序计数器</font>：当前线程所执行的字节码的**行号指示器**，主要就是完成一个加载工作，类似于一个指针一样的，指向下一行我们需要执行的代码。和栈一样，都是 **线程独享** 的，就是说每一个线程都会有自己对应的一块区域而不会存在并发和多线程的问题。
+- <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。 [![img](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)
+- <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将  `.class` 文件搬过来就是先丢到这一块上。
+- <font color="lighblue">堆</font>：**存放对象实例**，比如对象实例，数组···等，它和方法区都同属于 **线程共享区域** 。也就是说它们都是 **线程不安全** 的，主要用于存放新创建的对象，几乎所有的对象实例都在这里分配内存。
+- <font color="lighblue">栈</font>： 这是我们的代码运行空间。我们编写的每一个方法都会放到 **栈** 里面运行。
+- <font color="lighblue">虚拟机栈</font>：虚拟机栈描述的是**Java方法执行的内存结构**：每个方法被执行的时候都会同时创建一个**栈帧**（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息
+- <font color="lighblue">本地方法栈</font>：本地方法栈则是为虚拟机使用到的**Native方法服务**。
+- <font color="lighblue">程序计数器</font>：当前线程所执行的字节码的**行号指示器**，主要就是完成一个加载工作，类似于一个指针一样的，指向下一行我们需要执行的代码。和栈一样，都是 **线程独享** 的，就是说每一个线程都会有自己对应的一块区域而不会存在并发和多线程的问题。
 
 **小总结**
 
-1.  Java文件经过编译后变成 .class 字节码文件
-2.  字节码文件通过类加载器被搬运到 JVM 虚拟机中
-3.  虚拟机主要的5大块：方法区，堆都为线程共享区域，有线程安全问题，栈和本地方法栈和计数器都是独享区域，不存在线程安全问题，而 JVM 的调优主要就是围绕堆，栈两大块进行
+1. Java文件经过编译后变成 .class 字节码文件
+2. 字节码文件通过类加载器被搬运到 JVM 虚拟机中
+3. 虚拟机主要的5大块：方法区，堆都为线程共享区域，有线程安全问题，栈和本地方法栈和计数器都是独享区域，不存在线程安全问题，而 JVM 的调优主要就是围绕堆，栈两大块进行
 
 ![](https://camo.githubusercontent.com/131785c358b810e45abc6a71c98bc03bacbd2e54/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38393738363365653565636234643932623931313964303635663436383236322d6e65772d696d61676566373238376630622d633966302d346632322d396562342d3639363862626161356138322e706e67)
 
-*   1、通过 `java.exe`运行 `Java3yTest.class`，随后被加载到JVM中，**元空间存储着类的信息**(包括类的名称、方法信息、字段信息..)。
-*   2、然后JVM找到Java3yTest的主函数入口(main)，为main函数创建栈帧，开始执行main函数
-*   3、main函数的第一条命令是 `Java3y java3y=new Java3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
-*   4、加载完Java3y类之后，Java虚拟机做的第一件事情就是在堆区中为一个新的Java3y实例分配内存, 然后调用构造函数初始化Java3y实例，这个**Java3y实例持有着指向方法区的Java3y类的类型信息**（其中包含有方法表，java动态绑定的底层实现）的引用
-*   5、当使用 `java3y.setName("Java3y");`的时候，JVM**根据java3y引用找到Java3y对象**，然后根据Java3y对象持有的引用定位到方法区中Java3y类的类型信息的**方法表**，获得 `setName()`函数的字节码的地址
-*   6、为 `setName()`函数创建栈帧，开始运行 `setName()`函数
+- 1、通过 `java.exe`运行 `Java3yTest.class`，随后被加载到JVM中，**元空间存储着类的信息**(包括类的名称、方法信息、字段信息..)。
+- 2、然后JVM找到Java3yTest的主函数入口(main)，为main函数创建栈帧，开始执行main函数
+- 3、main函数的第一条命令是 `Java3y java3y=new Java3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
+- 4、加载完Java3y类之后，Java虚拟机做的第一件事情就是在堆区中为一个新的Java3y实例分配内存, 然后调用构造函数初始化Java3y实例，这个**Java3y实例持有着指向方法区的Java3y类的类型信息**（其中包含有方法表，java动态绑定的底层实现）的引用
+- 5、当使用 `java3y.setName("Java3y");`的时候，JVM**根据java3y引用找到Java3y对象**，然后根据Java3y对象持有的引用定位到方法区中Java3y类的类型信息的**方法表**，获得 `setName()`函数的字节码的地址
+- 6、为 `setName()`函数创建栈帧，开始运行 `setName()`函数
 
 ```java
 String str = new String("hello");
@@ -1679,29 +1717,28 @@ String str = new String("hello");
 
 ### 6.问题排查
 
-1.  通过<font color="lighblue">jps</font>命令查看Java进程「基础」信息（进程号、主类）。这个命令很常用的就是用来看当前服务器有多少Java进程在运行，它们的进程号和加载主类是啥
+1. 通过<font color="lighblue">jps</font>命令查看Java进程「基础」信息（进程号、主类）。这个命令很常用的就是用来看当前服务器有多少Java进程在运行，它们的进程号和加载主类是啥
 
-2.  通过<font color="lighblue">jstat</font>命令查看Java进程「统计类」相关的信息（类加载、编译相关信息统计，各个内存区域GC概况和统计）。这个命令很常用于看GC的情况
+2. 通过<font color="lighblue">jstat</font>命令查看Java进程「统计类」相关的信息（类加载、编译相关信息统计，各个内存区域GC概况和统计）。这个命令很常用于看GC的情况
 
-    > <https://www.cnblogs.com/sxdcgaq8080/p/11089841.html>
+   > https://www.cnblogs.com/sxdcgaq8080/p/11089841.html
 
-3.  通过<font color="lighblue">jinfo</font>命令来查看和调整Java进程的「运行参数」。
+3. 通过<font color="lighblue">jinfo</font>命令来查看和调整Java进程的「运行参数」。
 
-4.  通过<font color="lighblue">jmap</font>命令来查看Java进程的「内存信息」。这个命令很常用于把JVM内存信息dump到文件，然后再用MAT( Memory Analyzer tool 内存解析工具)把文件进行分析
+4. 通过<font color="lighblue">jmap</font>命令来查看Java进程的「内存信息」。这个命令很常用于把JVM内存信息dump到文件，然后再用MAT( Memory Analyzer tool 内存解析工具)把文件进行分析
 
-5.  通过<font color="lighblue">jstack</font>命令来查看JVM「线程信息」。这个命令用常用语排查死锁相关的问题
+5. 通过<font color="lighblue">jstack</font>命令来查看JVM「线程信息」。这个命令用常用语排查死锁相关的问题
+6. 还有近期比较热门的<font color="lighblue">Arthas</font>（阿里开源的诊断工具），涵盖了上面很多命令的功能且自带图形化界面。
 
-6.  还有近期比较热门的<font color="lighblue">Arthas</font>（阿里开源的诊断工具），涵盖了上面很多命令的功能且自带图形化界面。
-
-![](https://note.youdao.com/yws/api/personal/file/BC2C14EBF291430D9F01C36ABBE9334B?method=download\&shareKey=73acd55a5a3b41b27606f17b626f55dc)
+![](https://note.youdao.com/yws/api/personal/file/BC2C14EBF291430D9F01C36ABBE9334B?method=download&shareKey=73acd55a5a3b41b27606f17b626f55dc)
 
 ### 7. GC垃圾回收
 
-> <https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw>
+> https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw
 
 JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年轻代**和**老年代**，而非堆内存则为**方法区**(元空间)。
 
-当我们new一个对象后，会先放到Eden划分出来的一块作为存储空间的内存，当Eden空间满了之后，会触发一个叫做**Minor GC**（就是一个发生在年轻代的GC）的操作，存活下来的对象移动到Survivor0区。Survivor0区满后触发 Minor GC，就会将存活对象移动到Survivor1区，此时还会把from和to两个指针交换，这样保证了一段时间内总有一个survivor区为空且to所指向的survivor区为空。经过多次的 Minor GC后仍然存活的对象（**这里的存活判断是15次，对应到虚拟机参数为 -XX\:MaxTenuringThreshold 。为什么是15，因为HotSpot会在对象投中的标记字段里记录年龄，分配到的空间仅有4位，所以最多只能记录到15**）会移动到老年代。老年代是存储长期存活的对象的，占满时就会触发我们最常听说的**Full GC**，期间会停止所有线程等待GC的完成。所以对于响应要求高的应用应该尽量去减少发生Full GC从而避免响应超时的问题。
+当我们new一个对象后，会先放到Eden划分出来的一块作为存储空间的内存，当Eden空间满了之后，会触发一个叫做**Minor GC**（就是一个发生在年轻代的GC）的操作，存活下来的对象移动到Survivor0区。Survivor0区满后触发 Minor GC，就会将存活对象移动到Survivor1区，此时还会把from和to两个指针交换，这样保证了一段时间内总有一个survivor区为空且to所指向的survivor区为空。经过多次的 Minor GC后仍然存活的对象（**这里的存活判断是15次，对应到虚拟机参数为 -XX:MaxTenuringThreshold 。为什么是15，因为HotSpot会在对象投中的标记字段里记录年龄，分配到的空间仅有4位，所以最多只能记录到15**）会移动到老年代。老年代是存储长期存活的对象的，占满时就会触发我们最常听说的**Full GC**，期间会停止所有线程等待GC的完成。所以对于响应要求高的应用应该尽量去减少发生Full GC从而避免响应超时的问题。
 
 而且当老年区执行了full gc之后仍然无法进行对象保存的操作，就会产生OOM，这时候就是虚拟机中的堆内存不足，原因可能会是堆内存设置的大小过小，这个可以通过参数-Xms、-Xms来调整。也可能是代码中创建的对象大且多，而且它们一直在被引用从而长时间垃圾收集无法收集它们。
 
@@ -1709,47 +1746,47 @@ JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年
 
 #### 对象分配规则
 
-*   对象优先分配在Eden区，如果Eden区没有足够的空间时，虚拟机执行一次Minor GC。
-*   大对象直接进入老年代（大对象是指需要大量连续内存空间的对象）。这样做的目的是避免在Eden区和两个Survivor区之间发生大量的内存拷贝（新生代采用复制算法收集内存）。
-*   长期存活的对象进入老年代。虚拟机为每个对象定义了一个年龄计数器，如果对象经过了1次Minor GC那么对象会进入Survivor区，之后每经过一次Minor GC那么对象的年龄加1，直到达到阀值对象进入老年区。
-*   动态判断对象的年龄。如果Survivor区中相同年龄的所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象可以直接进入老年代。
-*   空间分配担保。每次进行Minor GC时，JVM会计算Survivor区移至老年区的对象的平均大小，如果这个值大于老年区的剩余值大小则进行一次Full GC，如果小于检查HandlePromotionFailure设置，如果true则只进行Monitor GC,如果false则进行Full GC。
+- 对象优先分配在Eden区，如果Eden区没有足够的空间时，虚拟机执行一次Minor GC。
+- 大对象直接进入老年代（大对象是指需要大量连续内存空间的对象）。这样做的目的是避免在Eden区和两个Survivor区之间发生大量的内存拷贝（新生代采用复制算法收集内存）。
+- 长期存活的对象进入老年代。虚拟机为每个对象定义了一个年龄计数器，如果对象经过了1次Minor GC那么对象会进入Survivor区，之后每经过一次Minor GC那么对象的年龄加1，直到达到阀值对象进入老年区。
+- 动态判断对象的年龄。如果Survivor区中相同年龄的所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象可以直接进入老年代。
+- 空间分配担保。每次进行Minor GC时，JVM会计算Survivor区移至老年区的对象的平均大小，如果这个值大于老年区的剩余值大小则进行一次Full GC，如果小于检查HandlePromotionFailure设置，如果true则只进行Monitor GC,如果false则进行Full GC。
 
 finalize()是Object类的一个方法、一个对象的finalize()方法只会被系统自动调用一次，经过finalize()方法逃脱死亡的对象，第二次不会再调用。不推荐使用
 
 #### 垃圾回收的主要方法
 
-*   引用计数法
-*   标记清除算法
-*   复制算法
-*   标记整理法
-*   分代收集算法
+- 引用计数法
+- 标记清除算法
+- 复制算法
+- 标记整理法
+- 分代收集算法
 
 #### 垃圾收集器种类
 
-*   在新生代工作的垃圾回收器：Serial, ParNew, ParallelScavenge
-*   在老年代工作的垃圾回收器：CMS，Serial Old, Parallel Old
-*   同时在新老生代工作的垃圾回收器：G1
+- 在新生代工作的垃圾回收器：Serial, ParNew, ParallelScavenge
+- 在老年代工作的垃圾回收器：CMS，Serial Old, Parallel Old
+- 同时在新老生代工作的垃圾回收器：G1
 
 在生产环境中我们要根据**不同的场景**来选择垃圾收集器组合，如果是运行在桌面环境处于 Client 模式的，则用 Serial + Serial Old 收集器绰绰有余，如果需要响应时间快，用户体验好的，则用 ParNew + CMS 的搭配模式，即使是号称是「驾驭一切」的 G1，也需要根据吞吐量等要求适当调整相应的 JVM 参数，没有最牛的技术，只有最合适的使用场景。
 
 ### 8.JVM调优参数
 
-\-Xmx3550m：设置 JVM 最大可用内存为 3550M。
+-Xmx3550m：设置 JVM 最大可用内存为 3550M。 
 
-\-Xms3550m：设置 JVM 初始内存为 3550m。注意：此值一般设置成和-Xmx 相同， 以避免每次垃圾回收完成后 JVM 重新分配内存。
+-Xms3550m：设置 JVM 初始内存为 3550m。注意：此值一般设置成和-Xmx 相同， 以避免每次垃圾回收完成后 JVM 重新分配内存。 
 
-\-Xmn2g：设置年轻代大小为 2G。整个 JVM 内存大小=年轻代大小 + 年老代大小 + 持久代大小。此值对系统性能影响较大，Sun 官方推荐配置为整个堆的 3/8。
+-Xmn2g：设置年轻代大小为 2G。整个 JVM 内存大小=年轻代大小 + 年老代大小 + 持久代大小。此值对系统性能影响较大，Sun 官方推荐配置为整个堆的 3/8。 
 
-\-Xss256k：设置每个线程的栈大小。JDK5.0 以后每个线程栈大小为 1M，以前每个线 程栈大小为 256K。根据应用的线程所需内存大小进行调整。在相同物理内存下，减小这个值能生成更多的线程。
+-Xss256k：设置每个线程的栈大小。JDK5.0 以后每个线程栈大小为 1M，以前每个线 程栈大小为 256K。根据应用的线程所需内存大小进行调整。在相同物理内存下，减小这个值能生成更多的线程。 
 
-\-XX\:NewRatio=4:设置年轻代（包括 Eden 和两个 Survivor 区）与年老代的比值（除去持久代）。设置为 4，则年轻代与年老代所占比值为 1：4。（该值默认为 2）
+-XX:NewRatio=4:设置年轻代（包括 Eden 和两个 Survivor 区）与年老代的比值（除去持久代）。设置为 4，则年轻代与年老代所占比值为 1：4。（该值默认为 2） 
 
-\-XX\:SurvivorRatio=4：设置年轻代中 Eden 区与 Survivor 区的大小比值。设置为 4，则两个 Survivor 区与一个 Eden 区的比值为 2:4。
+-XX:SurvivorRatio=4：设置年轻代中 Eden 区与 Survivor 区的大小比值。设置为 4，则两个 Survivor 区与一个 Eden 区的比值为 2:4。 
 
 ## 6.反射
 
-> <https://www.sczyh30.com/posts/Java/java-reflection-1/#comments>
+> https://www.sczyh30.com/posts/Java/java-reflection-1/#comments
 
 ### 1.反射的概述
 
@@ -1765,29 +1802,29 @@ java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载
 
 **获得Class对象**
 
-1.  使用 Class 类的 `forName` 静态方法:
+1. 使用 Class 类的 `forName` 静态方法:
 
-    ````java
-    public static Class<?> forName(String className)
-    ​``` 
-    比如在 JDBC 开发中常用此方法加载数据库驱动:
-    ​```java
-     Class.forName(driver);
-    ````
+   ```java
+   public static Class<?> forName(String className)
+   ​``` 
+   比如在 JDBC 开发中常用此方法加载数据库驱动:
+   ​```java
+    Class.forName(driver);
+   ```
 
-2.  直接获取某一个对象的 class
+2. 直接获取某一个对象的 class
 
-    ```java
-    Class<?> klass = int.class;
-    Class<?> classInt = Integer.TYPE;
-    ```
+   ```java
+   Class<?> klass = int.class;
+   Class<?> classInt = Integer.TYPE;
+   ```
 
-3.  调用某个对象的 `getClass()` 方法
+3. 调用某个对象的 `getClass()` 方法
 
-    ```java
-    StringBuilder str = new StringBuilder("123");
-    Class<?> klass = str.getClass();
-    ```
+   ```java
+   StringBuilder str = new StringBuilder("123");
+   Class<?> klass = str.getClass();
+   ```
 
 **判断是否为某个对象的实例**
 
@@ -1797,14 +1834,14 @@ java 虚拟机运行时内存有个叫方法区，主要作用是存储被装载
 
 通过反射来生成对象主要有两种方式：
 
-*   类加载器负责读取 Java 字节代码，并转换成 java.lang.Class类的一个实例。每个这样的实例用来表示一个 Java 类。通过此实例的 newInstance()方法就可以创建出该类的一个对象。
+- 类加载器负责读取 Java 字节代码，并转换成 java.lang.Class类的一个实例。每个这样的实例用来表示一个 Java 类。通过此实例的 newInstance()方法就可以创建出该类的一个对象。
 
 ```java
 Class<?> c = String.class;
 Object str = c.newInstance();
 ```
 
-*   先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例。这种方法可以用指定的构造器构造类的实例。
+- 先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例。这种方法可以用指定的构造器构造类的实例。
 
 ```java
 //获取String所对应的Class对象
@@ -1847,8 +1884,8 @@ public T newInstance(Object ... initargs)
 
 **获取类的成员变量（字段）信息**
 
-*   getFiled：访问公有的成员变量
-*   getDeclaredField：所有已声明的成员变量，但不能得到其父类的成员变量
+- getFiled：访问公有的成员变量
+- getDeclaredField：所有已声明的成员变量，但不能得到其父类的成员变量
 
 **调用方法**
 
@@ -1903,40 +1940,64 @@ public static void testArray() throws ClassNotFoundException {
 
 **反射的优点：**
 
-*   **可扩展性** ：应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。
-*   **类浏览器和可视化开发环境** ：一个类浏览器需要可以枚举类的成员。可视化开发环境（如 IDE）可以从利用反射中可用的类型信息中受益，以帮助程序员编写正确的代码。
-*   **调试器和测试工具** ： 调试器需要能够检查一个类里的私有成员。测试工具可以利用反射来自动地调用类里定义的可被发现的 API 定义，以确保一组测试中有较高的代码覆盖率。
+- **可扩展性** ：应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。
+- **类浏览器和可视化开发环境** ：一个类浏览器需要可以枚举类的成员。可视化开发环境（如 IDE）可以从利用反射中可用的类型信息中受益，以帮助程序员编写正确的代码。
+- **调试器和测试工具** ： 调试器需要能够检查一个类里的私有成员。测试工具可以利用反射来自动地调用类里定义的可被发现的 API 定义，以确保一组测试中有较高的代码覆盖率。
 
 **反射的缺点：**
 
 尽管反射非常强大，但也不能滥用。如果一个功能可以不用反射完成，那么最好就不用。在我们使用反射技术时，下面几条内容应该牢记于心。
 
-*   **性能开销** ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。
-*   **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
-*   **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
+- **性能开销** ：反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。
+- **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
+- **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
 
 ## 7.队列
 
-### LinkedBlockingDeque
+### **LinkedBlockingQueue**
 
-LinkedBlockingDeque是一个由双向链表组成的线程安全的阻塞队列。支持FIFO（先进先出）和FILO（先进后出）两种模式。支持设置队列容量。线程安全，多线程竞争时会阻塞等待。适用于多生产者和多消费者共享一个阻塞队列的场景，能确保线程安全，并具有高效的插入和移除操作。
+单向链表结构：仅支持在队列尾部插入元素（如add、put、offer），在头部移除元素（如take、poll），遵循FIFO（先进先出）原则。适用于需要严格FIFO顺序的场景，如任务调度、生产者-消费者模型。
 
 **常用的添加元素函数**
 
-1.  add()：若超出了度列的长度会直接抛出异常：
-2.  put()：若向队尾添加元素的时候发现队列已经满了会发生阻塞一直等待空间，以加入元素。
-3.  offer()：如果发现队列已满无法添加的话，会直接返回false。
+1. offer()：如果发现队列已满无法添加的话，会直接返回false。
+
+   特点：非阻塞，适合快速失败（fail-fast）的场景。可通过重试逻辑实现类似阻塞的效果。
+
+2. offer(E e, long timeout, TimeUnit unit)：在指定超时时间内尝试插入元素，若超时仍未插入，返回 false。
+
+   特点：结合了阻塞和非阻塞的优点，避免无限等待。
+
+3. put()：若向队尾添加元素的时候发现队列已经满了会发生阻塞一直等待空间，以加入元素。
+
+   特点：线程安全，保证原子性。适用于必须插入成功的场景
+
+4. add()：若超出了度列的长度会直接抛出异常：
+
+   特点：行为与 offer() 相同（但异常处理更严格），通常推荐使用 `offer()` 替代。
 
 **从队列中取出并移除头元素的方法**
 
-1.  poll()：若队列为空，返回null。
-2.  remove()：若队列为空，抛出NoSuchElementException异常。
-3.  take()：若队列为空，发生阻塞，等待有元素。
+1. poll()：若队列为空，返回null。
+
+   特点：非阻塞，适合快速失败（fail-fast）的场景。可通过循环或重试逻辑实现类似阻塞的效果。
+
+2. poll(timeout, unit)：在指定超时时间内尝试取出元素，若超时仍无元素，返回 null。
+
+   特点：结合了阻塞和非阻塞的优点，避免无限等待。
+
+3. take()：若队列为空，发生阻塞，等待有元素。
+
+   特点：线程安全，保证原子性。适用于必须获取元素的场景。
+
+4. remove()：若队列为空，抛出NoSuchElementException异常。
+
+   特点：行为与 poll() 相同（但异常处理更严格）。通常推荐使用 poll() 替代。
 
 **返回队列头列表**
 
-1.  element（）：返回队列头元素，如果为空则抛出异常NoSuchEleMentException
-2.  peek（）：返回队列头元素，如果为空则返回null
+1. element（）：返回队列头元素，如果为空则抛出异常NoSuchEleMentException
+2. peek（）：返回队列头元素，如果为空则返回null
 
 **注意**：使用take()函数，如果队列中没有数据，则线程wait释放CPU，而poll()则不会等待，直接返回null；同样，空间耗尽时offer()函数不会等待，直接返回false，而put()则会wait，因此如果你使用while(true)来获得队列元素，千万别用poll()，CPU会100%的。
 
@@ -1949,7 +2010,7 @@ public class UploadDetectionServiceImpl implements UploadDetectionService, Comma
         List<ResourceSection> sections = resourceSectionRepository.findWaitStatus(false);
         if (sections.size()>0){
             for (int i=0;i<sections.size();i++){
-                QUEUE.put(sections.get(i).getObjectId());
+                QUEUE.add(sections.get(i).getObjectId());
             }
         }
         start();
@@ -1991,4 +2052,9 @@ public class UploadDetectionServiceImpl implements UploadDetectionService, Comma
 }
 ```
 
-##
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 # 数据库
 
-***
+------
 
 [TOC]
 
@@ -16,7 +16,7 @@ alert,create,table,drop,create,database,drop,database
 
 **关系型数据库：**
 
-mysql,sql-server,oracle,db2,sybase,informix,access
+mysql,sql-server,oracle,db2,sybase,informix,access 
 
 **非关系型数据库：**
 
@@ -24,15 +24,15 @@ mongoDB,redis,hbase,memcache
 
 **区别：**
 
-*   存储的数据类型不同
-*   数据表的结构不同
-*   数据容量不同
-*   数据访问效率不同
+* 存储的数据类型不同
+* 数据表的结构不同
+* 数据容量不同
+* 数据访问效率不同
 
-|            数据库类型            |                                                       特性                                                      |                                                                             优点                                                                             |                                缺点                               |
-| :-------------------------: | :-----------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------: |
-|  关系型数据库 SQLite、Oracle、mysql | 1、关系型数据库，是指采用了关系模型来组织 数据的数据库； 2、关系型数据库的最大特点就是事务的一致性； 3、简单来说，关系模型指的就是二维表格模型， 而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。 | 1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解； 2、使用方便：通用的SQL语言使得操作关系型数据库非常方便； 3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率； 4、支持SQL，可用于复杂的查询。 | 1、为了维护一致性所付出的巨大代价就是其读写性能比较差； 2、固定的表结构； 3、高并发读写需求； 4、海量数据的高效率读写； |
-| 非关系型数据库 MongoDb、redis、HBase |                   1、使用键值对存储数据； 2、分布式； 3、一般不支持ACID特性； 4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。                   |                    1、无需经过sql层的解析，读写性能很高； 2、基于键值对，数据没有耦合性，容易扩展； 3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。                   |          1、不提供sql支持，学习和使用成本较高； 2、无事务处理，附加功能bi和报表等支持也不好；         |
+|              数据库类型              |                             特性                             |                             优点                             |                             缺点                             |
+| :----------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|  关系型数据库 SQLite、Oracle、mysql  | 1、关系型数据库，是指采用了关系模型来组织 数据的数据库； 2、关系型数据库的最大特点就是事务的一致性； 3、简单来说，关系模型指的就是二维表格模型， 而一个关系型数据库就是由二维表及其之间的联系所组成的一个数据组织。 | 1、容易理解：二维表结构是非常贴近逻辑世界一个概念，关系模型相对网状、层次等其他模型来说更容易理解； 2、使用方便：通用的SQL语言使得操作关系型数据库非常方便； 3、易于维护：丰富的完整性(实体完整性、参照完整性和用户定义的完整性)大大减低了数据冗余和数据不一致的概率； 4、支持SQL，可用于复杂的查询。 | 1、为了维护一致性所付出的巨大代价就是其读写性能比较差； 2、固定的表结构； 3、高并发读写需求； 4、海量数据的高效率读写； |
+| 非关系型数据库 MongoDb、redis、HBase | 1、使用键值对存储数据； 2、分布式； 3、一般不支持ACID特性； 4、非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。 | 1、无需经过sql层的解析，读写性能很高； 2、基于键值对，数据没有耦合性，容易扩展； 3、存储数据的格式：nosql的存储格式是key,value形式、文档形式、图片形式等等，文档形式、图片形式等等，而关系型数据库则只支持基础类型。 | 1、不提供sql支持，学习和使用成本较高； 2、无事务处理，附加功能bi和报表等支持也不好； |
 
 ### 数据库连接池
 
@@ -50,10 +50,10 @@ Hikari：HiKariCP是数据库连接池的一个后起之秀，号称性能最好
 
 <font color="lighblue">创建表</font>
 
-*   PRIMARY KEY 约束唯一标识数据库表中的每条记录。
-*   主键必须包含唯一的值。
-*   主键列不能包含 NULL 值。
-*   每个表都应该有一个主键，并且每个表只能有一个主键。
+* PRIMARY KEY 约束唯一标识数据库表中的每条记录。
+* 主键必须包含唯一的值。
+* 主键列不能包含 NULL 值。
+* 每个表都应该有一个主键，并且每个表只能有一个主键。
 
 ```sql
 create table student
@@ -115,12 +115,12 @@ SELECT * FROM users LIMIT 2, 5;
 
 SQL通配符必须与LIKE运算符一起使用：
 
-|             通配符            |       描述      |
-| :------------------------: | :-----------: |
-|              %             |   替代一个或多个字符   |
-|             \_             |    仅替代一个字符    |
-|         \[charlist]        |  字符列中的任何单一字符  |
-| \[^charlist]或者\[!charlist] | 不在字符列中的任何单一字符 |
+|           通配符           |            描述            |
+| :------------------------: | :------------------------: |
+|             %              |     替代一个或多个字符     |
+|             _              |       仅替代一个字符       |
+|         [charlist]         |   字符列中的任何单一字符   |
+| [^charlist]或者[!charlist] | 不在字符列中的任何单一字符 |
 
 ```sql
 -- "Persons" 表中选取居住在以 "N" 开始的城市里的人
@@ -148,9 +148,9 @@ WHERE column_name IN (value1,value2,...)
 
 <font color="lighblue">SQL UNIQUE 约束</font>
 
-*   UNIQUE 约束唯一标识数据库表中的每条记录。
-*   UNIQUE 和 PRIMARY KEY 约束均为列或列集合提供了唯一性的保证。
-*   PRIMARY KEY 拥有自动定义的 UNIQUE 约束。
+* UNIQUE 约束唯一标识数据库表中的每条记录。
+* UNIQUE 和 PRIMARY KEY 约束均为列或列集合提供了唯一性的保证。
+* PRIMARY KEY 拥有自动定义的 UNIQUE 约束。
 
 每个表可以有多个 UNIQUE 约束，但是每个表只能有一个 PRIMARY KEY 约束。
 
@@ -172,10 +172,10 @@ SELECT LastName AS Family, FirstName AS Name FROM Persons
 
 <font color="lighblue">SQL join</font> 用于根据<font color="lighblue">两个或多个表</font>中的列之间的关系，从这些表中查询数据。
 
-*   <font color="lighblue">JOIN</font>: 如果表中有至少一个匹配，则返回行，INNER JOIN 与 JOIN 是相同的。
-*   <font color="lighblue">INNER JOIN</font>:只返回两个表中联结字段相等的行
-*   <font color="lighblue">LEFT JOIN</font>: 即使右表中没有匹配，也从左表返回所有的行
-*   <font color="lighblue">RIGHT JOIN</font>: 即使左表中没有匹配，也从右表返回所有的行
+- <font color="lighblue">JOIN</font>: 如果表中有至少一个匹配，则返回行，INNER JOIN 与 JOIN 是相同的。
+- <font color="lighblue">INNER JOIN</font>:只返回两个表中联结字段相等的行
+- <font color="lighblue">LEFT JOIN</font>: 即使右表中没有匹配，也从左表返回所有的行
+- <font color="lighblue">RIGHT JOIN</font>: 即使左表中没有匹配，也从右表返回所有的行
 
 ```sql
 select * from student s,score c where s.s_id = c.c_id;
@@ -211,7 +211,8 @@ TRUNCATE TABLE 表名称; --除去表内的数据，但并不删除表本身
 
 ```sql
 ALTER TABLE table_name ADD column_name datatype;--添加列
-ALTER TABLE table_name DROP COLUMN column_name;--删除列
+ALTER TABLE table_name DROP COLUMN column_name;--删除列 
+ALTER TABLE `resource_files` MODIFY COLUMN `video_preview_url` VARCHAR(500) NULL DEFAULT NULL COMMENT '视频预览'; --修改列;
 
 alter table user_info add `district_id` int(11) DEFAULT 'kehh1001' comment '学区ID'; --DEFAULT 默认值
 alter table user_info add `district_name` varchar(64) comment '学区名称';
@@ -228,10 +229,10 @@ WHERE condition
 
 MySQL 使用下列数据类型在数据库中存储日期或日期/时间值：
 
-*   DATE - 格式 YYYY-MM-DD
-*   DATETIME - 格式: YYYY-MM-DD HH\:MM\:SS
-*   TIMESTAMP - 格式: YYYY-MM-DD HH\:MM\:SS
-*   YEAR - 格式 YYYY 或 YY
+- DATE - 格式 YYYY-MM-DD
+- DATETIME - 格式: YYYY-MM-DD HH:MM:SS
+- TIMESTAMP - 格式: YYYY-MM-DD HH:MM:SS
+- YEAR - 格式 YYYY 或 YY
 
 ### SQL函数
 
@@ -316,7 +317,7 @@ SELECT LEN(City) as LengthOfCity FROM Persons;--取得 "City" 列中值的长度
 UPDATE `tata_users` set store_id = REPLACE(store_id,'179e58f58d9543','155666666');
 ```
 
-<font color="lighblue">find\_in\_set()</font>函数查询以逗号分割的字符串中的某一字符串。
+<font color="lighblue">find_in_set()</font>函数查询以逗号分割的字符串中的某一字符串。
 
 ```sql
 --CITY_CODE:2145,233,6888
@@ -418,6 +419,37 @@ update J_Student set Sage=24 where Grade=78;
 drop view J_Student;
 ```
 
+#### 触发器
+
+MySQL 触发器是一种与表关联的数据库对象，它会在满足特定条件时（如对表执行INSERT、UPDATE、DELETE操作）自动执行预设的 SQL 语句块，无需手动调用。
+核心特点：
+触发时机：分为BEFORE（操作执行前）和AFTER（操作执行后）。
+触发事件：基于表的INSERT、UPDATE、DELETE操作触发。
+作用范围：FOR EACH ROW（对每一行受影响的数据都执行一次触发器逻辑）。
+
+```sql
+-- 任意一个状态为2，则更新report_status字段为1
+DELIMITER //
+
+CREATE TRIGGER trg_update_report_status
+BEFORE UPDATE ON lesson_intellect_check
+FOR EACH ROW
+BEGIN
+    IF (
+        NEW.detect_status = 2 OR
+        NEW.awy_status = 2 OR
+        NEW.st_status = 2 OR
+        NEW.radio_status = 2 OR
+        NEW.talk_status = 2 OR
+        NEW.teach_status = 2
+    ) THEN
+        SET NEW.report_status = 1;
+    END IF;
+END //
+
+DELIMITER ;
+```
+
 #### 按12个月统计,没有的月份补齐
 
 ```sql
@@ -443,11 +475,12 @@ on a.date = b.date order by date;
 -- IFNULL() 函数用于判断第一个表达式是否为 NULL，如果为 NULL 则返回第二个参数的值，如果不为 NULL 则返回第一个参数的值。
 ```
 
-![](https://note.youdao.com/yws/api/personal/file/53A206E219B74DECB554A9D8588FF6DC?method=download\&shareKey=ca7da52e9589a4994bb5ef9bfc850ca3)
+![](https://note.youdao.com/yws/api/personal/file/53A206E219B74DECB554A9D8588FF6DC?method=download&shareKey=ca7da52e9589a4994bb5ef9bfc850ca3)
 
 #### concat函数
 
-> <https://blog.csdn.net/weixin_45583894/article/details/123379603>
+> https://blog.csdn.net/weixin_45583894/article/details/123379603
+>
 
 **concat()函数**
 
@@ -459,21 +492,21 @@ on a.date = b.date order by date;
 
 3、举例：select concat (id, name, score) as 别名 from 表名；
 
-**concat\_ws()函数**
+**concat_ws()函数**
 
-1、功能：和concat()一样，但是可以指定分隔符（concat\_ws就是concat with separator）
+1、功能：和concat()一样，但是可以指定分隔符（concat_ws就是concat with separator）
 
-2、语法：concat\_ws(separator, str1, str2, ...)
+2、语法：concat_ws(separator, str1, str2, ...)
 
 说明：第一个参数指定分隔符。需要注意的是分隔符不能为null，如果为null，则返回结果为null。
 
 3、举例：select concat ('#',id, name, score) as 别名 from 表名；
 
-**group\_concat()函数**
+**group_concat()函数**
 
 1、功能：将group by产生的同一个分组中的值连接起来，返回一个字符串结果。
 
-2、语法：group\_concat( \[distinct] 要连接的字段 \[order by 排序字段 asc/desc ] \[separator] )
+2、语法：group_concat( [distinct] 要连接的字段 [order by 排序字段 asc/desc ] [separator] )
 
 说明：通过使用distinct可以**排除重复值**；如果希望对结果中的值进行**排序**，可以使用order by子句；separator**分隔符**是一个字符串值，缺省为一个逗号。
 
@@ -487,13 +520,13 @@ GROUP BY
 	name;
 ```
 
-**substring\_index函数**
+**substring_index函数**
 
-substring\_index(字符串,分隔符,序号)，截取目标字符串
+substring_index(字符串,分隔符,序号)，截取目标字符串
 
-*   string：用于截取目标字符串的字符串。可为字段，表达式等。
-*   sep：分隔符，string存在且用于分割的字符，比如“，”、“.”等。
-*   num：序号，为非0整数。若为整数则表示从左到右数，若为负数则从右到左数。
+* string：用于截取目标字符串的字符串。可为字段，表达式等。
+* sep：分隔符，string存在且用于分割的字符，比如“，”、“.”等。
+* num：序号，为非0整数。若为整数则表示从左到右数，若为负数则从右到左数。
 
 ```sql
 -- 分组后取每组的最大两条值，若求这两条值的和，可导出后按","分列求和后粘贴为数值
@@ -506,15 +539,15 @@ GROUP BY
 	teacher_id;
 ```
 
-**concat\_ws()和group\_concat()联合使用**
+**concat_ws()和group_concat()联合使用**
 
 题目：查询以name分组的所有组的id和score
 
-举例：select name,group\_concat(concat\_ws('-',id,score) order by id) as 别名 from 表名 group by name；
+举例：select name,group_concat(concat_ws('-',id,score) order by id) as 别名 from 表名 group by name；
 
-#### TO\_DAYS(date)函数
+####  TO_DAYS(date)函数
 
-> <https://blog.csdn.net/sinat_37239798/article/details/115161583>
+> https://blog.csdn.net/sinat_37239798/article/details/115161583
 
 ```SQL
 -- 利用to_days函数查询今天的数据
@@ -542,7 +575,7 @@ WHERE
 
 #### SQL语句中1=1的作用
 
-**1=1的用处**
+**1=1的用处** 
 
 where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and”而导致语法错误。
 
@@ -550,7 +583,7 @@ where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and
 
 where 1=1 是为了避免where 关键字后面的第一个词直接就是 “and”而导致语法错误。
 
-因为table中根本就没有名称为1的字段，所以该SQL等效于select \* from table，
+因为table中根本就没有名称为1的字段，所以该SQL等效于select * from table，
 
 这个SQL语句很明显是全表扫描，需要大量的IO操作，数据量越大越慢，建议查询时增加必输项，即where 1=1后面追加一些常用的必选条件，并且将这些必选条件建立适当的索引，效率会大大提高。
 
@@ -591,63 +624,63 @@ SELECT (@i:=@i+5) rownum,first_name,last_name FROM employee,(SELECT (@i:=100)) t
 
 ### mysql有哪些数据类型
 
-1、整数类型，包括TINYINT、SMALLINT、MEDIUMINT、INT、 BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。
+1、整数类型，包括TINYINT、SMALLINT、MEDIUMINT、INT、 BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。 
 
-2、实数类型，包括FLOAT、DOUBLE、DECIMAL。
+2、实数类型，包括FLOAT、DOUBLE、DECIMAL。 
 
-DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。
+DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。 
 
-而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL可以理解成是用字符串进行处理。
+而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL可以理解成是用字符串进行处理。 
 
-3、字符串类型，包括VARCHAR、CHAR、TEXT、BLOB
+3、字符串类型，包括VARCHAR、CHAR、TEXT、BLOB 
 
-VARCHAR用于存储可变长字符串，它比定长类型更节省空间。
+VARCHAR用于存储可变长字符串，它比定长类型更节省空间。 
 
-VARCHAR使用额外1或2个字节存储字符串长度。列长度小于255字节时，使用1字节表示，否则使用2字节表示。
+VARCHAR使用额外1或2个字节存储字符串长度。列长度小于255字节时，使用1字节表示，否则使用2字节表示。 
 
-VARCHAR存储的内容超出设置的长度时，内容会被截断。
+VARCHAR存储的内容超出设置的长度时，内容会被截断。 
 
-CHAR是定长的，根据定义的字符串长度分配足够的空间。
+CHAR是定长的，根据定义的字符串长度分配足够的空间。 
 
-CHAR会根据需要使用空格进行填充方便比较。
+CHAR会根据需要使用空格进行填充方便比较。 
 
-CHAR适合存储很短的字符串，或者所有值都接近同一个长度。
+CHAR适合存储很短的字符串，或者所有值都接近同一个长度。 
 
-CHAR存储的内容超出设置的长度时，内容同样会被截断。
+CHAR存储的内容超出设置的长度时，内容同样会被截断。 
 
-**使用策略：**
+**使用策略：** 
 
 对于经常变更的数据来说，CHAR比VARCHAR更好，因为CHAR不容易产生碎片。
 
-对于非常短的列，CHAR比VARCHAR在存储空间上更有效率。
+对于非常短的列，CHAR比VARCHAR在存储空间上更有效率。 
 
-使用时要注意只分配需要的空间，更长的列排序时会消耗更多内存。尽量避免使用TEXT/BLOB类型，查询时会使用临时表，导致严重的性能开销。
+使用时要注意只分配需要的空间，更长的列排序时会消耗更多内存。尽量避免使用TEXT/BLOB类型，查询时会使用临时表，导致严重的性能开销。 
 
-4、枚举类型（ENUM），把不重复的数据存储为一个预定义的集合。
+4、枚举类型（ENUM），把不重复的数据存储为一个预定义的集合。 
 
-ENUM存储非常紧凑，会把列表值压缩到一个或两个字节。
+ENUM存储非常紧凑，会把列表值压缩到一个或两个字节。 
 
-ENUM在内部存储时，其实存的是整数。
+ENUM在内部存储时，其实存的是整数。 
 
-尽量避免使用数字作为ENUM枚举的常量，因为容易混乱。
+尽量避免使用数字作为ENUM枚举的常量，因为容易混乱。 
 
 5、日期和时间类型，尽量使用timestamp，空间效率高于datetime用整数保存时间戳通常不方便处理。
 
 **注意**：
 
-*   避免使用select \*
-*   count(1)或count(列) 代替 count(\*)
-*   创建表时尽量用 char 代替 varchar
-*   表的字段顺序固定长度的字段优先
-*   组合索引代替多个单列索引（经常使用多个条件查询时）
-*   尽量使用短索引
-*   使用连接（JOIN）来代替子查询(Sub-Queries)
-*   连表时注意条件类型需一致
-*   索引散列值（重复少）不适合建索引，例：性别不适合
+- 避免使用select *
+- count(1)或count(列) 代替 count(*)
+- 创建表时尽量用 char 代替 varchar
+- 表的字段顺序固定长度的字段优先
+- 组合索引代替多个单列索引（经常使用多个条件查询时）
+- 尽量使用短索引
+- 使用连接（JOIN）来代替子查询(Sub-Queries)
+- 连表时注意条件类型需一致
+- 索引散列值（重复少）不适合建索引，例：性别不适合
 
 ### 三范式
 
-> <https://www.cnblogs.com/xiaozengzeng/p/10720226.html>
+> https://www.cnblogs.com/xiaozengzeng/p/10720226.html
 
 1NF:字段不可分;
 
@@ -680,7 +713,7 @@ SHOW FULL PROCESSLIST;
 KILL 3;
 ```
 
-[mysql innodb\_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
+[mysql innodb_locks](https://blog.csdn.net/sugarCYF/article/details/108433259)
 
 #### 慢查询日志文件
 
@@ -791,7 +824,7 @@ show databases;
 
 5、进入某个数据库
 
-use database\_name;
+use database_name;
 
 6、查看数据库中所有表
 
@@ -799,11 +832,11 @@ show tables;
 
 7、查看表结构
 
-desc table\_name;
+desc table_name;
 
 8、查看表中数据
 
-select \* from table\_name;
+select * from table_name;
 
 9、查看MySQL实时进程
 
@@ -811,7 +844,7 @@ show processlist;
 
 10、查看当前连接数
 
-show status like “%Threads\_connected%”;
+show status like “%Threads_connected%”;
 
 11、查看MySQL运行状态
 
@@ -837,7 +870,7 @@ systemctl restart mariadb
 
 16、查看表的锁定状态
 
-SHOW OPEN TABLES WHERE In\_use > 0;
+SHOW OPEN TABLES WHERE In_use > 0;
 
 17、查看当前的锁定状态
 
@@ -845,7 +878,7 @@ SHOW FULL PROCESSLIST;
 
 18、杀掉当前锁定该表的进程
 
-KILL \<process\_id>;
+KILL <process_id>;
 
 ### 从数据库备份数据
 
