@@ -1,4 +1,4 @@
-# Java进阶
+Java进阶
 
 ------
 
@@ -521,7 +521,7 @@ public static void main(String[] args) throws Exception{
 
 用户线程执行完毕，守护线程也将消失。
 
-##### 3.生产电脑
+##### 3.生产电脑(生产者消费者)
 
 ```java
 public class ThreadDemo{
@@ -576,7 +576,7 @@ class Resource {
 		Thread.sleep(100);
 		this.computer = new Computer("MLDB电脑", 3500.0);
 		System.out.println("【生产电脑】"+this.computer);
-		super.notifyAll();
+		super.notifyAll();//唤醒get()方法中休眠的线程
 	}
 	public synchronized void get() throws Exception {
 		if(this.computer == null) {//没有生产过
@@ -586,7 +586,7 @@ class Resource {
 		System.out.println("【取走电脑】"+this.computer);
 		System.out.println(this.computer);
 		this.computer = null;
-		super.notify();
+		super.notify();//make()方法中休眠的线程
 	}
 }
 //商品
@@ -607,7 +607,39 @@ class Computer{
 
 ![](https://note.youdao.com/yws/api/personal/file/6452C039B84B48E4AC3906BE9FF29C2B?method=download&shareKey=4c3f7dc82e138bb512637a6b2827dab9)
 
-### 6.线程安全
+### 6.wait和sleep方法的区别
+
+- 来自不同的类
+  - wait():来自 Object 类； 
+  - sleep():来自 Thread 类； 
+- 关于锁的释放
+  - wait():在等待的过程中会释放锁； 
+  - sleep():在等待的过程中不会释放锁 
+- 使用的范围
+  - wait():必须在synchronized同步代码块中使用； 
+  - sleep():可以在任何地方使用； 
+- 是否需要捕获异常
+  - wait():不需要捕获异常； 
+  - sleep():需要捕获异常； 
+- 唤醒方式
+  - wait(): 需要其他线程的notify() / notifyAll()唤醒； 
+  - sleep():时间到或被中断
+- 调用位置
+  - wait():必须在`synchronized`中；
+  - sleep():任意位置；
+
+**sleep：让出CPU资源，不释放锁资源。**
+
+**wait()：让出CPU资源和锁资源。**
+
+`wait()`、`notify()`和`notifyAll()`方法必须在**synchronized**同步块或同步方法中调用。
+
+这三个方法的作用是**协调多个线程对共享资源的访问**，它们的调用需要依赖于**对象的内置锁（monitor lock）**：
+
+- `wait()`：使当前线程释放锁并进入等待状态，需其他线程调用`notify()`唤醒。
+- `notify()`/`notifyAll()`：唤醒等待该锁的线程，使其重新竞争锁。
+
+### 7.线程安全
 
 就是**线程同步**的意思，就是当一个程序对一个线程安全的方法或者语句进行访问的时候，其他的不能再对他进行操作了，必须等到这次访问结束以后才能对这个线程安全的方法进行访问。
 
@@ -621,7 +653,7 @@ class Computer{
 
 为保证线程安全，可以添加synchroized关键字，上Lock锁，加volatile关键字。
 
-### 7.synchronized关键字
+### 8.synchronized关键字
 
 JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在这个关键字作用对象的作用范围内是同一时刻只能有一个线程进行操作；另一种是LOCK，是JDK提供的代码层面的锁，依赖CPU指令，代表性的是ReentrantLock。
 
@@ -643,7 +675,7 @@ JDK提供锁分两种：一种是synchronized，依赖JVM实现锁，因此在�
 
 Java中的synchronized，通过使用内置锁，来实现对变量的同步操作，进而实现了**对变量操作的原子性和其他线程对变量的可见性**，从而确保了并发情况下的线程安全。
 
-### 8.volatile关键字
+### 9.volatile关键字
 
 **volatile** 关键字的主要作用就是<font color="lighblue">保证变量的可见性和有序性</font>，然后还有一个作用是<font color="lighblue">防止指令重排序</font>。
 
@@ -651,7 +683,7 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 
 **有序性**
 
-有序性是指，在JVM中，允许编译器和处理器对指令进行重排序，但是重排序过程不会影响到单线程程序的执行，却会影响到多线程并发执行的正确性。
+指令重排序是 JVM 为了优化性能，在不影响单线程执行结果的前提下，对指令执行顺序的调整（可能导致多线程环境下执行顺序混乱）。
 
 可以通过volatile、synchronized、lock保证<font color="lighblue">有序性</font>。
 
@@ -662,7 +694,7 @@ volatile 修饰的成员变量在每次被线程访问时，都强制从共享�
 - **volatile关键字能保证数据的可见性，但不能保证数据的原子性。synchronized关键字两者都能保证。**
 - **volatile关键字用于解决变量在多个线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性。**
 
-### 9.Lock锁
+### 10.Lock锁
 
 - Lock方式来获取锁**支持中断、超时不获取、是非阻塞的**
 - **提高了语义化**，哪里加锁，哪里解锁都得写出来
@@ -674,35 +706,62 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 所以说，我们**绝大部分时候还是会使用Synchronized锁**，用到了Lock锁提及的特性，带来的灵活性才会考虑使用Lock显式锁~
 
-### 10.wait和sleep方法的区别
+#### Lock 比 Synchronized的区别
 
-* 来自不同的类
-  * wait():来自 Object 类； 
-  * sleep():来自 Thread 类； 
+Lock 比 Synchronized 的灵活性更高，Lock 可以自主决定什么时候加锁，什么时候释放锁，只需要调用 lock(）和 unlock(）这两个方法就行，同时 Lock 还提供了非阻塞的竞争锁方法tryLock(）方法，这个方法通过返回 true/false 来告诉当前线程是否已经有其他线程正在使用锁。Synchronized 由于是关键字，所以它无法实现非阻塞竞争锁的方法，另外，Synchronized 锁的释放是被动的，就是当 Synchronized 同步代码块执行完以后或者代码出现异常时才会释放。
 
-* 关于锁的释放
-  * wait():在等待的过程中会释放锁； 
-  * sleep():在等待的过程中不会释放锁 
+Lock 提供了公平锁和非公平锁的机制，Synchronized 只提供了一种非公平锁的实现。
 
-* 使用的范围
-  * wait():必须在同步代码块中使用； 
-  * sleep():可以在任何地方使用； 
+#### Lock 接口的主要方法
 
-* 是否需要捕获异常
-  * wait():不需要捕获异常； 
-  * sleep():需要捕获异常； 
-  
-* 唤醒方式
-  *	wait(): notify() / notifyAll()； 
-  *	sleep():时间到或被中断
+- `void lock()`: 获取锁，如果锁被占用则阻塞
+- `void lockInterruptibly() throws InterruptedException`: 获取锁，但可以被中断
+- `boolean tryLock()`: 尝试获取锁，立即返回，获取成功返回 true
+- `boolean tryLock(long time, TimeUnit unit) throws InterruptedException`: 在指定时间内尝试获取锁
+- `void unlock()`: 释放锁
+- `Condition newCondition()`: 创建一个与该锁关联的条件对象
 
-* 调用位置
-  *	wait():必须在`synchronized`中；
-  *	sleep():任意位置；
+#### ReentrantLock
 
-**sleep：让出CPU资源，不释放锁资源。**
+ReentrantLock 是一种可重入的排他锁，主要用来解决多线程对共享资源竞争的问题。
 
-**wait()：让出CPU资源和锁资源。**
+* 它支持可重入，也就是获得锁的线程在释放锁之前再次去竞争同一把锁的时候，不需要加锁就可以直接访问。 这一特性避免了线程在嵌套调用中因重复获取自身持有的锁而导致的死锁。
+* 它支持公平和非公平特性。
+* 它提供了阻塞竞争锁和非阻塞竞争锁的两种方法，分别是 lock(）和 tryLock()。
+
+```java
+public class LockExample {
+    // 创建锁对象
+    private final Lock lock = new ReentrantLock();
+    private int count = 0;
+    
+    // 加锁的方法
+    public void increment() {
+        // 获取锁
+        lock.lock();
+        try {
+            // 临界区代码
+            count++;
+            System.out.println(Thread.currentThread().getName() + " 增加后: " + count);
+        } finally {
+            // 确保锁被释放，放在finally中
+            lock.unlock();
+        }
+    }
+    
+    public static void main(String[] args) {
+        LockExample example = new LockExample();
+        // 创建多个线程测试
+        for (int i = 0; i < 5; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < 3; j++) {
+                    example.increment();
+                }
+            }, "线程" + (i + 1)).start();
+        }
+    }
+}
+```
 
 ### 11.线程池
 
@@ -746,10 +805,10 @@ Lock锁和Synchronized锁的性能其实**差别不是很大**！而Synchronized
 
 #### 6.四种常见的线程池
 
-* <font color="lighblue">CachedThreadPool</font>:可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
-* <font color="lighblue">SecudleThreadPool</font>:周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
-* <font color="lighblue">SingleThreadPool</font>:只有一条线程来执行任务，适用于有顺序的任务的应用场景。
-* <font color="lighblue">FixedThreadPool</font>:定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
+* <font color="lighblue">CachedThreadPool</font>：可缓存的线程池，该线程池中没有核心线程，非核心线程的数量为Integer.max_value，就是无限大，当有需要时创建线程来执行任务，没有需要时回收线程，适用于耗时少，任务量大的情况。
+* <font color="lighblue">SecudleThreadPool</font>：周期性执行任务的线程池，按照某种特定的计划执行线程中的任务，有核心线程，但也有非核心线程，非核心线程的大小也为无限大。适用于执行周期性的任务。
+* <font color="lighblue">SingleThreadPool</font>：只有一条线程来执行任务，适用于有顺序的任务的应用场景。
+* <font color="lighblue">FixedThreadPool</font>：定长的线程池，有核心线程，核心线程的即为最大的线程数量，没有非核心线程。
 
 #### 7.核心线程池内部实现了解吗
 
@@ -908,6 +967,77 @@ public class ScheduleTask {
 ```
 
 ![](https://note.youdao.com/yws/api/personal/file/6CDDF77986E844C3ADC0E1B3923D9FA0?method=download&shareKey=f433080ad78bf876c50e82e99c8f2336)
+
+#### 10.@Async异步注解
+
+@Async是 Spring 框架提供的注解，用于实现方法的异步执行，它能显著改变程序的执行模式。
+
+**核心特性**
+
+1. **异步执行**
+   被`@Async`标注的方法会脱离当前调用线程，由 Spring 管理的线程池（默认或自定义）中的线程执行，调用方无需等待该方法执行完成即可继续后续操作。
+2. **线程管理**
+   - 默认使用 Spring 的`SimpleAsyncTaskExecutor`（不推荐生产环境，因为它可能无限制创建线程）。
+   - 实际开发中通常会自定义线程池（如`ThreadPoolTaskExecutor`），通过`@Async("自定义线程池Bean名")`指定，以控制线程数量、队列大小等。
+3. **使用条件**
+   - 需要在配置类上添加`@EnableAsync`开启异步功能。
+   - 注解只能用于`public`方法，且不能在同一个类中直接调用（Spring AOP 代理机制限制）。
+4. **返回值支持**
+   - 无返回值：直接用`void`。
+   - 有返回值：需返回`Future`或其实现类（如`CompletableFuture`），用于获取异步执行结果。
+
+| 方案                 | 适用场景                       | 优点                 | 缺点                         |
+| -------------------- | ------------------------------ | -------------------- | ---------------------------- |
+| 纯同步（无 @Async）  | 数据量小（<100）、强顺序依赖   | 无并发问题，实现简单 | 耗时过长，可能阻塞主线程     |
+| 无控制的 @Async      | 无数据库操作的纯计算 / IO 任务 | 效率最高             | 数据库连接耗尽、事务冲突严重 |
+| 线程池 + 分批 + 重试 | 数据量大（>100）、有数据库操作 | 平衡效率与安全性     | 实现稍复杂，需调优线程参数   |
+
+**总结**：@Async的核心价值是通过多线程并行提升系统吞吐量，但也引入了并发带来的复杂性（如线程安全、事务同步）。不加@Async的同步执行虽然简单安全，但在处理大量任务时效率较低。实际开发中需根据业务的并发需求、数据一致性要求和性能目标选择合适的执行方式。
+
+**注意**：@Async 方法可以在同一个类中被调用，但默认会失效（同步执行），因为内部调用绕过了 Spring 代理。解决方式是让调用经过代理对象，而最佳实践是将异步方法拆分到独立的类中，既符合单一职责原则，又能避免代理失效问题。
+
+#### 线程安全问题
+
+```java
+@Service
+public class AsyncDbService {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Async
+    public void addUserIfNotExists(String username) {
+        // 步骤1：检查用户是否存在（读操作）
+        boolean exists = userRepository.existsByUsername(username);
+        if (!exists) {
+            // 步骤2：插入新用户（写操作）
+            try { Thread.sleep(100); } catch (InterruptedException e) {} // 模拟延迟
+            userRepository.save(new User(username));
+        }
+    }
+}
+
+// 测试：同时添加同一个用户
+@Test
+public void testDb() throws InterruptedException {
+    String username = "testUser";
+    // 启动3个异步任务，尝试添加同一用户
+    for (int i = 0; i < 3; i++) {
+        service.addUserIfNotExists(username);
+    }
+    Thread.sleep(1000);
+    long count = userRepository.countByUsername(username);
+    System.out.println("用户" + username + "的数量：" + count); // 预期1，实际可能3
+}
+```
+
+@Async可能会引起线程安全问题，@Async 的线程安全问题本质是多线程并发访问共享资源导致的冲突，而非 @Async 本身的问题。解决的核心是通过 “减少共享”“同步控制” 或 “数据库约束” 等方式，确保共享资源的操作在多线程下的安全性。
+
+#### 如何避免这些问题？
+
+* **避免共享资源**：优先使用局部变量或线程私有变量（如 `ThreadLocal`），减少多线程对共享资源的依赖。
+* **同步机制**：对共享资源的操作加锁（`synchronized`、`Lock`），或使用线程安全的容器（`ConcurrentHashMap`、`AtomicInteger`）。
+* **数据库层面**：通过唯一索引、乐观锁（`version`）或分布式锁（如 Redis 锁）避免重复操作。
+* **控制并发粒度**：使用 `CompletableFuture` 等工具协调异步任务的执行顺序，避免资源竞争。
 
 ### 1.日期格式化
 
@@ -1686,13 +1816,15 @@ class文件是通过**类的加载器**装载到jvm中的
 
 ### 5.JVM的内存结构
 
-- <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。 [![img](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)](https://camo.githubusercontent.com/24dd12441eb0ee31f0798c29f904114433e433e0/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38316631383133663337316334306666613163316636643738626334396564392d6e65772d696d61676532383331346563382d303636662d343531652d383337332d3435313739313764366266372e706e67)
+- <font color="lighblue">类加载器</font>：如果 **JVM** 想要执行这个 **.class** 文件，我们需要将其装进一个 **类加载器** 中，它就像一个搬运工一样，会把所有的 **.class** 文件全部搬进JVM里面来。
 - <font color="lighblue">方法区</font>：存储已**被虚拟机加载的类元数据信息**(元空间)比如类信息，常量，静态变量，编译后代码···等，类加载器将  `.class` 文件搬过来就是先丢到这一块上。
 - <font color="lighblue">堆</font>：**存放对象实例**，比如对象实例，数组···等，它和方法区都同属于 **线程共享区域** 。也就是说它们都是 **线程不安全** 的，主要用于存放新创建的对象，几乎所有的对象实例都在这里分配内存。
-- <font color="lighblue">栈</font>： 这是我们的代码运行空间。我们编写的每一个方法都会放到 **栈** 里面运行。
+- <font color="lighblue">栈</font>： 这是我们的代码运行空间。我们编写的每一个方法都会放到 **栈** 里面运行。栈主要用于存储局部变量、方法调用的参数、方法返回地址以及一些临时数据。
 - <font color="lighblue">虚拟机栈</font>：虚拟机栈描述的是**Java方法执行的内存结构**：每个方法被执行的时候都会同时创建一个**栈帧**（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息
 - <font color="lighblue">本地方法栈</font>：本地方法栈则是为虚拟机使用到的**Native方法服务**。
 - <font color="lighblue">程序计数器</font>：当前线程所执行的字节码的**行号指示器**，主要就是完成一个加载工作，类似于一个指针一样的，指向下一行我们需要执行的代码。和栈一样，都是 **线程独享** 的，就是说每一个线程都会有自己对应的一块区域而不会存在并发和多线程的问题。
+
+![](https://share.note.youdao.com/yws/api/personal/file/WEB5e09b206fc7d434de6245b91d58df7e8?method=download&shareKey=515eb9f9ede553909d79559072b5502a)
 
 **小总结**
 
@@ -1700,14 +1832,14 @@ class文件是通过**类的加载器**装载到jvm中的
 2. 字节码文件通过类加载器被搬运到 JVM 虚拟机中
 3. 虚拟机主要的5大块：方法区，堆都为线程共享区域，有线程安全问题，栈和本地方法栈和计数器都是独享区域，不存在线程安全问题，而 JVM 的调优主要就是围绕堆，栈两大块进行
 
-![](https://camo.githubusercontent.com/131785c358b810e45abc6a71c98bc03bacbd2e54/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f38393738363365653565636234643932623931313964303635663436383236322d6e65772d696d61676566373238376630622d633966302d346632322d396562342d3639363862626161356138322e706e67)
+**加载过程**
 
-- 1、通过 `java.exe`运行 `Java3yTest.class`，随后被加载到JVM中，**元空间存储着类的信息**(包括类的名称、方法信息、字段信息..)。
-- 2、然后JVM找到Java3yTest的主函数入口(main)，为main函数创建栈帧，开始执行main函数
-- 3、main函数的第一条命令是 `Java3y java3y=new Java3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
-- 4、加载完Java3y类之后，Java虚拟机做的第一件事情就是在堆区中为一个新的Java3y实例分配内存, 然后调用构造函数初始化Java3y实例，这个**Java3y实例持有着指向方法区的Java3y类的类型信息**（其中包含有方法表，java动态绑定的底层实现）的引用
-- 5、当使用 `java3y.setName("Java3y");`的时候，JVM**根据java3y引用找到Java3y对象**，然后根据Java3y对象持有的引用定位到方法区中Java3y类的类型信息的**方法表**，获得 `setName()`函数的字节码的地址
-- 6、为 `setName()`函数创建栈帧，开始运行 `setName()`函数
+1、通过 `java.exe`运行 `Java3yTest.class`，随后被加载到JVM中，**元空间存储着类的信息**(包括类的名称、方法信息、字段信息..)。
+2、然后JVM找到Java3yTest的主函数入口(main)，为main函数创建栈帧，开始执行main函数
+3、main函数的第一条命令是 `Java3y java3y=new Java3y();`就是让JVM创建一个Java3y对象，但是这时候方法区中没有Java3y类的信息，所以JVM马上加载Java3y类，把Java3y类的类型信息放到方法区中(元空间)
+4、加载完Java3y类之后，Java虚拟机做的第一件事情就是在堆区中为一个新的Java3y实例分配内存, 然后调用构造函数初始化Java3y实例，这个**Java3y实例持有着指向方法区的Java3y类的类型信息**（其中包含有方法表，java动态绑定的底层实现）的引用
+5、当使用 `java3y.setName("Java3y");`的时候，JVM**根据java3y引用找到Java3y对象**，然后根据Java3y对象持有的引用定位到方法区中Java3y类的类型信息的**方法表**，获得 `setName()`函数的字节码的地址
+6、为 `setName()`函数创建栈帧，开始运行 `setName()`函数
 
 ```java
 String str = new String("hello");
@@ -1736,13 +1868,13 @@ String str = new String("hello");
 
 > https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw
 
+![](https://share.note.youdao.com/yws/api/personal/file/WEB18261526eb2ce55f0032bdcfaf7d40b1?method=download&shareKey=ccae099107b2badcb3764e8938964943)
+
 JVM内存会划分为堆内存和非堆内存，堆内存中也会划分为**年轻代**和**老年代**，而非堆内存则为**方法区**(元空间)。
 
 当我们new一个对象后，会先放到Eden划分出来的一块作为存储空间的内存，当Eden空间满了之后，会触发一个叫做**Minor GC**（就是一个发生在年轻代的GC）的操作，存活下来的对象移动到Survivor0区。Survivor0区满后触发 Minor GC，就会将存活对象移动到Survivor1区，此时还会把from和to两个指针交换，这样保证了一段时间内总有一个survivor区为空且to所指向的survivor区为空。经过多次的 Minor GC后仍然存活的对象（**这里的存活判断是15次，对应到虚拟机参数为 -XX:MaxTenuringThreshold 。为什么是15，因为HotSpot会在对象投中的标记字段里记录年龄，分配到的空间仅有4位，所以最多只能记录到15**）会移动到老年代。老年代是存储长期存活的对象的，占满时就会触发我们最常听说的**Full GC**，期间会停止所有线程等待GC的完成。所以对于响应要求高的应用应该尽量去减少发生Full GC从而避免响应超时的问题。
 
 而且当老年区执行了full gc之后仍然无法进行对象保存的操作，就会产生OOM，这时候就是虚拟机中的堆内存不足，原因可能会是堆内存设置的大小过小，这个可以通过参数-Xms、-Xms来调整。也可能是代码中创建的对象大且多，而且它们一直在被引用从而长时间垃圾收集无法收集它们。
-
-![](https://camo.githubusercontent.com/3c6ec61a270148e9f2bea602bce6998d8aa31bde/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d31312f63303265636261336333336634333432396137363539383762393238653432332d6e65772d696d61676539336234366633642d333366392d343666392d613832352d6563373132396230303466362e706e67)
 
 #### 对象分配规则
 
@@ -1756,10 +1888,10 @@ finalize()是Object类的一个方法、一个对象的finalize()方法只会被
 
 #### 垃圾回收的主要方法
 
-- 引用计数法
 - 标记清除算法
-- 复制算法
 - 标记整理法
+- 复制算法
+- 引用计数法
 - 分代收集算法
 
 #### 垃圾收集器种类
@@ -1952,7 +2084,25 @@ public static void testArray() throws ClassNotFoundException {
 - **安全限制** ：使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。
 - **内部暴露** ：由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。
 
-## 7.队列
+## 7.阻塞队列
+
+当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。
+
+当队列中填满数据的情况下，生产者端的所有线程都会被自动阻塞（挂起），直到队列中有空的位置，线程被自动唤醒。
+
+1. ArrayBlockingQueue ：由数组结构组成的有界阻塞队列。 公平、非公平
+
+2. LinkedBlockingQueue ：由链表结构组成的有界阻塞队列。 两个独立锁提高并发
+
+3. PriorityBlockingQueue ：支持优先级排序的无界阻塞队列。 compareTo 排序实现优先
+
+4. DelayQueue：使用优先级队列实现的无界阻塞队列。 支持延时、缓存失效、定时任务 
+
+5. SynchronousQueue：不存储元素的阻塞队列。 不存储数据、可用于传递数据
+
+6. LinkedTransferQueue：由链表结构组成的无界阻塞队列。 
+
+7. LinkedBlockingDeque：由链表结构组成的双向阻塞队列。
 
 ### **LinkedBlockingQueue**
 

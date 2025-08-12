@@ -36,9 +36,9 @@ cat /etc/os-release
 
 ![](https://note.youdao.com/yws/api/personal/file/WEB952c9e22e273c2c9079257ba0a128d3a?method=download&shareKey=284e079de781d62b5175bf18dc0eda86)
 
-* r表示读权限
-* w表示写权限
-* x表示执行权限
+* r表示读权限，允许查看文件内容
+* w表示写权限，允许修改文件内容，包括删除文件
+* x表示执行权限就，允许将文件作为程序运行
 
 **八进制数字表示权限**
 
@@ -74,6 +74,37 @@ chown mysql:mysql /mysql
 //递归地更改目录及其所有子文件和子目录的所有者
 chown -R mysql /mysql
 ```
+
+#### umask新建文件权限
+
+umask 用于控制新创建文件或目录的默认权限。它的作用类似于“权限掩码”，通过屏蔽（禁止）某些权限位，确保新文件不会自动拥有过高的权限（如全局可写），从而提升系统安全性。
+
+### 如何修改 umask？
+
+**临时修改（仅当前会话有效）**
+
+```bash
+umask 0002  # 设置 umask 为 0002，文件权限应该是 0644（rw-r--r--）
+umask        # 验证修改结果
+```
+
+**永久修改（对所有用户生效）**
+编辑用户的 shell 配置文件（如 ~/.bashrc、~/.bash_profile 或 /etc/profile），添加：
+
+```bash
+umask 0022  # 推荐安全值
+```
+
+然后重新加载配置：
+
+```bash
+source ~/.bashrc  # 或重新登录终端
+```
+
+**系统默认 umask**
+
+* 大多数 Linux 发行版的默认 umask 是 0022（普通用户）或 0002（如 Ubuntu 的用户组共享场景）。
+* root 用户的默认 umask 通常是 022 或 027（更严格）。
 
 **查看账号信息**
 
@@ -429,6 +460,24 @@ top 命令查看系统的实时负载， 包括进程、CPU负载、内存使用
 eg：-Xms8g -Xmx8g -Xmn3g
 
 正常情况下，`-Xmn`参数总是应当小于`-Xmx`参数，否则就会触发`OOM`错误。
+
+**默认展示进程视图，可按 H（大写字母 H） 切换线程视图**
+
+**按 O（大写字母 O）进行交互式过滤**
+
+```bash
+COMMAND=java      # 过滤 Java 进程的线程
+PID=12345         # 过滤指定 PID 的线程
+```
+
+**按下 P（大写或小写均可），按 CPU 使用率排序，找到高 CPU 线程。**
+
+```bash
+top -H -p 26439  #显示 PID=26439 进程的所有线程
+ps -eLf | grep 26449  # 根据线程ID查看线程
+printf "%x\n" 26449  # 26449转十六进制，输出类似 ddd5
+jstack 26439 | grep -A 30 "nid=0xddd5" # 查看线程堆栈
+```
 
 ### 技巧快捷键
 

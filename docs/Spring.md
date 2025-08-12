@@ -8,7 +8,7 @@
 
 [TOC]
 
-#### 1.IOC
+## 1.IOC
 
 IOC：反转控制 -》 反射
 
@@ -42,7 +42,9 @@ IOC：反转控制 -》 反射
 
 **控制反转是一种思想，依赖注入是其最典型的实现方法：对象无需自行创建或管理它们的依赖关系，依赖关系将被「自动注入」到需要它们的对象当中去。**
 
-#### 2.生命周期
+## 2.生命周期
+
+Spring 生命周期全过程大致分为五个阶段：创建前准备阶段、创建实例阶段、依赖注入阶段、容器缓存阶段和销毁实例阶段。
 
 BeanLifeCycle.java
 
@@ -108,7 +110,7 @@ public class BeanlifeTest extends UnitTestBase {
 }
 ```
 
-#### 3.作用域
+## 3.作用域
 
 **在默认的情况下，Spring IoC 容器只会对一个 Bean 创建一个实例**，但有时候，我们希望能够通过 Spring IoC 容器获取多个实例，我们可以通过 `@Scope` 注解或者 `<bean>` 元素中的 `scope` 属性来设置。
 
@@ -218,7 +220,7 @@ public class ScopeText extends UnitTestBase {
 }
 ```
 
-#### 4.注解
+## 4.注解
 
 创建对象以及处理对象依赖关系，相关的注解：
 
@@ -319,7 +321,7 @@ public class ScopeText extends UnitTestBase {
   <bean id="myScope" class="com.huadi.scope.MyScope" scope="prototype"/>
   ```
 
-#### 5.依赖注入DI
+## 5.依赖注入DI
 
 **Spring中完成注入的几种方式：**
 
@@ -505,7 +507,7 @@ public class UnitTestBase {
   }
   ```
 
-#### 6.Aware接口
+## 6.Aware接口
 
 通常使用 Spring Aware 的目的是为了让 Bean 获得 Spring 容器的服务。实现这些接口会将代码耦合到Spring框架，应该避免使用任何 Aware 接口。
 
@@ -600,7 +602,7 @@ public class TestAware extends UnitTestBase {
 }
 ```
 
-##### 资源加载器的使用
+**资源加载器的使用**
 
 1.创建一个配置文件类AwareConfig.java
 
@@ -662,7 +664,7 @@ public class TestAware {
 
 4.将资源文件text.txt放置在类路径target/class下
 
-#### 7.Dao、Service
+## 7.Dao、Service
 
 UserDao.java
 
@@ -732,7 +734,7 @@ public class TestAnnotation extends UnitTestBase {
 }
 ```
 
-#### 8.事务的特性
+## 8.事务的特性
 
 1.**原子性**：原子性是指事务包含的所有操作要么全部成功，要么全部失败回滚，因此事务的操作如果成功就必须要完全应用到数据库，如果操作失败则不能对数据库有任何影响。
 
@@ -747,7 +749,7 @@ public class TestAnnotation extends UnitTestBase {
 - **编程式事务**使用TransactionTemplate或者直接使用底层的PlatformTransactionManager。对于编程式事务管理，spring推荐使用TransactionTemplate。
 - **声明式事务**是建立在AOP之上的。其本质是对方法前后进行拦截，然后在目标方法开始之前创建或者加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。声明式事务最大的优点就是不需要通过编程的方式管理事务，这样就不需要在业务逻辑代码中掺杂事务管理的代码，只需在配置文件中做相关的事务规则声明(或通过基于@Transactional注解的方式)，便可以将事务规则应用到业务逻辑中。
 
-##### 编程式事务管理
+#### 编程式事务管理
 
 Spring提供有两种方式的编程式事务管理：
 
@@ -847,7 +849,7 @@ public class AccountServiceImpl implements AccountService{
 }
 ```
 
-##### 声明式事务管理
+#### 声明式事务管理
 
 * 注解方式：  @Transactional
 * xml文件：  aop配置事务增强
@@ -1001,7 +1003,7 @@ public class AccountServiceImpl3 implements AccountService{
 }
 ```
 
-#### 9.AOP
+## 9.AOP
 
 Spring AOP主要做的事情就是：「把重复的代码抽取，在运行的时候往业务方法上**动态植入**“切面类代码”」
 
@@ -1243,7 +1245,7 @@ public class AspectTest {
     }
 ```
 
-#### 10.Bean
+## 10.Bean
 
 > https://github.com/wmyskxz/MoreThanJava/blob/master/java-web/spring/Spring%E5%AD%A6%E4%B9%A0-3-%E2%80%94%E2%80%94%E8%A3%85%E9%85%8DSpring-Bean%E8%AF%A6%E8%A7%A3.md
 
@@ -1275,7 +1277,7 @@ public class AspectTest {
 >
 > 代码参见IDEA中Spring01项目
 
-##### XML装配 Bean
+#### XML装配 Bean
 
 **控制反转是一种通过描述（在 Java 中可以是 XML 或者注解）并通过第三方（Spring）去产生或获取特定对象的方式。**
 
@@ -1442,7 +1444,7 @@ productService.doSomeService();
 </property>
 ```
 
-##### 注解装配 Bean
+#### 注解装配 Bean
 
 1.@Component表示 Spring IoC 会把这个类扫描成一个 bean 实例。
 
@@ -1533,7 +1535,7 @@ public class BeanTester {
 @ComponentScan(basePackageClasses = pojo.Student.class)
 ```
 
-##### 注解配置AOP
+#### 注解配置AOP
 
 1.用 @Aspect 注解一个类，那么 Spring IoC 容器就会认为这是一个切面。
 
@@ -1645,7 +1647,7 @@ execution(* pojo.Landlord.service())
 </beans>
 ```
 
-##### XML配置AOP
+#### XML配置AOP
 
 ```java
 <!-- 装配 Bean-->
@@ -1664,7 +1666,7 @@ execution(* pojo.Landlord.service())
 </aop:config>
 ```
 
-#### 11.Lombok标签
+## 11.Lombok标签
 
 ```xml
 <!--lombok-->
@@ -1688,7 +1690,7 @@ execution(* pojo.Landlord.service())
 
 @NoArgsConstructor, @RequiredArgsConstructor, @AllArgsConstructor : 注解在类上, 为类提供无参,有指定必须参数, 全参构造函数
 
-##### 构造函数
+#### 构造函数
 
 <font color="lighblue">@AllArgsConstructor</font>：生成全参数构造函数，同时如果变量使用了NotNull annotation ， 会进行是否为空的校验， 
 全部参数的构造函数的自动生成，该注解的作用域也是只有在实体类上，参数的顺序与属性定义的顺序一致。
