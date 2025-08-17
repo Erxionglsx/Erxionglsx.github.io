@@ -259,7 +259,7 @@ rocketmq中，topic与tag都是业务上用来归类的标识，区分在于topi
      * 同步延迟发送
      *
      * @param delayLevel 延时等级：现在RocketMq并不支持任意时间的延时，需要设置几个固定的延时等级，从1s到2h分别对应着等级 1 到 18
-     *                   1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+     * 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
      */
     public SendResult syncSendDelay(String topic, String tag, String content, long timeout, int delayLevel) {
         String destination = this.convertDestination(topic, tag);
@@ -376,7 +376,7 @@ RocketMQ 会为每个消费组都设置一个 topic 名称为 `“%RETRY%+consum
 
 在RocketMQ中，SubscriptionGroupConfig 配置常量默认地设置了两个参数，一个是retryQueueNums为1（重试队列数量为1个），另外一个是retryMaxTimes为16（最大重试消费的次数为16次）。Broker端通过校验判断，如果超过了最大重试消费次数则会将消息移至这里所说的死信队列。这里，RocketMQ会为每个消费组都设置一个 topic 命名为 `“%DLQ%+consumerGroup"` 的死信队列。但如果一个消费者组未产生死信消息，消息队列 RocketMQ 不会为其创建相应的死信队列的。
 
-因为死信队列中的消息是无法被消费的，它也证实了一部分消息出现了意料之外的情况。因此一般在实际应用中，移入至死信队列的消息，需要人工干预处理。例如通过 console 查看是否有私信队列，当解决问题后，可在 console 上手动重发消息。
+因为死信队列中的消息是无法被消费的，它也证实了一部分消息出现了意料之外的情况。因此一般在实际应用中，移入至死信队列的消息，需要人工干预处理。例如通过 console 查看是否有死信队列，当解决问题后，可在 console 上手动重发消息。
 
 ### Stream+RocketMQ实例
 
@@ -507,7 +507,6 @@ public class ReceiveClient {
         ToCdcContractSendDto toCdcContractSendDto = JsonMapper.INSTANCE.fromJson(message.getPayload().toString(), ToCdcContractSendDto.class);
         cpsToCdcAS.sendContractPush(toCdcContractSendDto);
     }
-    
 }
 ```
 
@@ -525,3 +524,4 @@ public void sendContractPush(ToCdcContractSendDto toCdcContractSendDto) throws I
 
 ![](https://note.youdao.com/yws/api/personal/file/0481E2444031437C91ED8FAECE68079F?method=download&shareKey=c9553192c4b4aa69f57561cf8b8be992)
 
+https://www.cnblogs.com/weifeng1463/p/12889300.html
