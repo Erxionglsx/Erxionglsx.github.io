@@ -259,7 +259,7 @@ rocketmq中，topic与tag都是业务上用来归类的标识，区分在于topi
      * 同步延迟发送
      *
      * @param delayLevel 延时等级：现在RocketMq并不支持任意时间的延时，需要设置几个固定的延时等级，从1s到2h分别对应着等级 1 到 18
-     * 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+     *                   1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
      */
     public SendResult syncSendDelay(String topic, String tag, String content, long timeout, int delayLevel) {
         String destination = this.convertDestination(topic, tag);
@@ -372,11 +372,17 @@ RocketMQ 会为每个消费组都设置一个 topic 名称为 `“%RETRY%+consum
 
 **死信队列**
 
+消息会被判定为 “死信” 并进入死信队列，通常满足以下条件之一：
+
+* 消费失败次数超限：消息被消费者多次消费（默认 16 次）仍未成功（如消费者抛出异常、未返回消费成功状态）。
+* 消息过期：消息在队列中超过预设的存活时间（messageDelayLevel）仍未被消费。
+* 队列满额：消息队列达到最大长度，新消息无法入队（较少见，通常队列会动态扩容）。
+
 由于有些原因导致消费者端长时间的无法正常消费从 broker 端 pull过来的业务消息，为了确保消息不会被无故的丢弃，那么超过配置的“最大重试消费次数”后就会移入到这个死信队列中。
 
 在RocketMQ中，SubscriptionGroupConfig 配置常量默认地设置了两个参数，一个是retryQueueNums为1（重试队列数量为1个），另外一个是retryMaxTimes为16（最大重试消费的次数为16次）。Broker端通过校验判断，如果超过了最大重试消费次数则会将消息移至这里所说的死信队列。这里，RocketMQ会为每个消费组都设置一个 topic 命名为 `“%DLQ%+consumerGroup"` 的死信队列。但如果一个消费者组未产生死信消息，消息队列 RocketMQ 不会为其创建相应的死信队列的。
 
-因为死信队列中的消息是无法被消费的，它也证实了一部分消息出现了意料之外的情况。因此一般在实际应用中，移入至死信队列的消息，需要人工干预处理。例如通过 console 查看是否有死信队列，当解决问题后，可在 console 上手动重发消息。
+因为死信队列中的消息是无法被消费的，它也证实了一部分消息出现了意料之外的情况。因此一般在实际应用中，移入至死信队列的消息，需要人工干预处理。例如通过 console 查看是否有私信队列，当解决问题后，可在 console 上手动重发消息。
 
 ### Stream+RocketMQ实例
 
@@ -507,6 +513,7 @@ public class ReceiveClient {
         ToCdcContractSendDto toCdcContractSendDto = JsonMapper.INSTANCE.fromJson(message.getPayload().toString(), ToCdcContractSendDto.class);
         cpsToCdcAS.sendContractPush(toCdcContractSendDto);
     }
+    
 }
 ```
 
@@ -523,5 +530,9 @@ public void sendContractPush(ToCdcContractSendDto toCdcContractSendDto) throws I
 ![](https://note.youdao.com/yws/api/personal/file/0552F3C827A94E29B5D37EF2F93A07A9?method=download&shareKey=426857a0d1f09fb9664811190f81774c)
 
 ![](https://note.youdao.com/yws/api/personal/file/0481E2444031437C91ED8FAECE68079F?method=download&shareKey=c9553192c4b4aa69f57561cf8b8be992)
+
+
+
+
 
 https://www.cnblogs.com/weifeng1463/p/12889300.html

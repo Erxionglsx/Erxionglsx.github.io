@@ -611,7 +611,6 @@ Direction d = Direction.FRONT;
 }
 Direction d1 = d;
 System.out.println(d1);
-
 ```
 
 请解释enum与Enum的区别？
@@ -1412,33 +1411,89 @@ public static void main(String[] args) throws FileNotFoundException {
 
 ![序列化](https://note.youdao.com/yws/api/personal/file/C21736454AB74F4E882BBEF4F05B534C?method=download&shareKey=d2467c1a0faff2c4e4dc3908a4af4518)
 
-然而并不是所有的对象都可以被系列化，在Java里面有一个强制性的要求：如果要序列化的对象，那么对象所在的类一定要实现java.io.Serializable父接口，作为序列化的标记，这个借口并没有任何的方法，因为它描述的是一种类的能力。
+然而并不是所有的对象都可以被系列化，在Java里面有一个强制性的要求：如果要序列化的对象，那么对象所在的类一定要实现java.io.Serializable父接口，作为序列化的标记，这个接口并没有任何的方法，因为它描述的是一种类的能力。
+
+#### JSON与Java序列化的区别
+
+* JSON 适合 “跨语言的数据交换”，只传递数据内容，轻量通用，但丢失了对象的类型和行为信息。
+* Java 序列化适合 “Java 环境内的对象迁移”，能完整保留对象的类型、数据和引用关系，让对象 “满血复活”，但只在 Java 体系内有效。
+
+#### 使用场景
+
+1. 远程方法调用（RPC）中的对象传输，在分布式 Java 系统中，不同服务节点（都是 Java 环境）之间通过 RPC 调用传递对象时，需要通过序列化将对象转为字节流传输，接收方再反序列化恢复对象。
+2. 对象的持久化存储，将 Java 对象的状态保存到磁盘文件或数据库中，后续需要时再完整恢复（如游戏存档、会话状态保存）。
+3. 容器中的对象状态管理，Java 容器（如 Tomcat）在处理会话（Session）时，会将 Session 中的对象序列化到磁盘（如服务器重启前），重启后再反序列化恢复，保证会话状态不丢失。
+
+**示例**
 
 ```java
-public class JavaAPIDemo{
-		public static void main(String[] args) {
-		}
+public class SchoolDataDTO implements Serializable {
+    //显式定义serialVersionUID静态常量
+    private static final long serialVersionUID = 1L;
+    private String schoolName;
+    private String schoolId;
+    private Integer teacherCount;
+    private Integer designCount;
+    private Integer checkCount;
+    private Integer videoCount;
+    //setter、getter省略
 }
-	
-@SuppressWarnings("serial")
-//Person类可以被序列化
-class Person implements Serializable {
-    private String name;
-    private int age;
 
-    private Person(String name,int age) {
-        this.name = name;
-        this.age = age;
+public ResponseEntity<?> getSchoolData(Long province, Long city, Long county, int page, int size) {
+        StringBuilder stringBuilder = new StringBuilder("DataBoard");
+    	if (Objects.nonNull(county)){
+            stringBuilder.append(county.toString());
+        }
+        String redisKey = stringBuilder.toString();
+
+        List<SchoolDataDTO> schoolDataDTOS = new ArrayList<>();
+        List<String> schoolCountByArea = schoolService.findSchoolCountByArea(province, city, county);
+    	if (CollectionUtils.isEmpty(redisTemplate.opsForList().range(redisKey, 0, -1))) {
+            Page<School> schoolByArea = schoolService.findSchoolByIdin(schoolCountByArea, page-1, size);
+            if (CollectionUtils.isNotEmpty(schoolDataDTOS)){
+                for (SchoolDataDTO schoolDataDTO : schoolDataDTOS) {
+                    //当调用rightPush方法存入SchoolDataDTO对象时，Redis会自动将对象序列化为字节流，再存入 Redis。
+                    redisTemplate.opsForList().rightPush(redisKey, schoolDataDTO);
+                }
+            }
+            //设置一个过期时间
+            redisTemplate.expire(redisKey, getTimeEnd(), TimeUnit.MINUTES);
+        } else {
+             //当从Redis读取数据时（range），Redis 返回的是存储的字节流，此时需要通过反序列化将字节流恢复为SchoolDataDTO对象
+            List<Object> range = redisTemplate.opsForList().range(redisKey, 0, -1);
+            for (Object o : range) {
+                schoolDataDTOS.add((SchoolDataDTO) o);
+            }
+        }
+
+        return MvcUtils.ok(new PageImpl<SchoolDataDTO>(schoolDataDTOS,new PageRequest(page-1,size),schoolCountByArea.size()));
     }
-    //setter、getter略
-    @Override
-    public String toString() {
-        return "姓名："+this.name + "年龄："+ this.age;
-    }
-}
 ```
 
-此时Person类产生的每一个对象都可以实现二进制的数据传输，属于可以被序列化的程序类。
+Serializable接口的类建议显式定义一个名为serialVersionUID的静态常量，类型为long。这个 ID 的作用是在反序列化时验证序列化对象的版本一致性，避免因类结构变化导致反序列化失败。
+
+#### 不显式定义的风险
+
+如果不手动定义serialVersionUID，Java 编译器会自动生成一个，生成规则依赖于类的结构（如字段、方法、继承关系等）。
+
+* 只要类结构发生微小变化（如增加 / 删除一个字段、修改方法名），自动生成的serialVersionUID就会改变。
+* 此时，用旧版本类序列化的对象，无法用新版本类反序列化（ID 不匹配），即使变化不影响核心数据。
+
+因此，所有实现Serializable接口的类都应该显式定义serialVersionUID，这是 Java 序列化的最佳实践。
+
+#### 为什么`SchoolDataDTO`需要序列化？
+
+1. **将对象转换为可存储的字节流**
+   Redis 作为缓存中间件，本质上只能存储字节流、字符串等基础数据格式，无法直接存储 Java 对象。当你调用redisTemplate的rightPush方法存入SchoolDataDTO对象时，Spring Redis 会自动将对象序列化为字节流，再存入 Redis。
+2. **从字节流恢复为原始对象**
+   当从 Redis 读取数据时（redisTemplate.opsForList().range），Redis 返回的是存储的字节流，此时需要通过反序列化将字节流恢复为SchoolDataDTO对象，才能在代码中正常调用其方法（如getSchoolName()）。
+
+#### 序列化在这里的具体作用
+
+1. **支撑 Redis 缓存功能**
+   你的代码逻辑是：查询学校数据后，将`SchoolDataDTO`列表存入 Redis，下次请求时直接从 Redis 读取，避免重复查询数据库（提高性能）。如果`SchoolDataDTO`不实现`Serializable`，存入 Redis 时会抛出`NotSerializableException`，导致缓存功能失效。
+2. **保证对象状态的完整保存与恢复**
+   `SchoolDataDTO`包含多个字段（如`schoolName`、`teacherCount`、`videoHours`等），序列化会将这些字段的状态完整转换为字节流，反序列化时能精确恢复所有字段的值，确保从 Redis 读取的对象与存入时完全一致。
 
 ### 28.String类方法
 
@@ -1892,10 +1947,15 @@ if(user != null){
 }
 ```
 
-33.Java对象转JSON
+### 33.Java对象与JSON互转
 
 ```java
 String json = JSONObject.toJSONString(list);
+
+String response = HttpUtil.createPost(url).body(sub).header(Header.AUTHORIZATION,"1").execute().body();
+			JSONObject awyResp = JSONObject.parseObject(response);
+			String highFrequencyWords = awyResp.getObject("high_frequency_words",String.class);
+			String sensitiveWords = awyResp.getObject("sensitive_words",String.class);
 ```
 
 
