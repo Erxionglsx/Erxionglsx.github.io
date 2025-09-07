@@ -219,6 +219,266 @@ public static void main(String[] args) throws IOException {
 
 映射类似于数据库 (database)中的表结构 (table)。创建数据库表需要设置字段名称，类型，长度，约束等；索引库也一样，需要知道这个类型下有哪些字段，每个字段有哪些约束信息，这就叫做映射 (mapping)。
 
+### 映射与表结构的核心差异
+
+1.**动态性支持**
+
+* **动态映射**：ES允许在写入数据时自动推断字段类型并创建映射，无需预先定义。例如，首次写入包含"price": 99.99的文档时，ES会自动将price字段识别为double类型。
+* **显式映射**：也可通过API预先定义映射，类似关系型数据库的CREATE TABLE，但ES更灵活，支持后续动态添加字段（除非显式设置dynamic: false）。
+
+2.**无固定模式**
+ES本质上是写时定义模式（Schema-on-write），但允许动态扩展字段，适合处理半结构化数据（如日志、JSON文档）。而关系型数据库是严格的读时解析模式（Schema-on-read），需预先定义完整表结构。
+
+3.**字段类型多样性**
+ES支持复杂类型（如嵌套对象nested、地理坐标geo_point、IP地址ip）和特殊类型（如自动补全completion、范围查询integer_range），远超关系型数据库的字段类型范畴。
+
+4.**多字段特性**
+一个字段可同时以不同方式索引。例如，product_name字段可定义为text类型（用于全文搜索）和keyword类型（用于精确聚合），通过fields参数实现
+
+```json
+"product_name": {
+  "type": "text",
+  "analyzer": "ik_max_word",
+  "fields": {
+    "raw": { "type": "keyword" }
+  }
+}
+```
+
+### 核心数据类型（字段类型）
+
+ES 的文档（Document）由多个字段（Field）组成，每个字段需指定数据类型，不同类型对应不同的存储和检索方式。
+
+#### 1. 字符串类型
+
+text：用于全文检索（如文章内容、描述），会被分词器拆分，支持模糊匹配。
+
+```json
+# 创建映射时定义text类型
+PUT /my_index
+{
+  "mappings": {
+    "properties": {
+      "article_content": { "type": "text" }  # 全文检索字段
+    }
+  }
+}
+```
+
+keyword：用于精确匹配（如 ID、标签、状态），不分词，支持聚合和排序。
+
+```json
+PUT /my_index
+{
+  "mappings": {
+    "properties": {
+      "user_id": { "type": "keyword" },      # 精确匹配用户ID
+      "tags": { "type": "keyword" }          # 用于标签聚合
+    }
+  }
+}
+```
+
+注意：可通过fields同时定义两种类型（如text用于检索，keyword用于聚合）：
+
+```json
+"title": {
+  "type": "text",
+  "fields": {
+    "keyword": { "type": "keyword", "ignore_above": 256 }  # 仅保留256字符内的精确值
+  }
+}
+```
+
+#### 2. 数值类型
+
+用于存储数字，细分类型优化存储效率：
+
+- 整数：`integer`（32 位）、`long`（64 位）、`short`（16 位）、`byte`（8 位）
+- 浮点数：`float`（32 位）、`double`（64 位）、`half_float`（16 位）、`scaled_float`（缩放浮点数，如价格用`scaling_factor: 100`存储分）
+
+```json
+PUT /products
+{
+  "mappings": {
+    "properties": {
+      "price": { "type": "scaled_float", "scaling_factor": 100 },  # 价格（元→分）
+      "stock": { "type": "integer" },                             # 库存数量
+      "weight": { "type": "float" }                               # 重量
+    }
+  }
+}
+```
+
+#### 3. 日期类型（`date`）
+
+支持多种日期格式（字符串、时间戳），需显式指定格式或使用默认（`strict_date_optional_time`）。
+
+```json
+PUT /events
+{
+  "mappings": {
+    "properties": {
+      "event_time": { 
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"  # 支持多种格式
+      }
+    }
+  }
+}
+```
+
+#### 4. 布尔类型（`boolean`）
+
+存储`true`/`false`，或对应的字符串（`"true"`/`"false"`）、整数（`1`/`0`）。
+
+```json
+PUT /users/_doc/1
+{
+  "is_active": true,
+  "has_permission": "false"  # 会自动转换为boolean
+}
+```
+
+#### 5. 数组类型（`array`）
+
+ES 没有显式的数组类型，任何字段都可存储多个值（需同类型）。
+
+```json
+# 存储标签数组（keyword类型）
+PUT /articles/_doc/1
+{
+  "tags": ["教育", "科技", "编程"]  # 对应字段类型为keyword
+}
+
+# 存储数值数组
+PUT /stats/_doc/1
+{
+  "scores": [90, 85, 95]  # 对应字段类型为integer
+}
+```
+
+#### 6. 对象类型（`object`）
+
+用于存储嵌套的 JSON 对象（单层级嵌套）。
+
+```json
+PUT /users
+{
+  "mappings": {
+    "properties": {
+      "name": { "type": "text" },
+      "address": {  # object类型
+        "type": "object",
+        "properties": {
+          "city": { "type": "keyword" },
+          "street": { "type": "text" }
+        }
+      }
+    }
+  }
+}
+
+# 插入对象数据
+PUT /users/_doc/1
+{
+  "name": "张三",
+  "address": {
+    "city": "北京",
+    "street": "中关村大街"
+  }
+}
+```
+
+#### 7. 嵌套类型（`nested`）
+
+解决`object`类型查询时的 “跨字段匹配” 问题，用于存储数组中的对象（需显式定义）。
+
+```json
+PUT /blogs
+{
+  "mappings": {
+    "properties": {
+      "comments": { 
+        "type": "nested",  # 嵌套类型（数组中的对象）
+        "properties": {
+          "author": { "type": "keyword" },
+          "content": { "type": "text" }
+        }
+      }
+    }
+  }
+}
+
+# 插入嵌套对象数组
+PUT /blogs/_doc/1
+{
+  "comments": [
+    { "author": "Alice", "content": "很棒的文章" },
+    { "author": "Bob", "content": "学习了" }
+  ]
+}
+
+# 查询：查找Alice评论中包含“很棒”的博客
+GET /blogs/_search
+{
+  "query": {
+    "nested": {
+      "path": "comments",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "comments.author": "Alice" } },
+            { "match": { "comments.content": "很棒" } }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+#### 8. 地理类型
+
+**geo_point**：存储经纬度（用于地理位置检索，如 “附近的学校”）。
+
+```json
+PUT /schools
+{
+  "mappings": {
+    "properties": {
+      "location": { "type": "geo_point" }  # 地理坐标
+    }
+  }
+}
+
+# 插入学校位置（两种格式）
+PUT /schools/_doc/1
+{ "location": "39.9042, 116.4074" }  # 纬度,经度
+
+PUT /schools/_doc/2
+{ "location": { "lat": 31.2304, "lon": 121.4737 } }
+
+# 查询：查找北京天安门（39.9042,116.4074）附近10公里内的学校
+GET /schools/_search
+{
+  "query": {
+    "geo_distance": {
+      "distance": "10km",
+      "location": "39.9042, 116.4074"
+    }
+  }
+}
+```
+
+**geo_shape**：存储复杂地理形状（如区域、多边形）。
+
+#### 9. 特殊类型
+
+**ip**：存储 IP 地址（IPv4/IPv6），支持网段查询。
+
+**range**：存储数值 / 日期范围（如`integer_range`、`date_range`）。
+
 ### 1.创建映射
 
 在Postman 中，向 ES 服务器发 PUT 请求<http://127.0.0.1:9200/user/_mapping>
