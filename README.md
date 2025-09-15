@@ -54,7 +54,8 @@
 - 软件工程导论
   - [软件工程导论](./docs/软件工程导论.md)
 - 分布式与微服务
-  - [分布式与微服务](./docs/分布式.md)
+  - [分布式](./docs/分布式.md)
+  - [微服务](./docs/微服务.md)
   - [Nacos](./docs/Nacos.md)
   - [OpenFeign](./docs/OpenFeign.md)
   - [GateWay](./docs/GateWay.md)
@@ -74,5 +75,4 @@
   - [JSP](./docs/JSP.md)
 - 其他
   - [钉钉消息通知](./docs/钉钉消息通知.md)
-  - [Eclipse快捷键](./docs/Eclipse快捷键及代码规范.md)
   - [Windows常用命令](./docs/Windows常用运行命令.md)

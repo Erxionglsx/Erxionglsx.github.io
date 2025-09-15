@@ -1505,8 +1505,8 @@ Serializable接口的类建议显式定义一个名为serialVersionUID的静态�
 |    4     | [int compareToIgnoreCase(String str)](https://www.runoob.com/java/java-string-comparetoignorecase.html)     按字典顺序比较两个字符串，不考虑大小写。 |
 |    5     | [String concat(String str)](https://www.runoob.com/java/java-string-concat.html)    将指定字符串连接到此字符串的结尾。 |
 |    6     | [boolean contentEquals(StringBuffer sb)](https://www.runoob.com/java/java-string-contentequals.html)    当且仅当字符串与指定的StringBuffer有相同顺序的字符时候返回真。 |
-|    7     | [static String copyValueOf(char[\] data)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
-|    8     | [static String copyValueOf(char[\] data, int offset, int count)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
+|    7     | [static String copyValueOf([char[\] data)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
+|    8     | [static String copyValueOf([char[\] data, int offset, int count)](https://www.runoob.com/java/java-string-copyvalueof.html)    返回指定数组中表示该字符序列的 String。 |
 |    9     | [boolean endsWith(String suffix)](https://www.runoob.com/java/java-string-endswith.html)    测试此字符串是否以指定的后缀结束。 |
 |    10    | [boolean equals(Object anObject)](https://www.runoob.com/java/java-string-equals.html)    将此字符串与指定的对象比较。 |
 |    11    | [boolean equalsIgnoreCase(String anotherString)](https://www.runoob.com/java/java-string-equalsignorecase.html)    将此 String 与另一个 String 比较，不考虑大小写。 |
