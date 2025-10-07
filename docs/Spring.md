@@ -1,7 +1,5 @@
-Spring
+## Spring
 
-> 代码参考：SpringTest
->
 > [Spring入门](https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&mid=2247483942&idx=1&sn=f71e1adeeaea3430dd989ef47cf9a0b3&chksm=ebd74327dca0ca3141c8636e95d41629843d2623d82be799cf72701fb02a665763140b480aec&scene=21###wechat_redirect)
 
 ------
@@ -44,7 +42,7 @@ IOC：反转控制 -》 反射
 
 ## 2.生命周期
 
-Spring 生命周期全过程大致分为五个阶段：创建前准备阶段、创建实例阶段、依赖注入阶段、容器缓存阶段和销毁实例阶段。
+Spring 生命周期全过程大致分为五个阶段：**创建前准备阶段、创建实例阶段、依赖注入阶段、容器缓存阶段和销毁实例阶段**。
 
 BeanLifeCycle.java
 
@@ -1250,6 +1248,8 @@ public class AspectTest {
 ## 10.Bean
 
 > https://github.com/wmyskxz/MoreThanJava/blob/master/java-web/spring/Spring%E5%AD%A6%E4%B9%A0-3-%E2%80%94%E2%80%94%E8%A3%85%E9%85%8DSpring-Bean%E8%AF%A6%E8%A7%A3.md
+
+在 Spring 中，**Bean 就是由 Spring 容器管理的对象**，Spring 管理 Bean 的核心是通过**IoC 容器**（控制反转容器）来实现的。
 
  Spring 中提供了 3 种方法进行配置：
 
