@@ -65,5 +65,6 @@
   - [JSP](./docs/JSP.md)
   
 * 其他
+  - [Python](./docs/Python.md)
   - [钉钉消息通知](./docs/钉钉消息通知.md)
   - [Windows常用命令](./docs/Windows常用运行命令.md)
